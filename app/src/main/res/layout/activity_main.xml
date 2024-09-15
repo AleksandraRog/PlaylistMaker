@@ -38,6 +38,7 @@
                 <FrameLayout
                     android:layout_width="12dp"
                     android:layout_height="16dp"
+                    android:layout_marginRight="35dp"
                     android:layout_gravity="end|center_vertical"
                     android:visibility="invisible">
                     <ImageView
