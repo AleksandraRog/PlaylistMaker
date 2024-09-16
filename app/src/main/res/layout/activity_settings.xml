@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/base_setting_screen">
+    <LinearLayout
+        style="@style/TopFrame"
+        android:layout_margin="4dp">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <Button
+                android:id="@+id/button_back"
+                style="@style/ButtonTop"
+                android:backgroundTint="@color/base_setting_screen"
+                android:visibility="visible"
+                app:layout_constraintDimensionRatio="1:1"
+                app:cornerRadius="0dp"
+                app:icon="@drawable/vector_back"
+                app:iconGravity="textTop"
+                app:iconPadding="0dp"
+                app:iconSize="@dimen/icon_size"
+                app:iconTint="@color/text_great_screen" />
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                app:layout_constraintDimensionRatio="13:3"
+                app:layout_constraintStart_toEndOf="@+id/button_back">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/button_setting"
+                    android:textSize="@dimen/primari_text_size"
+                    android:textColor="@color/top_text_setting_screen"
+                    android:fontFamily="sans-serif"/>
+                <FrameLayout
+                    android:layout_width="12dp"
+                    android:layout_height="16dp"
+                    android:layout_marginRight="35dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:visibility="invisible">
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_hide_dropdown" />
+                </FrameLayout>
+            </FrameLayout>
+
+            <Button
+                style="@style/ButtonTop"
+                android:backgroundTint="@color/base_setting_screen"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:icon="@drawable/vector_filterlist"
+                app:iconTint="@color/text_great_screen"
+                app:iconGravity="textTop"
+                app:iconPadding="0dp"
+                app:iconSize="@dimen/icon_size"
+                app:cornerRadius="0dp"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+    <TableLayout
+        style="@style/BottomFrame"
+        android:textColor="@color/text_setting_screen"
+        android:textSize="@dimen/setting_point_text_size"
+        android:stretchColumns="0">
+
+        <!-- Первая строка -->
+        <TableRow
+            style="@style/List">
+
+            <TextView
+                style="@style/TextViewSetting"
+                android:text="@string/dark_team" />
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp">
+            </Switch>
+
+        </TableRow>
+
+        <!-- Вторая строка -->
+        <TableRow style="@style/List">
+
+            <TextView
+                style="@style/TextViewSetting"
+                android:text="@string/share_app" />
+
+            <ImageView
+                style="@style/ImageViewSetting"
+                android:src="@drawable/ic_vector_share"/>
+
+        </TableRow>
+
+        <!-- Третья строка -->
+        <TableRow
+            style="@style/List">
+
+            <TextView
+                style = "@style/TextViewSetting"
+                android:text="@string/send_support" />
+
+            <ImageView
+                style="@style/ImageViewSetting"
+                android:src="@drawable/vector_support" />
+
+        </TableRow>
+
+        <!--  Четвертая строка -->
+        <TableRow
+            style="@style/List">
+
+            <TextView
+                style="@style/TextViewSetting"
+                android:text="@string/arrow_forward"/>
+
+            <ImageView
+                style="@style/ImageViewSetting"
+                android:src="@drawable/vector_arrow" />
+        </TableRow>
+
+        <!--  Пятая строка -->
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="476">
+        </TableRow>
+    </TableLayout>
+</LinearLayout>
