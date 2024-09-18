@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Цвет для состояния фокуса -->
+    <item android:state_focused="true" android:color="@color/YP_black" />
+
+    <!-- Цвет для состояния нажатия -->
+    <item android:state_pressed="true" android:color="@color/YP_black" />
+
+    <!-- Цвет для обычного состояния -->
+    <item android:color="@color/YP_text_grey" />
+</selector>
