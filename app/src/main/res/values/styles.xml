@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="ButtonGreat" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_width">match_parent</item>
@@ -15,30 +16,12 @@
         <item name="iconTint">@color/YP_black</item>
         <item name="iconSize">@dimen/icon_size</item>
         <item name="cornerRadius">@dimen/button_radius</item>
-
-    </style>
-
-    <style name="ButtonTop" parent="Widget.MaterialComponents.Button.UnelevatedButton">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:visibility">invisible</item>
-        <item name="android:gravity">center</item>
-        <item name="layout_constraintDimensionRatio">1:1</item>
-        <item name="iconGravity">textTop</item>
-        <item name="iconPadding">0dp</item>
-        <item name="iconSize">@dimen/icon_size</item>
-        <item name="iconTint">?attr/colorOnSecondary</item>
-    </style>
-
-    <style name="ButtonTop.Back" parent="ButtonTop">
-        <item name="icon">@drawable/vector_back</item>
-        <item name="iconTint">?attr/colorOnSecondary</item>
     </style>
 
     <style name="List">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">61</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">61dp</item>
         <item name="android:gravity">end|center_vertical</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
     </style>
@@ -58,41 +41,25 @@
 
     <style name="TopFrame">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">7</item>
-        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">@dimen/top_padding</item>
+        <item name="android:padding">4dp</item>
+        <item name="navigationIcon">@drawable/vector_back</item>
+        <item name="titleTextColor">?attr/colorOnSecondary</item>
+        <item name="contentInsetStartWithNavigation">@dimen/top_padding</item>
+        <item name="titleTextAppearance">@style/ToolbarTitleText</item>
+    </style>
+
+    <style name="ToolbarTitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">@dimen/primari_text_size</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="titleMarginTop">2dp</item>
         <item name="android:textFontWeight">500</item>
-    </style>
-
-    <style name="TopFrame.TextVeiw">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="drawableEndCompat">@drawable/ic_hide_dropdown</item>
-        <item name="drawableTint">?attr/android:backgroundTint</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingLeft">12dp</item>
-        <item name="android:paddingRight">28dp</item>
-        <item name="layout_constraintDimensionRatio">13:3</item>
-    </style>
-
-    <style name="BottomFrame">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">93</item>
-        <item name="android:paddingTop">@dimen/top_padding</item>
-        <item name="android:paddingBottom">@dimen/bottom_padding</item>
-    </style>
-
-    <style name="BottomFrame.LinearLayout">
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">170</item>
     </style>
 
     <style name="SearchFrame">
         <item name="android:backgroundTint">@color/YP_light_gray</item>
-        <item name="drawableTint">@color/YP_grey_3</item>
+        <item name="drawableTint">@color/YP_text_grey</item>
         <item name="android:textColorHint">@color/YP_text_grey</item>
     </style>
-
 </resources>

@@ -5,71 +5,45 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/top_toolbar_frame"
         style="@style/TopFrame"
-        android:layout_margin="4dp">
+        app:title="@string/button_search">
+    </androidx.appcompat.widget.Toolbar>
 
-        <Button
-            android:id="@+id/button_back"
-            style="@style/ButtonTop.Back"
-            android:visibility="visible" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginHorizontal="@dimen/start_margin"
+        android:paddingVertical="8dp">
 
-        <TextView
-            style="@style/TopFrame.TextVeiw"
-            android:text="@string/button_search"
-            app:layout_constraintLeft_toRightOf="@+id/button_back" />
-
-        <Button
-            style="@style/ButtonTop"
-            app:icon="@drawable/vector_filterlist"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <LinearLayout
-        style="@style/BottomFrame"
-        android:orientation="vertical">
-
-        <FrameLayout
+        <EditText
+            android:id="@+id/inputEditText"
+            style="@style/SearchFrame"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="13"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="8dp">
+            android:layout_height="match_parent"
+            android:background="@drawable/search_field_s"
+            android:drawableStart="@drawable/vector_search"
+            android:drawablePadding="12dp"
+            android:fontFamily="@font/ys_display_regular"
+            android:hint="@string/button_search"
+            android:inputType="text"
+            android:lines="1"
+            android:paddingStart="12dp"
+            android:textColor="?attr/colorOnPrimary"
+            android:textCursorDrawable="@drawable/cursor_color"
+            android:textSize="@dimen/base_text_size"
+            app:drawableSize="@dimen/start_margin" />
 
-            <EditText
-                android:id="@+id/inputEditText"
-                style="@style/SearchFrame"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/search_field_s"
-                android:drawableLeft="@drawable/vector_search"
-                android:drawablePadding="12dp"
-                android:fontFamily="@font/ys_display_regular"
-                android:hint="@string/button_search"
-                android:inputType="text"
-                android:lines="1"
-                android:maxLength="20"
-                android:paddingLeft="12dp"
-                android:textColor="?attr/colorOnPrimary"
-                android:textCursorDrawable="@drawable/cursor_color"
-                android:textSize="@dimen/base_text_size"
-                app:drawableSize="16dp" />
-
-            <ImageView
-                style="@style/SearchFrame"
-                android:id="@+id/clearIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/end_margin_setting"
-                android:layout_gravity="right|center_vertical"
-                android:src="@drawable/ic_vector_clear"
-                app:drawableSize="16dp"
-                android:visibility="gone" />
-        </FrameLayout>
-        <LinearLayout
-            style="@style/BottomFrame.LinearLayout"
-            android:layout_width="match_parent">
-        </LinearLayout>
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/clearIcon"
+            style="@style/SearchFrame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginEnd="@dimen/end_margin_setting"
+            android:src="@drawable/ic_vector_clear"
+            android:visibility="gone"
+            app:drawableSize="@dimen/start_margin" />
+    </FrameLayout>
 </LinearLayout>

@@ -4,9 +4,9 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 
 class SettingsActivity : AppCompatActivity() {
@@ -22,15 +22,16 @@ class SettingsActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_settings)
 
-        val backButton = findViewById<Button>(R.id.button_back)
+
         supportButton = findViewById<ImageView>(R.id.button_support)
         shareButton = findViewById<ImageView>(R.id.button_share)
         arrowButton = findViewById<ImageView>(R.id.button_arrow)
 
-        backButton.setOnClickListener {
-            val backIntent = Intent(this, MainActivity::class.java)
-            startActivity(backIntent)
-            finish()
+        val topToolbar : Toolbar = findViewById(R.id.top_toolbar_frame)
+        setSupportActionBar(topToolbar)
+
+        topToolbar.setNavigationOnClickListener {
+            onBackPressed()
         }
 
         supportButton.setOnClickListener {

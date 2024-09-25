@@ -1,16 +1,15 @@
 package com.example.playlistmaker
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 
 class SearchActivity : AppCompatActivity() {
 
@@ -23,12 +22,11 @@ class SearchActivity : AppCompatActivity() {
 
         val inputEditText = findViewById<EditText>(R.id.inputEditText)
         val clearButton = findViewById<ImageView>(R.id.clearIcon)
-        val backButton = findViewById<Button>(R.id.button_back)
+        val topToolbar : Toolbar = findViewById(R.id.top_toolbar_frame)
+        setSupportActionBar(topToolbar)
 
-        backButton.setOnClickListener {
-            val backIntent = Intent(this, MainActivity::class.java)
-            startActivity(backIntent)
-            finish()
+        topToolbar.setNavigationOnClickListener {
+            onBackPressed()
         }
 
         clearButton.setOnClickListener {

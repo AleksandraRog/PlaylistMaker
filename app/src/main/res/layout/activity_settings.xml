@@ -5,30 +5,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/top_toolbar_frame"
         style="@style/TopFrame"
-        android:layout_margin="4dp">
+        app:title="@string/button_setting">
 
-        <Button
-            android:id="@+id/button_back"
-            style="@style/ButtonTop.Back"
-            android:visibility="visible" />
-
-        <TextView
-            style="@style/TopFrame.TextVeiw"
-            android:text="@string/button_setting"
-            app:layout_constraintLeft_toRightOf="@+id/button_back" />
-
-        <Button
-            style="@style/ButtonTop"
-            app:icon="@drawable/vector_filterlist"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.Toolbar>
 
     <TableLayout
-        style="@style/BottomFrame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:stretchColumns="0"
+        android:textFontWeight="400"
         android:textSize="@dimen/base_text_size">
 
         <!-- Первая строка -->
@@ -38,13 +26,16 @@
                 style="@style/TextViewSetting"
                 android:text="@string/dark_theme" />
 
-            <Switch
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/switch_theme"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:thumbTint="@color/thumb_color"
-                android:trackTint="@color/track_color"></Switch>
+                android:gravity="center_vertical"
+                android:minWidth="48dp"
+                android:paddingEnd="4dp"
+                android:thumbTintMode="screen"
+                app:thumbTint="@color/thumb_color"
+                app:trackTint="@color/track_color"></com.google.android.material.switchmaterial.SwitchMaterial>
 
         </TableRow>
 
@@ -88,13 +79,6 @@
                 android:id="@+id/button_arrow"
                 style="@style/ImageViewSetting"
                 android:src="@drawable/vector_arrow" />
-        </TableRow>
-
-        <!--  Пятая строка -->
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="476">
         </TableRow>
     </TableLayout>
 </LinearLayout>
