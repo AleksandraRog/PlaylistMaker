@@ -4,7 +4,6 @@ import android.graphics.Paint
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -26,29 +25,29 @@ class TrackViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflate
         trackTime = itemView.findViewById(R.id.trackTime)
     }
 
-    fun bind(trackName: String, artistName: String, trackTime: String, artworkUrl100: String) {
+    fun bind(track: Track) {
 
-        Glide.with(this.itemView.context)
-            .load(artworkUrl100).centerInside()
+        Glide.with(itemView.context)
+            .load(track.artworkUrl100).centerInside()
             .placeholder(R.drawable.vector_placeholder)
             .centerCrop()
             .transform(RoundedCorners(dpToPx(2f)))
             .into(imageView)
-        this.trackName.setSingleLine(true)
-        this.artistName.setSingleLine(true)
-        this.trackName.text = trackName
-        this.artistName.text = artistName
-        this.trackTime.text = trackTime
-        this.trackName.ellipsize = TextUtils.TruncateAt.END
-        this.artistName.ellipsize = TextUtils.TruncateAt.END
+        trackName.setSingleLine(true)
+        artistName.setSingleLine(true)
+        trackName.text = track.trackName
+        artistName.text = track.artistName
+        trackTime.text = track.trackTime
+        trackName.ellipsize = TextUtils.TruncateAt.END
+        artistName.ellipsize = TextUtils.TruncateAt.END
 
         val getTextWidthInPixels: (String, Float) -> Float = { text, textSize ->
             val paint = Paint().apply { this.textSize = textSize }
             paint.measureText(text)
         }
         val textWidthInPx =
-            getTextWidthInPixels(trackTime, 11f * itemView.context.resources.displayMetrics.density)
-        this.artistName.maxWidth =
+            getTextWidthInPixels(track.trackTime, 11f * itemView.context.resources.displayMetrics.density)
+        artistName.maxWidth =
             ScreenSize.getScreenWidth() - ScreenSize.getOtherWidthTrackViewHolder() - textWidthInPx.toInt()
     }
 

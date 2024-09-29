@@ -1,6 +1,5 @@
 package com.example.playlistmaker
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
@@ -14,7 +13,7 @@ class TrackAdapter (
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         val track = tracks[position]
-        holder.bind(track.trackName, track.artistName, track.trackTime, track.artworkUrl100)
+        holder.bind(track)
     }
 
     override fun getItemCount(): Int {
