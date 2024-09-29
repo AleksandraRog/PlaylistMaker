@@ -3,100 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/base_great_screen"
     android:orientation="vertical">
-    <LinearLayout
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/top_toolbar_frame"
         style="@style/TopFrame"
-        android:layout_margin="4dp">
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <Button
-                android:id="@+id/button_back"
-                style="@style/ButtonTop"
-                android:backgroundTint="@color/base_great_screen"
-                app:layout_constraintDimensionRatio="1:1"
-                app:icon="@drawable/vector_back"
-                app:iconGravity="textTop"
-                app:iconPadding="0dp"
-                app:iconSize="@dimen/icon_size"
-                app:iconTint="@color/text_great_screen" />
+        app:navigationIcon="@null"
+        app:title="@string/app_name" />
 
-            <FrameLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                app:layout_constraintDimensionRatio="13:3">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="12dp"
-                    android:text="@string/app_name"
-                    android:textSize="@dimen/primari_text_size"
-                    android:textColor="@color/top_text_great_screen"
-                    android:fontFamily="sans-serif"/>
-                <FrameLayout
-                    android:layout_width="12dp"
-                    android:layout_height="16dp"
-                    android:layout_marginRight="35dp"
-                    android:layout_gravity="end|center_vertical"
-                    android:visibility="invisible">
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/ic_hide_dropdown" />
-                </FrameLayout>
-            </FrameLayout>
-
-            <Button
-                style="@style/ButtonTop"
-                android:backgroundTint="@color/base_great_screen"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintDimensionRatio="1:1"
-                app:icon="@drawable/vector_filterlist"
-                app:iconTint="@color/text_great_screen"
-                app:iconGravity="textTop"
-                app:iconPadding="0dp"
-                app:iconSize="@dimen/icon_size"
-                app:cornerRadius="0dp"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </LinearLayout>
-    <LinearLayout
-        style="@style/BottomFrame"
-        android:orientation="vertical">
-        <Button
+    <Button
         android:id="@+id/search_button"
-        android:foreground="?attr/selectableItemBackground"
         style="@style/ButtonGreat"
-        android:text="@string/button_waiting"
-        app:icon="@drawable/vector_search"
-        app:iconGravity="textStart"
-        app:iconTint="@color/text_great_screen"
-        app:iconSize="@dimen/icon_size"
-        app:cornerRadius="@dimen/button_radius"/>
+        android:text="@string/button_search"
+        app:icon="@drawable/vector_search" />
 
-        <Button
+    <Button
         android:id="@+id/library_button"
         style="@style/ButtonGreat"
-        android:text="@string/button_mediatek"
-        app:icon="@drawable/vector_library"
-        app:iconGravity="textStart"
-        app:iconTint="@color/text_great_screen"
-        app:iconSize="@dimen/icon_size"
-        app:cornerRadius="@dimen/button_radius"/>
+        android:text="@string/button_library"
+        app:icon="@drawable/vector_library" />
 
-        <Button
+    <Button
         android:id="@+id/setting_button"
         style="@style/ButtonGreat"
-        android:foreground="?attr/selectableItemBackground"
+        android:layout_marginBottom="28dp"
         android:text="@string/button_setting"
-        android:layout_marginBottom="18dp"
-        app:icon="@drawable/vector_setting"
-        app:iconGravity="textStart"
-        app:iconTint="@color/text_great_screen"
-        app:iconSize="@dimen/icon_size"
-        app:cornerRadius="@dimen/button_radius"/>
-    </LinearLayout>
-
+        app:icon="@drawable/vector_setting" />
 </LinearLayout>
