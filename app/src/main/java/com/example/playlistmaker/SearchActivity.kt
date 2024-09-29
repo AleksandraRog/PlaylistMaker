@@ -10,6 +10,8 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class SearchActivity : AppCompatActivity() {
 
@@ -19,10 +21,13 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_search)
+        ScreenSize.initSizeTrackViewHolder(this)
 
         val inputEditText = findViewById<EditText>(R.id.inputEditText)
         val clearButton = findViewById<ImageView>(R.id.clearIcon)
         val topToolbar : Toolbar = findViewById(R.id.top_toolbar_frame)
+        val recyclerView = findViewById<RecyclerView>(R.id.trackList)
+
         setSupportActionBar(topToolbar)
 
         topToolbar.setNavigationOnClickListener {
@@ -51,6 +56,9 @@ class SearchActivity : AppCompatActivity() {
             }
         }
         inputEditText.addTextChangedListener(simpleTextWatcher)
+
+        recyclerView.adapter = TrackAdapter(Track.trackList)
+        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
@@ -76,5 +84,4 @@ class SearchActivity : AppCompatActivity() {
         const val EDIT_TEXT_KEY = "EDIT_TEXT_KEY"
         const val EDIT_TEXT_DEF = ""
     }
-
 }

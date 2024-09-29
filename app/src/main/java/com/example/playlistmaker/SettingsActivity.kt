@@ -22,7 +22,6 @@ class SettingsActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_settings)
 
-
         supportButton = findViewById<ImageView>(R.id.button_support)
         shareButton = findViewById<ImageView>(R.id.button_share)
         arrowButton = findViewById<ImageView>(R.id.button_arrow)
