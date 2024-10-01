@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -41,12 +42,16 @@ class SettingsActivity : AppCompatActivity() {
                 putExtra(Intent.EXTRA_TEXT, getString(R.string.text_support_message))
             }
             intentValue = supportIntent
-            startActivity(supportIntent)
+            if (supportIntent.resolveActivity(packageManager) != null) {
+                startActivity(supportIntent)
+            } else {
+                Toast.makeText(this, "Нет почтовых клиентов", Toast.LENGTH_SHORT).show()
+            }
         }
 
         shareButton.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
+               type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT, getString(R.string.link_course))
             }
             intentValue = shareIntent

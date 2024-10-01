@@ -1,5 +1,6 @@
 package com.example.playlistmaker
 
+
 import android.graphics.Paint
 import android.text.TextUtils
 import android.util.TypedValue
@@ -7,16 +8,21 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 
-class TrackViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.track_view, parent, false)) {
+
+class TrackViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
+    LayoutInflater.from(parent.context).inflate(R.layout.track_view2, parent, false)
+) {
 
     private val imageView: ImageView
     private val trackName: TextView
     private val artistName: TextView
     private val trackTime: TextView
+
 
     init {
         imageView = itemView.findViewById(R.id.trackImage)
@@ -37,21 +43,24 @@ class TrackViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflate
         artistName.setSingleLine(true)
         trackName.text = track.trackName
         artistName.text = track.artistName
+
         trackTime.text = track.trackTime
         trackName.ellipsize = TextUtils.TruncateAt.END
         artistName.ellipsize = TextUtils.TruncateAt.END
-
-        val getTextWidthInPixels: (String, Float) -> Float = { text, textSize ->
-            val paint = Paint().apply { this.textSize = textSize }
-            paint.measureText(text)
-        }
-        val textWidthInPx =
-            getTextWidthInPixels(track.trackTime, 11f * itemView.context.resources.displayMetrics.density)
-        artistName.maxWidth =
-            ScreenSize.getScreenWidth() - ScreenSize.getOtherWidthTrackViewHolder() - textWidthInPx.toInt()
+//        val getTextWidthInPixels: (String, Float) -> Float = { text, textSize ->
+//            val paint = Paint().apply {
+//                this.textSize = textSize * itemView.context.resources.displayMetrics.density
+//                this.typeface = ResourcesCompat.getFont(itemView.context, R.font.ys_display_regular)
+//            }
+//            paint.measureText(text)
+//        }
+//        val textWidthInPx =
+//            getTextWidthInPixels(track.trackTime, 11f)
+//        artistName.maxWidth =
+//            ScreenSize.getScreenWidth() - ScreenSize.getOtherWidthTrackViewHolder() - textWidthInPx.toInt()
     }
 
-    fun dpToPx(dp: Float): Int {
+    private fun dpToPx(dp: Float): Int {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, dp,
             itemView.context.resources.displayMetrics
