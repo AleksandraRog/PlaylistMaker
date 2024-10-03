@@ -8,6 +8,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/top_toolbar_frame"
         style="@style/TopFrame"
+        app:navigationContentDescription="@null"
         app:title="@string/button_search">
     </androidx.appcompat.widget.Toolbar>
 
@@ -46,4 +47,9 @@
             android:visibility="gone"
             app:drawableSize="@dimen/start_margin" />
     </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/trackList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>

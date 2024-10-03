@@ -62,4 +62,13 @@
         <item name="drawableTint">@color/YP_text_grey</item>
         <item name="android:textColorHint">@color/YP_text_grey</item>
     </style>
+
+    <style name="SubtitleTrackViewHolder">
+        <item name="android:textSize">11sp</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="drawableTint">@color/YP_text_grey</item>
+        <item name="android:textColor">@color/YP_text_grey</item>
+        <item name="android:layout_marginBottom">14dp</item>
+    </style>
+
 </resources>
