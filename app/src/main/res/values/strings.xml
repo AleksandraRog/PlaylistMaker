@@ -12,4 +12,8 @@
     <string name="text_support_message">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="link_arrow">https://yandex.ru/legal/practicum_offer/</string>
     <string name="link_course">https://practicum.yandex.ru/android-developer/?from=catalog</string>
+    <string name="nothing_found">Ничего не нашлось</string>
+    <string name="something_went_wrong">Проблемы со связью\n \nЗагрузка не удалась. Проверьте\nподключение к интернету</string>
+    <string name="update">Обновить</string>
+    <string name="no_reply">No Reply</string>
 </resources>
