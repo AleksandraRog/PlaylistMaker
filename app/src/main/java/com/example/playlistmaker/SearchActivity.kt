@@ -70,10 +70,7 @@ class SearchActivity : AppCompatActivity() {
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(clearButton.windowToken, 0)
             inputEditText.setText("")
-            placeholderMessage.visibility = View.GONE
-            placeholderButton.visibility = View.GONE
-            tracks.clear()
-            trackAdapter.notifyDataSetChanged()
+            clearAll()
         }
 
         placeholderButton.setOnClickListener {
@@ -89,6 +86,9 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
                 searchTextValue = s.toString()
+                if (searchTextValue == "") {
+                    clearAll()
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -135,20 +135,15 @@ class SearchActivity : AppCompatActivity() {
                     ) {
                         val responseCode = response.code()
                         val responseBody = response.body()?.results
-                        when (responseCode) {
-                            200 -> {
-                                tracks.clear()
-                                if (responseBody?.isNotEmpty() == true) {
-                                    tracks.addAll(responseBody!!.map { track ->
-                                        track.trackTime()
-                                        track
-                                    })
-                                }
-                                trackAdapter.notifyDataSetChanged()
-                                showMessage(responseCode, responseBody?.isNotEmpty())
-                            }
-                            else -> showMessage(responseCode, responseBody?.isNotEmpty())
+                        tracks.clear()
+                        if (responseBody?.isNotEmpty() == true && responseCode == 200) {
+                            tracks.addAll(responseBody!!.map { track ->
+                                track.trackTime()
+                                track
+                            })
                         }
+                        trackAdapter.notifyDataSetChanged()
+                        showMessage(responseCode, responseBody?.isNotEmpty())
                     }
 
                     override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
@@ -163,22 +158,24 @@ class SearchActivity : AppCompatActivity() {
     private fun showMessage(responseCode: Int, responseRezult: Boolean?) {
 
         if (responseCode != 200) {
+            clearAll()
             placeholderMessage.visibility = View.VISIBLE
             placeholderButton.visibility = View.VISIBLE
             placeholderMessage.setCompoundDrawablesWithIntrinsicBounds(
                 null,
-                 getDrawable(R.drawable.ic_vector_nolink),
+                getDrawable(R.drawable.ic_vector_nolink),
                 null,
                 null
             )
             placeholderMessage.text = getString(R.string.something_went_wrong)
 
         } else if (responseRezult != true) {
+
             placeholderMessage.visibility = View.VISIBLE
             placeholderButton.visibility = View.GONE
             placeholderMessage.setCompoundDrawablesWithIntrinsicBounds(
                 null,
-                 getDrawable(R.drawable.ic_vector_nomusic),
+                getDrawable(R.drawable.ic_vector_nomusic),
                 null,
                 null
             )
@@ -188,6 +185,13 @@ class SearchActivity : AppCompatActivity() {
             placeholderMessage.visibility = View.GONE
             placeholderButton.visibility = View.GONE
         }
+    }
+
+    private fun clearAll() {
+        placeholderMessage.visibility = View.GONE
+        placeholderButton.visibility = View.GONE
+        tracks.clear()
+        trackAdapter.notifyDataSetChanged()
     }
 
     companion object {
