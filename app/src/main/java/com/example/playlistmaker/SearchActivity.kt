@@ -72,6 +72,7 @@ class SearchActivity : AppCompatActivity() {
             inputEditText.setText("")
             placeholderMessage.visibility = View.GONE
             placeholderButton.visibility = View.GONE
+            tracks.clear()
             trackAdapter.notifyDataSetChanged()
         }
 
