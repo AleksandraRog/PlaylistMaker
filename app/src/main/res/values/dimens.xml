@@ -2,6 +2,7 @@
 <resources>
     <dimen name="primari_text_size">20sp</dimen>
     <dimen name="base_text_size">16sp</dimen>
+    <dimen name="message_text_size">19sp</dimen>
     <dimen name="icon_size">24dp</dimen>
     <dimen name="top_padding">24dp</dimen>
     <dimen name="button_radius">16dp</dimen>

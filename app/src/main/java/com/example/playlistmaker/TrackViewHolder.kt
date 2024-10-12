@@ -35,9 +35,10 @@ class TrackViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflate
             .into(imageView)
         trackName.setSingleLine(true)
         artistName.setSingleLine(true)
-        trackName.text = track.trackName
-        artistName.text = track.artistName
-        trackTime.text = track.trackTime
+        trackTime.setSingleLine(true)
+        trackName.text = track.trackName ?: itemView.context.getString(R.string.no_reply)
+        artistName.text = track.artistName ?: itemView.context.getString(R.string.no_reply)
+        trackTime.text = track.trackTime ?: itemView.context.getString(R.string.no_reply)
         trackName.ellipsize = TextUtils.TruncateAt.END
         artistName.ellipsize = TextUtils.TruncateAt.END
 
@@ -46,7 +47,7 @@ class TrackViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflate
             paint.measureText(text)
         }
         val textWidthInPx =
-            getTextWidthInPixels(track.trackTime, 11f * itemView.context.resources.displayMetrics.density)
+            getTextWidthInPixels(track.trackTime ?: itemView.context.getString(R.string.no_reply), 11f * itemView.context.resources.displayMetrics.density)
         artistName.maxWidth =
             ScreenSize.getScreenWidth() - ScreenSize.getOtherWidthTrackViewHolder() - textWidthInPx.toInt()
     }
