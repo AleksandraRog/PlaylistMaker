@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/placeholderMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="102dp"
+        android:layout_marginBottom="@dimen/top_padding"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:textAlignment="center"
+        android:textColor="?attr/colorOnSecondary"
+        android:textSize="@dimen/message_text_size"
+        android:drawablePadding="@dimen/start_margin"
+        tools:drawableTop="@drawable/ic_vector_nomusic"
+        tools:text="drawable/ic_vector_nomusic"
+        android:fontFamily="@font/ys_display_medium"/>
+    <Button
+        android:id="@+id/renovate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_vertical"
+        android:text="@string/update"
+        android:textAllCaps="false"
+        app:cornerRadius="54dp"
+        android:backgroundTint="?attr/colorOnSecondary"
+        android:textColor="?attr/colorSecondary"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="10dp"
+        android:fontFamily="@font/ys_display_medium"
+        android:textSize="14sp"
+        android:visibility="gone"/>
+</LinearLayout>
