@@ -42,8 +42,8 @@
     <style name="TopFrame">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">@dimen/top_padding</item>
         <item name="android:padding">4dp</item>
+        <item name="android:layout_marginBottom">@dimen/top_padding</item>
         <item name="navigationIcon">@drawable/vector_back</item>
         <item name="titleTextColor">?attr/colorOnSecondary</item>
         <item name="contentInsetStartWithNavigation">@dimen/top_padding</item>
@@ -69,12 +69,6 @@
         <item name="drawableTint">@color/YP_text_grey</item>
         <item name="android:textColor">@color/YP_text_grey</item>
         <item name="android:layout_marginBottom">14dp</item>
-    </style>
-
-    <style name="TransparentTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:backgroundDimEnabled">false</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
     </style>
 
 </resources>

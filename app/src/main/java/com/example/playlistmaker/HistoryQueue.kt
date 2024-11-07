@@ -2,16 +2,18 @@ package com.example.playlistmaker
 
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.google.gson.GsonBuilder
 import java.util.LinkedList
 import java.util.Queue
 import java.util.function.Predicate
 
-class HistoryTracksQueue<T>(private val queue: Queue<T> = LinkedList<T>()) : Queue<T> by queue {
+class HistoryQueue<T>(private val queue: Queue<T> = LinkedList<T>()) : Queue<T> by queue {
 
 
-    private val gson = Gson()
+    private val gson = GsonBuilder()
+        .registerTypeAdapter(TrackTimePeriod::class.java, CustomTimeTypeAdapter())
+        .create()
+
     private val sharedPreferences: SharedPreferences =
         App.instance.applicationContext.getSharedPreferences(
             App.PLAYLISTMAKER_PREFERENCES,
@@ -66,28 +68,5 @@ class HistoryTracksQueue<T>(private val queue: Queue<T> = LinkedList<T>()) : Que
         val result = queue.removeIf(filter)
         registrationDiff()
         return result
-    }
-
-    companion object {
-        var historyList: HistoryTracksQueue<Track> = HistoryTracksQueue(loadHistoryList())
-        val MAX_HISTORYLIST_SIZE = 10
-
-        fun addHistoryList(track: Track) {
-            historyList.removeIf { it.trackId == track.trackId }
-            if (historyList.size == MAX_HISTORYLIST_SIZE) {
-                historyList.poll()
-            }
-            historyList.offer(track)
-        }
-
-        private fun loadHistoryList(): LinkedList<Track> {
-            val json = App.instance.applicationContext.getSharedPreferences(
-                App.PLAYLISTMAKER_PREFERENCES, MODE_PRIVATE
-            ).getString(App.HISTORY_LIST_KEY, null)
-            return if (json != null) {
-                Gson().fromJson(json, object : TypeToken<LinkedList<Track>>() {}.type)
-            } else LinkedList<Track>()
-        }
-
     }
 }

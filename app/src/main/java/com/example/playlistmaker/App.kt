@@ -3,6 +3,8 @@ package com.example.playlistmaker
 import android.app.Application
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
 class App() : Application() {
 
@@ -16,6 +18,11 @@ class App() : Application() {
         darkTheme = preferences.getBoolean(DARK_THEME_KEY, false)
 
         switchTheme(darkTheme)
+
+        startKoin {
+            androidContext(this@App)
+            modules(experimetnKoinModule)
+        }
     }
 
     fun switchTheme(enableTheme: Boolean) {

@@ -1,54 +1,38 @@
 package com.example.playlistmaker
 
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
-import android.view.WindowInsetsAnimation
-import android.view.WindowInsetsController
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.ViewCompat
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
-import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import org.koin.android.ext.android.inject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.util.LinkedList
 
 
 class SearchActivity : AppCompatActivity() {
 
     private var searchTextValue: String = EDIT_TEXT_DEF
-    private val itunsBaseUrl = "https://itunes.apple.com"
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(itunsBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val itunsService = retrofit.create(TrackApi::class.java)
+    private val iTunsService: TrackApi by inject()
     private val tracks = ArrayList<Track>()
     private val trackAdapter = TrackAdapter()
     private val historyTrackAdapter = TrackAdapter()
@@ -63,20 +47,26 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-     //   enableEdgeToEdge()
+        enableEdgeToEdge()
         setContentView(R.layout.activity_search)
         ScreenSize.initSizeTrackViewHolder(this)
 
-            setOnApplyWindowInsetsListener(findViewById<View?>(R.id.includeView).rootView) { view, insets ->
-                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-                val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
-                Log.d("log_setOnApply", " ime ${ime.bottom}")
-                insets
-            }
+        setOnApplyWindowInsetsListener(findViewById<View>(R.id.search_activity)) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val paddingBottom = if (ime.bottom > 0) ime.bottom else
+                systemBars.bottom
+            view.setPadding(
+                systemBars.left, systemBars.top, systemBars.right,
+                paddingBottom
+            )
+            insets
+        }
 
         val inputEditText = findViewById<EditText>(R.id.inputEditText)
         val clearButton = findViewById<ImageView>(R.id.clearIcon)
         val topToolbar: Toolbar = findViewById(R.id.top_toolbar_frame)
+
         includeView = findViewById(R.id.includeView)
 
         val inflater = LayoutInflater.from(this)
@@ -102,7 +92,7 @@ class SearchActivity : AppCompatActivity() {
 
         val historyRecyclerView = historyView.findViewById<RecyclerView>(R.id.trackList2)
 
-        historyTrackAdapter.tracks = LinkedList(HistoryTracksQueue.historyList).asReversed()
+        historyTrackAdapter.tracks = LinkedList(Track.historyList).asReversed()
         historyRecyclerView.adapter = historyTrackAdapter
 
         val historyLinearLayoutManager =
@@ -111,13 +101,11 @@ class SearchActivity : AppCompatActivity() {
         historyRecyclerView.layoutManager = historyLinearLayoutManager
         historyTrackAdapter.setOnItemClickListener = { position ->
             historyTrackAdapter.updateTracks(
-                LinkedList(HistoryTracksQueue.historyList).asReversed()
+                LinkedList(Track.historyList).asReversed()
             )
             historyLinearLayoutManager.scrollToPosition(0)
 
         }
-
-        setSupportActionBar(topToolbar)
 
         topToolbar.setNavigationOnClickListener {
             onBackPressed()
@@ -136,8 +124,8 @@ class SearchActivity : AppCompatActivity() {
 
         clearHistoryButton.setOnClickListener {
 
-            HistoryTracksQueue.historyList.clear()
-            historyTrackAdapter.updateTracks(LinkedList(HistoryTracksQueue.historyList).asReversed())
+            Track.historyList.clear()
+            historyTrackAdapter.updateTracks(LinkedList(Track.historyList).asReversed())
             includeView.removeAllViews()
         }
 
@@ -150,9 +138,9 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
                 searchTextValue = s.toString()
-                if (searchTextValue == "" && inputEditText.hasFocus() && HistoryTracksQueue.historyList.size != 0) {
+                if (searchTextValue == "" && inputEditText.hasFocus() && Track.historyList.size != 0) {
                     updateIncludeView(historyView)
-                    historyTrackAdapter.updateTracks(LinkedList(HistoryTracksQueue.historyList).asReversed())
+                    historyTrackAdapter.updateTracks(LinkedList(Track.historyList).asReversed())
                     historyLinearLayoutManager.scrollToPosition(0)
                 } else if (includeView.childCount > 0) {
                     clearAll()
@@ -174,9 +162,9 @@ class SearchActivity : AppCompatActivity() {
         }
 
         inputEditText.setOnFocusChangeListener { view, hasFocus ->
-            if (hasFocus && inputEditText.text.isEmpty() && HistoryTracksQueue.historyList.size != 0) {
+            if (hasFocus && inputEditText.text.isEmpty() && Track.historyList.size != 0) {
                 updateIncludeView(historyView)
-                historyTrackAdapter.updateTracks(LinkedList(HistoryTracksQueue.historyList).asReversed())
+                historyTrackAdapter.updateTracks(LinkedList(Track.historyList).asReversed())
             } else if (includeView.childCount > 0) {
                 clearAll()
             }
@@ -200,7 +188,7 @@ class SearchActivity : AppCompatActivity() {
     private fun search(view: EditText): Boolean {
 
         if (view.text.isNotEmpty()) {
-            itunsService.search(view.text.toString())
+            iTunsService.search(view.text.toString())
                 .enqueue(object : Callback<TracksResponse> {
 
                     var includedView: View = errorView
@@ -213,10 +201,7 @@ class SearchActivity : AppCompatActivity() {
                         val responseBody = response.body()?.results
                         tracks.clear()
                         if (responseBody?.isNotEmpty() == true && responseCode == 200) {
-                            tracks.addAll(responseBody!!.map { track ->
-                                track.trackTime()
-                                track
-                            })
+                            tracks.addAll(responseBody)
                             includedView = recyclerView
                         }
                         updateIncludeView(includedView)

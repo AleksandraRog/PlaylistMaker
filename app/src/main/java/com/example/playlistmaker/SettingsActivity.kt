@@ -1,19 +1,16 @@
 package com.example.playlistmaker
 
-import android.app.Application
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
+import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
@@ -29,6 +26,14 @@ class SettingsActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_settings)
 
+        setOnApplyWindowInsetsListener(window.decorView) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                systemBars.left, systemBars.top, systemBars.right,
+                systemBars.bottom
+            )
+            insets
+        }
         supportButton = findViewById<ImageView>(R.id.button_support)
         shareButton = findViewById<ImageView>(R.id.button_share)
         arrowButton = findViewById<ImageView>(R.id.button_arrow)

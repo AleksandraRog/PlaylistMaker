@@ -42,7 +42,7 @@ class TrackAdapter() : RecyclerView.Adapter<TrackViewHolder>() {
         val track = tracks.get(position)
         holder.bind(track)
         holder.itemView.setOnClickListener {
-            HistoryTracksQueue.addHistoryList(track)
+            Track.addHistoryList(track)
             setOnItemClickListener?.invoke(position)
         }
     }

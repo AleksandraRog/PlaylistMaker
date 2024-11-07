@@ -5,10 +5,10 @@
     android:id="@+id/search_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".SearchActivity">
+    android:orientation="vertical">
 
-    <androidx.appcompat.widget.Toolbar
+
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/top_toolbar_frame"
         style="@style/TopFrame"
         android:layout_marginBottom="0dp"
@@ -58,4 +58,4 @@
         layout="@layout/error_view_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-</LinearLayout>
+    </LinearLayout>
