@@ -1,8 +1,8 @@
 package com.example.playlistmaker
 
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import com.google.gson.GsonBuilder
+import org.koin.java.KoinJavaComponent.getKoin
 import java.util.LinkedList
 import java.util.Queue
 import java.util.function.Predicate
@@ -14,17 +14,15 @@ class HistoryQueue<T>(private val queue: Queue<T> = LinkedList<T>()) : Queue<T> 
         .registerTypeAdapter(TrackTimePeriod::class.java, CustomTimeTypeAdapter())
         .create()
 
-    private val sharedPreferences: SharedPreferences =
-        App.instance.applicationContext.getSharedPreferences(
-            App.PLAYLISTMAKER_PREFERENCES,
-            MODE_PRIVATE
-        )
+    private val sharedPreferences: SharedPreferences by lazy {
+        getKoin().get<SharedPreferences>()
+    }
 
     private fun registrationDiff() {
         val queueList = LinkedList(queue)
-        var json = gson.toJson(queueList)
+        val json = gson.toJson(queueList)
         sharedPreferences.edit()
-            .putString(App.HISTORY_LIST_KEY, json)
+            .putString(HISTORY_LIST_KEY, json)
             .apply()
     }
 

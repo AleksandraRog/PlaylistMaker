@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,8 @@ import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import org.koin.android.ext.android.inject
 import retrofit2.Call
 import retrofit2.Callback
@@ -34,6 +37,7 @@ class SearchActivity : AppCompatActivity() {
 
     private val iTunsService: TrackApi by inject()
     private val tracks = ArrayList<Track>()
+    private var historyTracks = HistoryQueue(LinkedList<Track>())
     private val trackAdapter = TrackAdapter()
     private val historyTrackAdapter = TrackAdapter()
 
@@ -87,21 +91,26 @@ class SearchActivity : AppCompatActivity() {
             }
         }
         trackAdapter.tracks = tracks
+
         recyclerView.adapter = trackAdapter
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        trackAdapter.setOnItemClickListener = { track ->
+            addHistoryList(track)
+        }
 
         val historyRecyclerView = historyView.findViewById<RecyclerView>(R.id.trackList2)
-
-        historyTrackAdapter.tracks = LinkedList(Track.historyList).asReversed()
+        historyTracks = HistoryQueue(loadHistoryList(this))
+        historyTrackAdapter.tracks = LinkedList(historyTracks).asReversed()
         historyRecyclerView.adapter = historyTrackAdapter
 
         val historyLinearLayoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         historyRecyclerView.layoutManager = historyLinearLayoutManager
-        historyTrackAdapter.setOnItemClickListener = { position ->
+        historyTrackAdapter.setOnItemClickListener = { track ->
+            addHistoryList(track)
             historyTrackAdapter.updateTracks(
-                LinkedList(Track.historyList).asReversed()
+                LinkedList(historyTracks).asReversed()
             )
             historyLinearLayoutManager.scrollToPosition(0)
 
@@ -124,8 +133,8 @@ class SearchActivity : AppCompatActivity() {
 
         clearHistoryButton.setOnClickListener {
 
-            Track.historyList.clear()
-            historyTrackAdapter.updateTracks(LinkedList(Track.historyList).asReversed())
+            historyTracks.clear()
+            historyTrackAdapter.updateTracks(LinkedList(historyTracks).asReversed())
             includeView.removeAllViews()
         }
 
@@ -138,9 +147,9 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
                 searchTextValue = s.toString()
-                if (searchTextValue == "" && inputEditText.hasFocus() && Track.historyList.size != 0) {
+                if (searchTextValue == "" && inputEditText.hasFocus() && historyTracks.size != 0) {
                     updateIncludeView(historyView)
-                    historyTrackAdapter.updateTracks(LinkedList(Track.historyList).asReversed())
+                    historyTrackAdapter.updateTracks(LinkedList(historyTracks).asReversed())
                     historyLinearLayoutManager.scrollToPosition(0)
                 } else if (includeView.childCount > 0) {
                     clearAll()
@@ -162,9 +171,9 @@ class SearchActivity : AppCompatActivity() {
         }
 
         inputEditText.setOnFocusChangeListener { view, hasFocus ->
-            if (hasFocus && inputEditText.text.isEmpty() && Track.historyList.size != 0) {
+            if (hasFocus && inputEditText.text.isEmpty() && historyTracks.size != 0) {
                 updateIncludeView(historyView)
-                historyTrackAdapter.updateTracks(LinkedList(Track.historyList).asReversed())
+                historyTrackAdapter.updateTracks(LinkedList(historyTracks).asReversed())
             } else if (includeView.childCount > 0) {
                 clearAll()
             }
@@ -264,8 +273,30 @@ class SearchActivity : AppCompatActivity() {
         ).toInt()
     }
 
+    private fun loadHistoryList(context: Context): LinkedList<Track> {
+        val json = context.getSharedPreferences(
+            PLAYLISTMAKER_PREFERENCES, MODE_PRIVATE
+        ).getString(HISTORY_LIST_KEY, null)
+        return if (json != null) {
+            val gson = GsonBuilder()
+                .registerTypeAdapter(TrackTimePeriod::class.java, CustomTimeTypeAdapter())
+                .create()
+            gson.fromJson(json, object : TypeToken<LinkedList<Track>>() {}.type)
+        } else LinkedList<Track>()
+    }
+
+
+    private fun addHistoryList(track: Track) {
+        historyTracks.removeIf { it.trackId == track.trackId }
+        if (historyTracks.size == MAX_HISTORYLIST_SIZE) {
+            historyTracks.poll()
+        }
+        historyTracks.offer(track)
+    }
+
     companion object {
         const val EDIT_TEXT_KEY = "EDIT_TEXT_KEY"
         const val EDIT_TEXT_DEF = ""
+        const val MAX_HISTORYLIST_SIZE = 10
     }
 }

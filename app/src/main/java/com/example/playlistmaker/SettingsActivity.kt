@@ -1,17 +1,21 @@
 package com.example.playlistmaker
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
-import androidx.activity.enableEdgeToEdge
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
-import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.switchmaterial.SwitchMaterial
+import org.koin.java.KoinJavaComponent.getKoin
+
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -20,43 +24,45 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var arrowButton: ImageView
     private lateinit var switchThemes: SwitchMaterial
     private var intentValue: Intent? = null
+    private var isDarkMode: Boolean = false
+
+    val preferences: SharedPreferences by lazy {
+        getKoin().get<SharedPreferences>()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_settings)
 
-        setOnApplyWindowInsetsListener(window.decorView) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(
-                systemBars.left, systemBars.top, systemBars.right,
-                systemBars.bottom
-            )
-            insets
-        }
         supportButton = findViewById<ImageView>(R.id.button_support)
         shareButton = findViewById<ImageView>(R.id.button_share)
         arrowButton = findViewById<ImageView>(R.id.button_arrow)
         switchThemes = findViewById<SwitchMaterial>(R.id.switch_theme)
-        val sharedPreferences = getSharedPreferences(App.PLAYLISTMAKER_PREFERENCES, MODE_PRIVATE)
-        val isDarkMode = sharedPreferences.getBoolean("DARK_THEME_KEY", false)
+
+        isDarkMode = preferences.getBoolean(DARK_THEME_KEY, false)
 
         switchThemes.isChecked = isDarkMode
+        window.decorView.systemUiVisibility = systemUiVisibility(isDarkMode)
 
         val topToolbar: Toolbar = findViewById(R.id.top_toolbar_frame)
         setSupportActionBar(topToolbar)
 
         topToolbar.setNavigationOnClickListener {
-            onBackPressed()
+            val settingsIntent = Intent(this, MainActivity::class.java)
+            startActivity(settingsIntent)
+            finish()
         }
 
         switchThemes.setOnCheckedChangeListener { _, isChecked ->
-            sharedPreferences.edit()
-                .putBoolean(App.DARK_THEME_KEY, isChecked)
-                .apply()
-            (applicationContext as App).switchTheme(isChecked)
-        }
 
+            isDarkMode = isChecked
+            reColors(window.decorView as ViewGroup)
+            window.decorView.systemUiVisibility = systemUiVisibility(isChecked)
+            preferences.edit()
+                .putBoolean(DARK_THEME_KEY, isChecked)
+                .apply()
+        }
 
         supportButton.setOnClickListener {
             val supportIntent = Intent(Intent.ACTION_SENDTO).apply {
@@ -119,5 +125,55 @@ class SettingsActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    private fun reColors(viewGroup: ViewGroup) {
+        val iconColor = if (isDarkMode)
+            ContextCompat.getColor(this, R.color.YP_white) else
+            ContextCompat.getColor(this, R.color.YP_text_grey)
+        val textColor = if (isDarkMode)
+            ContextCompat.getColor(this, R.color.YP_white) else
+            ContextCompat.getColor(this, R.color.YP_black)
+        val backgroundColor = if (isDarkMode)
+            ContextCompat.getColor(this, R.color.YP_black) else
+            ContextCompat.getColor(this, R.color.YP_white)
+        val navigationBarColor = if (isDarkMode)
+            ContextCompat.getColor(this, R.color.black) else
+            ContextCompat.getColor(this, R.color.YP_white)
+
+        window.statusBarColor = backgroundColor
+        window.navigationBarColor = navigationBarColor
+
+        for (i in 0 until viewGroup.childCount) {
+            val view = viewGroup.getChildAt(i)
+            when (view) {
+                is ViewGroup -> {
+                    view.setBackgroundColor(backgroundColor)
+                    reColors(view)
+                }
+
+                is TextView -> {
+                    view.setTextColor(textColor)
+                    view.setBackgroundColor(backgroundColor)
+                }
+
+                is ImageView -> {
+                    if (view is ImageButton) {
+                        view.setColorFilter(textColor)
+                    } else {
+                        view.setColorFilter(iconColor)
+                    }
+                    view.setBackgroundColor(backgroundColor)
+                }
+            }
+        }
+    }
+
+    override fun recreate() {}
+
+    private fun systemUiVisibility(isLightBackground: Boolean): Int {
+        return if (isLightBackground) 0 else
+            (View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or
+                    View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR)
     }
 }

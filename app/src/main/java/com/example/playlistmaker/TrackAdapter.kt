@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 class TrackAdapter() : RecyclerView.Adapter<TrackViewHolder>() {
 
     var tracks: List<Track> = emptyList()
-    var setOnItemClickListener: ((Int) -> Unit)? = null
+    var setOnItemClickListener: ((Track) -> Unit)? = null
 
     fun updateTracks(newTracks: List<Track>) {
         val oldTracks = tracks
@@ -42,8 +42,7 @@ class TrackAdapter() : RecyclerView.Adapter<TrackViewHolder>() {
         val track = tracks.get(position)
         holder.bind(track)
         holder.itemView.setOnClickListener {
-            Track.addHistoryList(track)
-            setOnItemClickListener?.invoke(position)
+            setOnItemClickListener?.invoke(track)
         }
     }
 
