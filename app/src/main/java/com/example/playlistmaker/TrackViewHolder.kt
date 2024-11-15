@@ -7,11 +7,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 
-class TrackViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.track_view, parent, false)) {
+class TrackViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
+    LayoutInflater.from(parent.context).inflate(R.layout.track_view, parent, false)
+) {
 
     private val imageView: ImageView
     private val trackName: TextView
@@ -38,16 +41,22 @@ class TrackViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflate
         trackTime.setSingleLine(true)
         trackName.text = track.trackName ?: itemView.context.getString(R.string.no_reply)
         artistName.text = track.artistName ?: itemView.context.getString(R.string.no_reply)
-        trackTime.text = track.trackTime ?: itemView.context.getString(R.string.no_reply)
+        trackTime.text = track.trackTime.toString() ?: itemView.context.getString(R.string.no_reply)
         trackName.ellipsize = TextUtils.TruncateAt.END
         artistName.ellipsize = TextUtils.TruncateAt.END
 
         val getTextWidthInPixels: (String, Float) -> Float = { text, textSize ->
-            val paint = Paint().apply { this.textSize = textSize }
+            val paint = Paint().apply {
+                this.textSize = textSize
+                this.typeface = ResourcesCompat.getFont(itemView.context, R.font.ys_display_regular)
+            }
             paint.measureText(text)
         }
         val textWidthInPx =
-            getTextWidthInPixels(track.trackTime ?: itemView.context.getString(R.string.no_reply), 11f * itemView.context.resources.displayMetrics.density)
+            getTextWidthInPixels(
+                track.trackTime.toString() ?: itemView.context.getString(R.string.no_reply),
+                11f * itemView.context.resources.displayMetrics.density
+            )
         artistName.maxWidth =
             ScreenSize.getScreenWidth() - ScreenSize.getOtherWidthTrackViewHolder() - textWidthInPx.toInt()
     }

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/setting_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/top_toolbar_frame"
         style="@style/TopFrame"
         app:title="@string/button_setting">
-
-    </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <TableLayout
         android:layout_width="match_parent"
@@ -35,7 +35,8 @@
                 android:paddingEnd="4dp"
                 android:thumbTintMode="screen"
                 app:thumbTint="@color/thumb_color"
-                app:trackTint="@color/track_color"></com.google.android.material.switchmaterial.SwitchMaterial>
+                app:trackTint="@color/track_color">
+            </com.google.android.material.switchmaterial.SwitchMaterial>
 
         </TableRow>
 

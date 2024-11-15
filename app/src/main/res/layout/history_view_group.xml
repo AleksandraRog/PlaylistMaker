@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/search_activity2"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/your_history"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="@dimen/top_padding"
+        android:layout_marginBottom="8dp"
+        android:paddingTop="18dp"
+        android:gravity="center_horizontal"
+        android:textColor="?attr/colorOnSecondary"
+        android:textSize="@dimen/message_text_size"
+        android:text="@string/your_history"
+        android:fontFamily="@font/ys_display_medium"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/trackList2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
+
+    <Button
+        android:id="@+id/clear_history_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/top_padding"
+        android:gravity="center_vertical"
+        android:text="@string/clear_history"
+        android:textAllCaps="false"
+        app:cornerRadius="54dp"
+        android:backgroundTint="?attr/colorOnSecondary"
+        android:textColor="?attr/colorSecondary"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="10dp"
+        android:fontFamily="@font/ys_display_medium"
+        android:textSize="14sp"/>
+</LinearLayout>
