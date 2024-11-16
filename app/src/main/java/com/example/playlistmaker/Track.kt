@@ -5,18 +5,25 @@ import com.google.gson.annotations.SerializedName
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
+import java.io.Serializable
+import java.text.SimpleDateFormat
 import java.time.Duration.ofMillis
 import java.util.Locale
 import java.time.Duration
+import java.util.Date
 
 data class Track(
     val trackName: String?,
     val artistName: String?,
     val artworkUrl100: String?,
+    val releaseDate: Date?,
+    val collectionName: String?,
+    val primaryGenreName: String?,
+    val country: String?,
     val trackId: Int?,
     @SerializedName("trackTimeMillis")
     val trackTime: TrackTimePeriod?
-)
+) : Serializable
 
 data class TrackTimePeriod(val duration: Duration?) {
 
@@ -45,11 +52,36 @@ data class TrackTimePeriod(val duration: Duration?) {
 class CustomTimeTypeAdapter : TypeAdapter<TrackTimePeriod>() {
 
     override fun write(out: JsonWriter?, value: TrackTimePeriod?) {
-        out?.value(value?.toMillis())
+        if (value != null) {
+            out?.value(value.toMillis())
+        } else { out?.nullValue() }
+
     }
 
     override fun read(`in`: JsonReader?): TrackTimePeriod? {
         return if (`in` != null && `in`.peek() == JsonToken.NUMBER)
             TrackTimePeriod.fromMillis(`in`.nextLong()) else null
     }
+}
+
+class CustomDateTypeAdapter : TypeAdapter<Date?>() {
+
+    // https://ru.wikipedia.org/wiki/ISO_8601
+    companion object {
+        const val FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+    }
+
+    private val formatter = SimpleDateFormat(FORMAT_PATTERN, Locale.getDefault())
+    override fun write(out: JsonWriter?, value: Date?) {
+        if (value != null) {
+            out?.value(formatter.format(value))
+        } else { out?.nullValue() }
+
+    }
+
+    override fun read(`in`: JsonReader?): Date? {
+        return if (`in` != null && `in`.peek() == JsonToken.STRING)
+            formatter.parse(`in`.nextString()) else null
+    }
+
 }

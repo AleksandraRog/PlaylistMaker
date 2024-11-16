@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -28,6 +29,7 @@ import org.koin.android.ext.android.inject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.Date
 import java.util.LinkedList
 
 
@@ -96,6 +98,10 @@ class SearchActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         trackAdapter.setOnItemClickListener = { track ->
             addHistoryList(track)
+            val playerIntent = Intent(this, PlayerActivity::class.java)
+            val trackJson = trackSerializable(track)
+            playerIntent.putExtra(TRACK_EXTRA, trackJson)
+            startActivity(playerIntent)
         }
 
         val historyRecyclerView = historyView.findViewById<RecyclerView>(R.id.trackList2)
@@ -109,6 +115,10 @@ class SearchActivity : AppCompatActivity() {
         historyRecyclerView.layoutManager = historyLinearLayoutManager
         historyTrackAdapter.setOnItemClickListener = { track ->
             addHistoryList(track)
+            val playerIntent = Intent(this, PlayerActivity::class.java)
+            val trackJson = trackSerializable(track)
+            playerIntent.putExtra(TRACK_EXTRA, trackJson)
+            startActivity(playerIntent)
             historyTrackAdapter.updateTracks(
                 LinkedList(historyTracks).asReversed()
             )
@@ -280,6 +290,7 @@ class SearchActivity : AppCompatActivity() {
         return if (json != null) {
             val gson = GsonBuilder()
                 .registerTypeAdapter(TrackTimePeriod::class.java, CustomTimeTypeAdapter())
+                .registerTypeAdapter(Date::class.java, CustomDateTypeAdapter())
                 .create()
             gson.fromJson(json, object : TypeToken<LinkedList<Track>>() {}.type)
         } else LinkedList<Track>()
@@ -294,9 +305,18 @@ class SearchActivity : AppCompatActivity() {
         historyTracks.offer(track)
     }
 
+    private fun trackSerializable(track: Track) : String {
+        return GsonBuilder()
+            .registerTypeAdapter(TrackTimePeriod::class.java, CustomTimeTypeAdapter())
+            .registerTypeAdapter(Date::class.java, CustomDateTypeAdapter())
+            .create()
+            .toJson(track)
+    }
+
     companion object {
         const val EDIT_TEXT_KEY = "EDIT_TEXT_KEY"
         const val EDIT_TEXT_DEF = ""
         const val MAX_HISTORYLIST_SIZE = 10
+        const val TRACK_EXTRA = "TRACK_EXTRA"
     }
 }
