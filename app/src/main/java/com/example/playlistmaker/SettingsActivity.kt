@@ -94,14 +94,50 @@ class SettingsActivity : AppCompatActivity() {
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
 
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val currentNightMode = isDarkMode
 
         if (hasFocus) {
-            supportButton.clearColorFilter()
-            arrowButton.clearColorFilter()
-            shareButton.clearColorFilter()
+            if (currentNightMode) {
+                supportButton.setColorFilter(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.YP_white
+                    )
+                )
+                arrowButton.setColorFilter(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.YP_white
+                    )
+                )
+                shareButton.setColorFilter(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.YP_white
+                    )
+                )
+            } else {
+                supportButton.setColorFilter(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.YP_text_grey
+                    )
+                )
+                arrowButton.setColorFilter(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.YP_text_grey
+                    )
+                )
+                shareButton.setColorFilter(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.YP_text_grey
+                    )
+                )
+                     }
 
-        } else if (currentNightMode == Configuration.UI_MODE_NIGHT_NO) {
+        } else if (!currentNightMode) {
             when (intentValue?.action) {
                 Intent.ACTION_SENDTO -> supportButton.setColorFilter(
                     ContextCompat.getColor(
@@ -125,7 +161,7 @@ class SettingsActivity : AppCompatActivity() {
                 )
             }
         }
-    }
+   }
 
     private fun reColors(viewGroup: ViewGroup) {
         val iconColor = if (isDarkMode)
@@ -169,7 +205,9 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    override fun recreate() {}
+    override fun recreate() {
+
+    }
 
     private fun systemUiVisibility(isLightBackground: Boolean): Int {
         return if (isLightBackground) 0 else

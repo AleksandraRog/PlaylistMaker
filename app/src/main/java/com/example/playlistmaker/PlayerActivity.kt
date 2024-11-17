@@ -79,8 +79,7 @@ class PlayerActivity : AppCompatActivity() {
         Log.d("setBackground", "track.releaseDate ${track.releaseDate}")
 
         releaseDate.text = if (track.releaseDate == null) placeholderString else {
-        val simpleDateFormat = SimpleDateFormat("yyyy", Locale.getDefault())
-            simpleDateFormat.format(track.releaseDate) }
+            SimpleDateFormat("yyyy", Locale.getDefault()).format(track.releaseDate) }
         collectionName.text = track.collectionName ?: placeholderString
         primaryGenreName.text = track.primaryGenreName ?: placeholderString
         country.text = track.country ?: placeholderString
