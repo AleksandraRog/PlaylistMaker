@@ -3,6 +3,7 @@ package com.example.playlistmaker
 import android.content.SharedPreferences
 import com.google.gson.GsonBuilder
 import org.koin.java.KoinJavaComponent.getKoin
+import java.util.Date
 import java.util.LinkedList
 import java.util.Queue
 import java.util.function.Predicate
@@ -12,6 +13,7 @@ class HistoryQueue<T>(private val queue: Queue<T> = LinkedList<T>()) : Queue<T> 
 
     private val gson = GsonBuilder()
         .registerTypeAdapter(TrackTimePeriod::class.java, CustomTimeTypeAdapter())
+        .registerTypeAdapter(Date::class.java, CustomDateTypeAdapter())
         .create()
 
     private val sharedPreferences: SharedPreferences by lazy {

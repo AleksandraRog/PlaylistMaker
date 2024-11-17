@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 
 class TrackViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
-    LayoutInflater.from(parent.context).inflate(R.layout.track_view, parent, false)
+    LayoutInflater.from(parent.context).inflate(R.layout.track_row_view, parent, false)
 ) {
 
     private val imageView: ImageView

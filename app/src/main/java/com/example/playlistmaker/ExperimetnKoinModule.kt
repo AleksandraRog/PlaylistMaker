@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder
 import org.koin.android.ext.koin.androidContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.Date
 
 val experimetnKoinModule = module {
 
@@ -17,6 +18,7 @@ val experimetnKoinModule = module {
                 GsonConverterFactory.create(
                     GsonBuilder()
                         .registerTypeAdapter(TrackTimePeriod::class.java, CustomTimeTypeAdapter())
+                        .registerTypeAdapter(Date::class.java, CustomDateTypeAdapter())
                         .create()
                 )
             )
