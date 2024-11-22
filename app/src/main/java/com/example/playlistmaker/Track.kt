@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
-import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.time.Duration.ofMillis
 import java.util.Locale
@@ -16,6 +15,7 @@ data class Track(
     val trackName: String?,
     val artistName: String?,
     val artworkUrl100: String?,
+    val previewUrl: String?,
     val releaseDate: Date?,
     val collectionName: String?,
     val primaryGenreName: String?,
@@ -23,7 +23,7 @@ data class Track(
     val trackId: Int?,
     @SerializedName("trackTimeMillis")
     val trackTime: TrackTimePeriod?
-) : Serializable
+)
 
 data class TrackTimePeriod(val duration: Duration?) {
 
@@ -66,7 +66,6 @@ class CustomTimeTypeAdapter : TypeAdapter<TrackTimePeriod>() {
 
 class CustomDateTypeAdapter : TypeAdapter<Date?>() {
 
-    // https://ru.wikipedia.org/wiki/ISO_8601
     companion object {
         const val FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'"
     }
@@ -83,5 +82,4 @@ class CustomDateTypeAdapter : TypeAdapter<Date?>() {
         return if (`in` != null && `in`.peek() == JsonToken.STRING)
             formatter.parse(`in`.nextString()) else null
     }
-
 }

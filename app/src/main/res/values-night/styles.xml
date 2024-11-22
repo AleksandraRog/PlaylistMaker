@@ -8,7 +8,7 @@
     </style>
 
     <style name="SearchFrame">
-        <item name="android:backgroundTint">?attr/colorPrimary</item>
+        <item name="android:backgroundTint">@color/YP_white</item>
         <item name="android:drawableTint">?attr/colorOnPrimary</item>
         <item name="android:drawableTintMode">?attr/colorOnPrimary</item>
         <item name="android:textColorHint">?attr/colorOnPrimary</item>
