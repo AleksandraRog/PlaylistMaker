@@ -2,7 +2,6 @@ package com.example.playlistmaker
 
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -25,6 +24,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var switchThemes: SwitchMaterial
     private var intentValue: Intent? = null
     private var isDarkMode: Boolean = false
+    private var changeModeListener: Boolean? = null
 
     val preferences: SharedPreferences by lazy {
         getKoin().get<SharedPreferences>()
@@ -57,11 +57,13 @@ class SettingsActivity : AppCompatActivity() {
         switchThemes.setOnCheckedChangeListener { _, isChecked ->
 
             isDarkMode = isChecked
+            changeModeListener = isChecked
             reColors(window.decorView as ViewGroup)
             window.decorView.systemUiVisibility = systemUiVisibility(isChecked)
             preferences.edit()
                 .putBoolean(DARK_THEME_KEY, isChecked)
                 .apply()
+            changeModeListener = null
         }
 
         supportButton.setOnClickListener {
@@ -206,7 +208,9 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     override fun recreate() {
-
+       if (changeModeListener==null) {
+            super.recreate()
+        }
     }
 
     private fun systemUiVisibility(isLightBackground: Boolean): Int {

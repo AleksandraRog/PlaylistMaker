@@ -3,26 +3,31 @@ package com.example.playlistmaker
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.util.TypedValue
+import android.view.Gravity.CENTER_HORIZONTAL
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.progressindicator.CircularProgressIndicator
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import org.koin.android.ext.android.inject
@@ -31,7 +36,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.Date
 import java.util.LinkedList
-
 
 class SearchActivity : AppCompatActivity() {
 
@@ -42,14 +46,23 @@ class SearchActivity : AppCompatActivity() {
     private var historyTracks = HistoryQueue(LinkedList<Track>())
     private val trackAdapter = TrackAdapter()
     private val historyTrackAdapter = TrackAdapter()
+    private val searchRunnable = Runnable { search() }
+    private val handler = Handler(Looper.getMainLooper())
+    private var isClickAllowed = true
+    private val gson: Gson = GsonBuilder()
+        .registerTypeAdapter(TrackTimePeriod::class.java, CustomTimeTypeAdapter())
+        .registerTypeAdapter(Date::class.java, CustomDateTypeAdapter())
+        .create()
 
     private lateinit var placeholderMessage: TextView
     private lateinit var placeholderButton: Button
     private lateinit var clearHistoryButton: Button
     private lateinit var includeView: ViewGroup
+    private lateinit var inputEditText: EditText
     private lateinit var recyclerView: RecyclerView
     private lateinit var errorView: View
     private lateinit var historyView: View
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,9 +82,10 @@ class SearchActivity : AppCompatActivity() {
             insets
         }
 
-        val inputEditText = findViewById<EditText>(R.id.inputEditText)
+        inputEditText = findViewById(R.id.inputEditText)
         val clearButton = findViewById<ImageView>(R.id.clearIcon)
         val topToolbar: Toolbar = findViewById(R.id.top_toolbar_frame)
+
 
         includeView = findViewById(R.id.includeView)
 
@@ -92,16 +106,21 @@ class SearchActivity : AppCompatActivity() {
                 topMargin = dpToPx(16f)
             }
         }
+
+        progressBar = CreateCircularProgressIndicator()
+
         trackAdapter.tracks = tracks
 
         recyclerView.adapter = trackAdapter
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         trackAdapter.setOnItemClickListener = { track ->
-            addHistoryList(track)
-            val playerIntent = Intent(this, PlayerActivity::class.java)
-            val trackJson = trackSerializable(track)
-            playerIntent.putExtra(TRACK_EXTRA, trackJson)
-            startActivity(playerIntent)
+            if (clickDebounce()) {
+                addHistoryList(track)
+                val playerIntent = Intent(this, PlayerActivity::class.java)
+                val trackJson = trackSerializable(track)
+                playerIntent.putExtra(TRACK_EXTRA, trackJson)
+                startActivity(playerIntent)
+            }
         }
 
         val historyRecyclerView = historyView.findViewById<RecyclerView>(R.id.trackList2)
@@ -114,16 +133,17 @@ class SearchActivity : AppCompatActivity() {
 
         historyRecyclerView.layoutManager = historyLinearLayoutManager
         historyTrackAdapter.setOnItemClickListener = { track ->
-            addHistoryList(track)
-            val playerIntent = Intent(this, PlayerActivity::class.java)
-            val trackJson = trackSerializable(track)
-            playerIntent.putExtra(TRACK_EXTRA, trackJson)
-            startActivity(playerIntent)
-            historyTrackAdapter.updateTracks(
-                LinkedList(historyTracks).asReversed()
-            )
-            historyLinearLayoutManager.scrollToPosition(0)
-
+            if (clickDebounce()) {
+                addHistoryList(track)
+                val playerIntent = Intent(this, PlayerActivity::class.java)
+                val trackJson = trackSerializable(track)
+                playerIntent.putExtra(TRACK_EXTRA, trackJson)
+                startActivity(playerIntent)
+                historyTrackAdapter.updateTracks(
+                    LinkedList(historyTracks).asReversed()
+                )
+                historyLinearLayoutManager.scrollToPosition(0)
+            }
         }
 
         topToolbar.setNavigationOnClickListener {
@@ -138,7 +158,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         placeholderButton.setOnClickListener {
-            search(inputEditText)
+            search()
         }
 
         clearHistoryButton.setOnClickListener {
@@ -155,14 +175,17 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
                 clearButton.visibility = clearButtonVisibility(s)
                 searchTextValue = s.toString()
                 if (searchTextValue == "" && inputEditText.hasFocus() && historyTracks.size != 0) {
+
                     updateIncludeView(historyView)
                     historyTrackAdapter.updateTracks(LinkedList(historyTracks).asReversed())
                     historyLinearLayoutManager.scrollToPosition(0)
-                } else if (includeView.childCount > 0) {
-                    clearAll()
+                } else {
+                    if (includeView.childCount > 0) {clearAll()}
+                    searchDebounce()
                 }
             }
 
@@ -172,13 +195,6 @@ class SearchActivity : AppCompatActivity() {
         }
 
         inputEditText.addTextChangedListener(simpleTextWatcher)
-
-        inputEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                search(inputEditText)
-            }
-            false
-        }
 
         inputEditText.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus && inputEditText.text.isEmpty() && historyTracks.size != 0) {
@@ -204,10 +220,13 @@ class SearchActivity : AppCompatActivity() {
         searchTextValue = savedInstanceState.getString(EDIT_TEXT_KEY, EDIT_TEXT_DEF)
     }
 
-    private fun search(view: EditText): Boolean {
+    private fun search(): Boolean {
 
-        if (view.text.isNotEmpty()) {
-            iTunsService.search(view.text.toString())
+        includeView.addView(progressBar)
+        progressBar.visibility = View.VISIBLE
+
+        if (inputEditText.text.isNotEmpty()) {
+            iTunsService.search(inputEditText.text.toString())
                 .enqueue(object : Callback<TracksResponse> {
 
                     var includedView: View = errorView
@@ -216,6 +235,7 @@ class SearchActivity : AppCompatActivity() {
                         call: Call<TracksResponse>,
                         response: Response<TracksResponse>
                     ) {
+                        progressBar.visibility = View.GONE
                         val responseCode = response.code()
                         val responseBody = response.body()?.results
                         tracks.clear()
@@ -229,6 +249,7 @@ class SearchActivity : AppCompatActivity() {
                     }
 
                     override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
+                        progressBar.visibility = View.GONE
                         updateIncludeView(includedView)
                         showMessage(500, false)
                     }
@@ -288,14 +309,9 @@ class SearchActivity : AppCompatActivity() {
             PLAYLISTMAKER_PREFERENCES, MODE_PRIVATE
         ).getString(HISTORY_LIST_KEY, null)
         return if (json != null) {
-            val gson = GsonBuilder()
-                .registerTypeAdapter(TrackTimePeriod::class.java, CustomTimeTypeAdapter())
-                .registerTypeAdapter(Date::class.java, CustomDateTypeAdapter())
-                .create()
             gson.fromJson(json, object : TypeToken<LinkedList<Track>>() {}.type)
         } else LinkedList<Track>()
     }
-
 
     private fun addHistoryList(track: Track) {
         historyTracks.removeIf { it.trackId == track.trackId }
@@ -306,11 +322,42 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun trackSerializable(track: Track) : String {
-        return GsonBuilder()
-            .registerTypeAdapter(TrackTimePeriod::class.java, CustomTimeTypeAdapter())
-            .registerTypeAdapter(Date::class.java, CustomDateTypeAdapter())
-            .create()
-            .toJson(track)
+        return gson.toJson(track)
+    }
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+        val clickDebounceRunnable = Runnable {
+            isClickAllowed = true
+        }
+        handler.removeCallbacks(clickDebounceRunnable)
+        handler.postDelayed(clickDebounceRunnable, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
+    private fun CreateCircularProgressIndicator() : CircularProgressIndicator {
+        return CircularProgressIndicator(this).apply {
+            layoutParams = LinearLayoutCompat.LayoutParams(
+                LinearLayoutCompat.LayoutParams.WRAP_CONTENT,
+                LinearLayoutCompat.LayoutParams.WRAP_CONTENT
+            ).apply {
+                gravity = CENTER_HORIZONTAL
+                topMargin = dpToPx(140f)
+            }
+
+            isIndeterminate  = true
+            indicatorSize = dpToPx(44f)
+            progress = 75
+            setIndicatorColor(getColor(R.color.YP_blue))
+        }
     }
 
     companion object {
@@ -318,5 +365,7 @@ class SearchActivity : AppCompatActivity() {
         const val EDIT_TEXT_DEF = ""
         const val MAX_HISTORYLIST_SIZE = 10
         const val TRACK_EXTRA = "TRACK_EXTRA"
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

@@ -24,4 +24,5 @@
     <string name="track_time">Длительность</string>
     <string name="clear_history">Очистить историю</string>
     <string name="play_button">Play</string>
+    <string name="track_time_zero">00:00</string>
 </resources>
