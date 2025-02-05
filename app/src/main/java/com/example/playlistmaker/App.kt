@@ -1,44 +1,36 @@
 package com.example.playlistmaker
 
 import android.app.Application
-import android.content.Context
-import android.content.SharedPreferences
+import android.os.Handler
+import android.os.Looper
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.domain.consumer.ConsumerData
+import com.example.playlistmaker.domain.interactors.DarkThemeInteractor
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
-const val PLAYLISTMAKER_PREFERENCES = "PLAYLIST_MAKER_PROJECT"
-const val DARK_THEME_KEY = "DARK_THEME_KEY"
-const val HISTORY_LIST_KEY = "HISTORY_LIST_KEY"
+
+
 
 class App() : Application() {
 
-    private var darkTheme = false
-    private lateinit var listener: SharedPreferences.OnSharedPreferenceChangeListener
+    private val darkThemeInteractor = Creator.provideDarkThemeInteractor()
+    private val handler = Handler(Looper.getMainLooper())
+
 
     override fun onCreate() {
         super.onCreate()
 
-        val preferences = getSharedPreferences(PLAYLISTMAKER_PREFERENCES, Context.MODE_PRIVATE)
-        darkTheme = preferences.getBoolean(DARK_THEME_KEY, false)
-
-        switchTheme(darkTheme)
-
-        listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-            if (key == DARK_THEME_KEY) {
-                val darkThemev = sharedPreferences?.getBoolean(DARK_THEME_KEY, false)
-                if (darkThemev != null) {
-                    switchTheme(darkThemev)
-
-                }
-            }
-        }
-        preferences.registerOnSharedPreferenceChangeListener(listener)
-
-       startKoin {
+        startKoin {
             androidContext(this@App)
             modules(experimetnKoinModule)
         }
+
+       darkThemeInteractor.getDarkTheme(consumer = object : DarkThemeInteractor.DarkThemeConsumer{
+            override fun consume(data: ConsumerData<Boolean>) {
+                handler.post( Runnable {switchTheme(data.result)} )
+            }
+        })
     }
 
     fun switchTheme(enableTheme: Boolean) {

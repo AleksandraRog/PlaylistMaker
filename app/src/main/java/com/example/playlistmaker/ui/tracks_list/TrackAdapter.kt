@@ -1,13 +1,30 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.tracks_list
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.domain.model.Track
 
 class TrackAdapter() : RecyclerView.Adapter<TrackViewHolder>() {
 
     var tracks: List<Track> = emptyList()
     var setOnItemClickListener: ((Track) -> Unit)? = null
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
+        return TrackViewHolder(parent)
+    }
+
+    override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
+        val track = tracks[position]
+        holder.bind(track)
+        holder.itemView.setOnClickListener {
+            setOnItemClickListener?.invoke(track)
+        }
+    }
+
+    override fun getItemCount(): Int {
+        return tracks.size
+    }
 
     fun updateTracks(newTracks: List<Track>) {
         val oldTracks = tracks
@@ -32,21 +49,5 @@ class TrackAdapter() : RecyclerView.Adapter<TrackViewHolder>() {
         })
         this.tracks = newTracks.toMutableList()
         diffResult.dispatchUpdatesTo(this)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
-        return TrackViewHolder(parent)
-    }
-
-    override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
-        val track = tracks.get(position)
-        holder.bind(track)
-        holder.itemView.setOnClickListener {
-            setOnItemClickListener?.invoke(track)
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return tracks.size
     }
 }

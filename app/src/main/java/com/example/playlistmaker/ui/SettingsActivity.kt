@@ -1,9 +1,12 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui
 
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
@@ -12,9 +15,12 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import com.example.playlistmaker.App
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.consumer.ConsumerData
+import com.example.playlistmaker.domain.interactors.DarkThemeInteractor
 import com.google.android.material.switchmaterial.SwitchMaterial
-import org.koin.java.KoinJavaComponent.getKoin
-
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -22,16 +28,15 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var shareButton: ImageView
     private lateinit var arrowButton: ImageView
     private lateinit var switchThemes: SwitchMaterial
+    private lateinit var app: App
     private var intentValue: Intent? = null
-    private var isDarkMode: Boolean = false
+    private var isDarkMode: Boolean? = null
     private var changeModeListener: Boolean? = null
-
-    val preferences: SharedPreferences by lazy {
-        getKoin().get<SharedPreferences>()
-    }
+    private val handler = Handler(Looper.getMainLooper())
+    private val darkThemeInteractor = Creator.provideDarkThemeInteractor()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
+        app = application as App
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
@@ -40,10 +45,7 @@ class SettingsActivity : AppCompatActivity() {
         arrowButton = findViewById<ImageView>(R.id.button_arrow)
         switchThemes = findViewById<SwitchMaterial>(R.id.switch_theme)
 
-        isDarkMode = preferences.getBoolean(DARK_THEME_KEY, false)
-
-        switchThemes.isChecked = isDarkMode
-        window.decorView.systemUiVisibility = systemUiVisibility(isDarkMode)
+        getDarkTheme()
 
         val topToolbar: Toolbar = findViewById(R.id.top_toolbar_frame)
         setSupportActionBar(topToolbar)
@@ -60,9 +62,7 @@ class SettingsActivity : AppCompatActivity() {
             changeModeListener = isChecked
             reColors(window.decorView as ViewGroup)
             window.decorView.systemUiVisibility = systemUiVisibility(isChecked)
-            preferences.edit()
-                .putBoolean(DARK_THEME_KEY, isChecked)
-                .apply()
+            saveDarkTheme(isChecked)
             changeModeListener = null
         }
 
@@ -99,7 +99,7 @@ class SettingsActivity : AppCompatActivity() {
         val currentNightMode = isDarkMode
 
         if (hasFocus) {
-            if (currentNightMode) {
+            if (currentNightMode==true) {
                 supportButton.setColorFilter(
                     ContextCompat.getColor(
                         this,
@@ -139,7 +139,7 @@ class SettingsActivity : AppCompatActivity() {
                 )
                      }
 
-        } else if (!currentNightMode) {
+        } else if (currentNightMode==false) {
             when (intentValue?.action) {
                 Intent.ACTION_SENDTO -> supportButton.setColorFilter(
                     ContextCompat.getColor(
@@ -166,16 +166,16 @@ class SettingsActivity : AppCompatActivity() {
    }
 
     private fun reColors(viewGroup: ViewGroup) {
-        val iconColor = if (isDarkMode)
+        val iconColor = if (isDarkMode==true)
             ContextCompat.getColor(this, R.color.YP_white) else
             ContextCompat.getColor(this, R.color.YP_text_grey)
-        val textColor = if (isDarkMode)
+        val textColor = if (isDarkMode==true)
             ContextCompat.getColor(this, R.color.YP_white) else
             ContextCompat.getColor(this, R.color.YP_black)
-        val backgroundColor = if (isDarkMode)
+        val backgroundColor = if (isDarkMode==true)
             ContextCompat.getColor(this, R.color.YP_black) else
             ContextCompat.getColor(this, R.color.YP_white)
-        val navigationBarColor = if (isDarkMode)
+        val navigationBarColor = if (isDarkMode==true)
             ContextCompat.getColor(this, R.color.black) else
             ContextCompat.getColor(this, R.color.YP_white)
 
@@ -217,5 +217,27 @@ class SettingsActivity : AppCompatActivity() {
         return if (isLightBackground) 0 else
             (View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or
                     View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR)
+    }
+
+    private fun saveDarkTheme(darkTheme : Boolean) {
+        darkThemeInteractor.saveDarkTheme(darkTheme)
+        darkThemeInteractor.observeThemeChanges(consumer = object :DarkThemeInteractor.DarkThemeConsumer{
+            override fun consume(data: ConsumerData<Boolean>) {
+                handler.post( Runnable {app.switchTheme(data.result)})
+            }
+        })
+    }
+
+    private fun getDarkTheme() {
+        darkThemeInteractor.getDarkTheme(consumer = object : DarkThemeInteractor.DarkThemeConsumer{
+            override fun consume(data: ConsumerData<Boolean>) {
+                handler.post( Runnable {
+                    val newDarkTheme = data.result
+                    isDarkMode = newDarkTheme
+                    switchThemes.isChecked = newDarkTheme
+                    window.decorView.systemUiVisibility = systemUiVisibility(newDarkTheme)
+                })
+            }
+        })
     }
 }
