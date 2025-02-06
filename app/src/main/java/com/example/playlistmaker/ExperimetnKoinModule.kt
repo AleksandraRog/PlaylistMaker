@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import com.example.playlistmaker.data.local.PLAYLISTMAKER_PREFERENCES
 import com.example.playlistmaker.data.local.CustomDateTypeAdapter
@@ -8,6 +9,7 @@ import com.example.playlistmaker.data.local.CustomTimeTypeAdapter
 import com.example.playlistmaker.domain.model.TrackTimePeriod
 import org.koin.dsl.module
 import com.google.gson.GsonBuilder
+import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -40,6 +42,8 @@ val experimetnKoinModule = module {
    }
 
     single<ExecutorService> { Executors.newCachedThreadPool() }
+
+    single<Context> { androidApplication() }
 
     single {
         androidContext().getSharedPreferences(

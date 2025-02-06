@@ -1,5 +1,7 @@
 package com.example.playlistmaker
 
+import com.example.playlistmaker.data.SharedPreferencesClient
+import com.example.playlistmaker.data.local.DarkThemeClient
 import com.example.playlistmaker.data.local.DarkThemeManager
 import com.example.playlistmaker.data.local.HistoryTrackManager
 import com.example.playlistmaker.data.network.RetrofitNetworkClient
@@ -52,7 +54,7 @@ object Creator {
 
     //DarkTheme
     private fun getDarkThemeRepository(): DarkThemeRepository {
-       return DarkThemeRepositoryImpl(DarkThemeManager())
+       return DarkThemeRepositoryImpl(DarkThemeClient())
     }
 
     fun provideDarkThemeInteractor(): DarkThemeInteractor {
@@ -60,7 +62,7 @@ object Creator {
     }
 
     //PLAYER
-    fun getAudioPlayerRepository(): PlayerRepository {
+    private fun getAudioPlayerRepository(): PlayerRepository {
        return PlayerRepositoryImpl()
    }
 

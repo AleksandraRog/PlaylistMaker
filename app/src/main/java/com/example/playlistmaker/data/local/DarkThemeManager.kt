@@ -4,18 +4,24 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import org.koin.java.KoinJavaComponent.getKoin
 
-class DarkThemeManager : LocalStorageManager<Boolean> {
+object DarkThemeManager : LocalStorageManager<Boolean?> {
 
     val sharedPreferences: SharedPreferences by lazy {
         getKoin().get<SharedPreferences>()
     }
 
-    override fun getData(): Boolean {
-        return sharedPreferences.getBoolean(DARK_THEME_KEY,false)
+    override fun getData(): Boolean? {
+        return if (sharedPreferences.contains(DARK_THEME_KEY)) {
+            sharedPreferences.getBoolean(DARK_THEME_KEY, false) // или true, если нужно
+        } else {
+            null
+        }
     }
 
-    override fun saveData(data: Boolean) {
-        sharedPreferences.edit().putBoolean(DARK_THEME_KEY,data).apply()
+    override fun saveData(data: Boolean?) {
+        if (data != null) {
+            sharedPreferences.edit().putBoolean(DARK_THEME_KEY, data).apply()
+        }
     }
 
     fun getDarkThemeKey() : String {

@@ -11,6 +11,8 @@
         <item name="colorOnSecondary">@color/YP_white</item>
         <!-- Status bar color. -->
         <!-- Customize your theme here. -->
+        <item name="android:background">?attr/colorSecondary</item>
+        <item name="android:textColor">?attr/colorOnSecondary</item>
     </style>
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker">

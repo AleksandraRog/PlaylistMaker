@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
+import com.example.playlistmaker.App
 import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.ScreenSize
@@ -20,9 +21,11 @@ import com.example.playlistmaker.ui.tracks_list.SearchActivity
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var app: App
     private val darkThemeInteractor = Creator.provideDarkThemeInteractor()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        app = application as App
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
@@ -46,10 +49,12 @@ class MainActivity : AppCompatActivity() {
         searchButton.setOnClickListener {
             val searchIntent = Intent(this, SearchActivity::class.java)
             startActivity(searchIntent)
+            finish()
         }
         libraryButton.setOnClickListener {
             val libraryIntent = Intent(this, LibraryActivity::class.java)
             startActivity(libraryIntent)
+            finish()
         }
         settingButton.setOnClickListener {
             val settingsIntent = Intent(this, SettingsActivity::class.java)
@@ -59,9 +64,9 @@ class MainActivity : AppCompatActivity() {
         val context = this
         darkThemeInteractor.getDarkTheme(consumer = object : DarkThemeInteractor.DarkThemeConsumer {
             override fun consume(data: ConsumerData<Boolean>) {
-                Handler.createAsync(Looper.getMainLooper()).post(Runnable {
+                Handler.createAsync(Looper.getMainLooper()).post( Runnable {
 
-                    window.navigationBarColor = if (data.result) ContextCompat.getColor(
+                    window.navigationBarColor = if (app.getDarkTheme(data)) ContextCompat.getColor(
                         context,
                         R.color.black
                     ) else ContextCompat.getColor(

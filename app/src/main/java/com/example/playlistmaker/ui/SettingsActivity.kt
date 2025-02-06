@@ -12,6 +12,8 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -40,10 +42,10 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        supportButton = findViewById<ImageView>(R.id.button_support)
-        shareButton = findViewById<ImageView>(R.id.button_share)
-        arrowButton = findViewById<ImageView>(R.id.button_arrow)
-        switchThemes = findViewById<SwitchMaterial>(R.id.switch_theme)
+        supportButton = findViewById(R.id.button_support)
+        shareButton = findViewById(R.id.button_share)
+        arrowButton = findViewById(R.id.button_arrow)
+        switchThemes = findViewById(R.id.switch_theme)
 
         getDarkTheme()
 
@@ -51,9 +53,7 @@ class SettingsActivity : AppCompatActivity() {
         setSupportActionBar(topToolbar)
 
         topToolbar.setNavigationOnClickListener {
-            val mainIntent = Intent(this, MainActivity::class.java)
-            startActivity(mainIntent)
-            finish()
+            onBackPressed()
         }
 
         switchThemes.setOnCheckedChangeListener { _, isChecked ->
@@ -91,6 +91,14 @@ class SettingsActivity : AppCompatActivity() {
             intentValue = arrowIntent
             startActivity(arrowIntent)
         }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val mainIntent = Intent(this@SettingsActivity, MainActivity::class.java)
+                startActivity(mainIntent)
+                finish()
+            }
+        })
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -232,7 +240,7 @@ class SettingsActivity : AppCompatActivity() {
         darkThemeInteractor.getDarkTheme(consumer = object : DarkThemeInteractor.DarkThemeConsumer{
             override fun consume(data: ConsumerData<Boolean>) {
                 handler.post( Runnable {
-                    val newDarkTheme = data.result
+                    val newDarkTheme = app.getDarkTheme(data)
                     isDarkMode = newDarkTheme
                     switchThemes.isChecked = newDarkTheme
                     window.decorView.systemUiVisibility = systemUiVisibility(newDarkTheme)

@@ -9,7 +9,7 @@ import java.util.LinkedList
 
 class HistoryTrackManager : LocalStorageManager<LinkedList<TrackDto>> {
 
-    val sharedPreferences: SharedPreferences by lazy {
+    private val sharedPreferences: SharedPreferences by lazy {
         getKoin().get<SharedPreferences>()
     }
     private val gson: Gson by lazy { getKoin().get<Gson>() }

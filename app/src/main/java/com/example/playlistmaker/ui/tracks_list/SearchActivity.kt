@@ -15,6 +15,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -33,6 +34,7 @@ import com.example.playlistmaker.domain.interactors.HistoryInteractor
 import com.example.playlistmaker.domain.interactors.TracksInteractor
 import com.example.playlistmaker.presentation.mapper.SizeFormatter
 import com.example.playlistmaker.ui.CustomCircularProgressIndicator
+import com.example.playlistmaker.ui.MainActivity
 import com.example.playlistmaker.ui.PlayerActivity
 import java.lang.ref.WeakReference
 import java.util.LinkedList
@@ -146,6 +148,14 @@ class SearchActivity : AppCompatActivity() {
                 clearAll()
             }
         }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val mainIntent = Intent(this@SearchActivity, MainActivity::class.java)
+                startActivity(mainIntent)
+                finish()
+            }
+        })
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -261,16 +271,15 @@ class SearchActivity : AppCompatActivity() {
             inputEditText.text.toString(),
             consumer = object : TracksInteractor.FindTracksConsumer {
                 override fun consume(data: ConsumerData<List<Track>>) {
-                    val tracksSearchResponse = data
                     val searchRunnable = Runnable {
                         tracks.clear()
-                        if (tracksSearchResponse.code == 200) {
-                            tracks.addAll(tracksSearchResponse.result)
+                        if (data.code == 200) {
+                            tracks.addAll(data.result)
                             updateIncludeView(recyclerView)
                             trackAdapter.updateTracks(tracks)
 
                         } else {
-                            showMessage(tracksSearchResponse.code)
+                            showMessage(data.code)
 
                         }
                     }

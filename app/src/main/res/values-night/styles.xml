@@ -21,4 +21,9 @@
         <item name="android:drawableTint">@color/YP_white</item>
         <item name="android:textColor">@color/YP_white</item>
     </style>
+
+    <style name="ImageViewTrackViewHolder">
+        <item name="android:tint">@color/YP_white</item>
+    </style>
+
 </resources>

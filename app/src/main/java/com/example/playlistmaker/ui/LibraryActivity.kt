@@ -1,6 +1,8 @@
 package com.example.playlistmaker.ui
 
+import android.content.Intent
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
@@ -19,5 +21,13 @@ class LibraryActivity : AppCompatActivity() {
                 systemBars.bottom)
             insets
         }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val mainIntent = Intent(this@LibraryActivity, MainActivity::class.java)
+                startActivity(mainIntent)
+                finish()
+            }
+        })
     }
 }
