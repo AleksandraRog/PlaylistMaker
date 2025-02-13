@@ -1,6 +1,7 @@
 package com.example.playlistmaker.player.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
@@ -9,20 +10,21 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.common.domain.model.Track
 import com.example.playlistmaker.common.domain.model.TrackTimePeriod
 import com.example.playlistmaker.common.presentation.mapper.SizeFormatter
 import com.example.playlistmaker.common.ui.CustomCircularProgressIndicator
+import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.player.presentation.PlayerPropertyState
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.player.presentation.TrackScreenState
 import com.example.playlistmaker.player.presentation.model.PlayerState
 import com.example.playlistmaker.search.ui.SearchActivity
+import org.koin.androidx.viewmodel.ext.android.getViewModel
+import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -41,10 +43,7 @@ class PlayerActivity : AppCompatActivity() {
 
         val trackId = intent.getIntExtra(SearchActivity.TRACK_EXTRA, -1)
 
-        viewModel = ViewModelProvider(
-            this,
-            PlayerViewModel.getViewModelFactory(trackId = trackId)
-        )[PlayerViewModel::class.java]
+        viewModel = getViewModel{ parametersOf (trackId) }
 
         setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

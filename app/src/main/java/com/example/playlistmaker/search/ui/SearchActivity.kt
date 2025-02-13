@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -18,7 +19,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
@@ -34,6 +34,7 @@ import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.HistoryQueue
 import com.example.playlistmaker.search.presentation.SearchViewModel
 import com.example.playlistmaker.search.presentation.TracksState
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.LinkedList
 
 class SearchActivity : AppCompatActivity() {
@@ -43,11 +44,11 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var historyRecyclerView: RecyclerView
     private lateinit var simpleTextWatcher: TextWatcher
-    private lateinit var viewModel: SearchViewModel
     private lateinit var binding: ActivitySearchBinding
     private lateinit var errorBinding: ErrorViewGroupBinding
     private lateinit var historyBinding: HistoryViewGroupBinding
 
+    private val viewModel: SearchViewModel by viewModel()
     private val progressBar: ProgressBar by lazy { CustomCircularProgressIndicator(this) }
     private var searchTextValue: String = EDIT_TEXT_DEF
     private val trackAdapter = TrackAdapter()
@@ -57,8 +58,7 @@ class SearchActivity : AppCompatActivity() {
     private val historyLinearLayoutManager =
         LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
+   override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -79,14 +79,10 @@ class SearchActivity : AppCompatActivity() {
             )
             insets
         }
-        viewModel = ViewModelProvider(
-            this,
-            SearchViewModel.getViewModelFactory()
-        )[SearchViewModel::class.java]
 
-        initListTrackView()
+       initListTrackView()
 
-        viewModel.observeState().observe(this) {
+       viewModel.observeState().observe(this) {
             render(it)
         }
 

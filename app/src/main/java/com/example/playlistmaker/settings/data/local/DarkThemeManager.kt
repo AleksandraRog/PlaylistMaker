@@ -4,11 +4,7 @@ import android.content.SharedPreferences
 import com.example.playlistmaker.common.data.local.LocalStorageManager
 import org.koin.java.KoinJavaComponent.getKoin
 
-object DarkThemeManager : LocalStorageManager<Boolean?> {
-
-    val sharedPreferences: SharedPreferences by lazy {
-        getKoin().get<SharedPreferences>()
-    }
+class DarkThemeManager(val sharedPreferences: SharedPreferences) : LocalStorageManager<Boolean?> {
 
     override fun getData(): Boolean? {
         return if (sharedPreferences.contains(DARK_THEME_KEY)) {

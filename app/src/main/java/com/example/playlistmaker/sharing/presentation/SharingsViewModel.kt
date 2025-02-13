@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.common.Creator
 import com.example.playlistmaker.common.domain.consumer.Consumer
 import com.example.playlistmaker.common.domain.consumer.ConsumerData
 import com.example.playlistmaker.sharing.domain.interactors.SharingInteractor
@@ -41,17 +40,5 @@ class SharingsViewModel(
                 sharingLiveData.postValue(SharingObjects.SUPPORT.apply { intent=data.result})
             }
         })
-    }
-
-    companion object{
-        fun getViewModelFactory(appLink : String, termsLink : String, emailData: EmailData) : ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val sharingInteractor = Creator.provideSharingInteractor()
-                sharingInteractor.getShareAppLink = {appLink}
-                sharingInteractor.getTermsLink = {termsLink}
-                sharingInteractor.getSupportEmailData = {emailData}
-                SharingsViewModel(sharingInteractor,)
-            }
-        }
     }
 }

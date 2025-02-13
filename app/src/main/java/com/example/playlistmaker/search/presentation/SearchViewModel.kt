@@ -4,29 +4,29 @@ import android.app.Application
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.common.Creator
 import com.example.playlistmaker.common.domain.consumer.Consumer
 import com.example.playlistmaker.common.domain.consumer.ConsumerData
 import com.example.playlistmaker.common.domain.model.Track
 import com.example.playlistmaker.search.domain.interactors.HistoryInteractor
 import com.example.playlistmaker.search.domain.interactors.TracksInteractor
 import com.example.playlistmaker.search.domain.model.HistoryQueue
+import com.example.playlistmaker.search.domain.usecase.UpdateHistoryQueueUseCase
 import java.util.LinkedList
 
-class SearchViewModel(application: Application) : AndroidViewModel(application) {
+class SearchViewModel(
+    application: Application,
+    private val historyInteractor: HistoryInteractor,
+    private val tracksInteractor: TracksInteractor,
+    private val updateHistoryQueueUseCase: UpdateHistoryQueueUseCase
+) : AndroidViewModel(application) {
 
     private var lastSearchText: String? = null
     private val handler = Handler(Looper.getMainLooper())
-    private val tracksInteractor = Creator.provideTracksInteractor(getApplication<Application>())
-    private val historyInteractor = Creator.provideHistoryInteractor()
-    private val updateHistoryQueueUseCase = Creator.provideUpdateHistoryQueueUseCase()
+
     val tracks = ArrayList<Track>()
     var historyTracks = HistoryQueue(LinkedList<Track>())
 
@@ -118,15 +118,8 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
         stateLiveData.postValue(TracksState.EmptyHistory)
     }
 
-
     companion object {
         private val SEARCH_REQUEST_TOKEN = Any()
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
-
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SearchViewModel(this[APPLICATION_KEY] as Application)
-            }
-        }
     }
 }
