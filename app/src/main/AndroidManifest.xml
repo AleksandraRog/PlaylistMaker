@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
 
     <queries>
 
@@ -15,7 +17,7 @@
     </queries>
 
     <application
-        android:name=".App"
+        android:name=".common.App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -26,7 +28,7 @@
         android:theme="@style/Base.Theme.PlaylistMaker"
         tools:targetApi="31">
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".main.ui.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.PlaylistMaker">
             <intent-filter>
@@ -36,16 +38,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.LibraryActivity"
+            android:name=".common.ui.LibraryActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.tracks_list.SearchActivity"
+            android:name=".search.ui.SearchActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.SettingsActivity"
-            android:exported="false"/>
+            android:name=".settings.ui.SettingsActivity"
+            android:exported="false" />
         <activity
-            android:name=".ui.PlayerActivity"
+            android:name=".player.ui.PlayerActivity"
             android:exported="false" />
     </application>
 
