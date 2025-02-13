@@ -2,7 +2,6 @@ package com.example.playlistmaker.settings.data.local
 
 import android.content.SharedPreferences
 import com.example.playlistmaker.common.data.local.LocalStorageManager
-import org.koin.java.KoinJavaComponent.getKoin
 
 class DarkThemeManager(val sharedPreferences: SharedPreferences) : LocalStorageManager<Boolean?> {
 

@@ -3,13 +3,9 @@ package com.example.playlistmaker.sharing.presentation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.common.domain.consumer.Consumer
 import com.example.playlistmaker.common.domain.consumer.ConsumerData
 import com.example.playlistmaker.sharing.domain.interactors.SharingInteractor
-import com.example.playlistmaker.sharing.domain.model.EmailData
 
 class SharingsViewModel(
     private val sharingInteractor: SharingInteractor,
