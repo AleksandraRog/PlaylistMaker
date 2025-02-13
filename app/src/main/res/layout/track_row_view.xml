@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="61dp"
     android:paddingStart="13dp"
@@ -25,7 +26,8 @@
         android:fontFamily="@font/ys_display_regular"
         app:layout_constraintEnd_toStartOf="@+id/imageGo"
         app:layout_constraintStart_toEndOf="@+id/trackImage"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Привет"/>
 
     <TextView
         android:id="@+id/artistName"
@@ -39,7 +41,8 @@
         app:layout_constraintStart_toEndOf="@+id/trackImage"
         app:layout_constraintEnd_toStartOf="@+id/trackTime"
         app:layout_constraintTop_toBottomOf="@+id/trackName"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="Юлия Савичева"/>
 
     <TextView
         android:id="@+id/trackTime"
@@ -52,10 +55,12 @@
         app:layout_constraintStart_toEndOf="@+id/artistName"
         app:layout_constraintEnd_toStartOf="@+id/imageGo"
         app:layout_constraintTop_toBottomOf="@+id/trackName"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="00:00"/>
 
     <ImageView
         android:id="@+id/imageGo"
+        style="@style/ImageViewTrackViewHolder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"

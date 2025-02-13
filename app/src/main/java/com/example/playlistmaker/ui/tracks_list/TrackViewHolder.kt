@@ -1,8 +1,7 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.tracks_list
 
 import android.graphics.Paint
 import android.text.TextUtils
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -11,6 +10,10 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.R
+import com.example.playlistmaker.ScreenSize
+import com.example.playlistmaker.domain.model.Track
+import com.example.playlistmaker.presentation.mapper.SizeFormatter
 
 class TrackViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
     LayoutInflater.from(parent.context).inflate(R.layout.track_row_view, parent, false)
@@ -34,7 +37,7 @@ class TrackViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
             .load(track.artworkUrl100).centerInside()
             .placeholder(R.drawable.vector_placeholder)
             .centerCrop()
-            .transform(RoundedCorners(dpToPx(2f)))
+            .transform(RoundedCorners(SizeFormatter.dpToPx(2f, itemView.context)))
             .into(imageView)
         trackName.setSingleLine(true)
         artistName.setSingleLine(true)
@@ -59,12 +62,5 @@ class TrackViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
             )
         artistName.maxWidth =
             ScreenSize.getScreenWidth() - ScreenSize.getOtherWidthTrackViewHolder() - textWidthInPx.toInt()
-    }
-
-    fun dpToPx(dp: Float): Int {
-        return TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, dp,
-            itemView.context.resources.displayMetrics
-        ).toInt()
     }
 }
