@@ -7,21 +7,11 @@ import android.net.NetworkCapabilities
 import com.example.playlistmaker.common.data.NetworkClient
 import com.example.playlistmaker.common.data.dto.Response
 import com.example.playlistmaker.search.data.dto.TracksSearchRequest
-import org.koin.core.parameter.parametersOf
-import org.koin.java.KoinJavaComponent.getKoin
-import retrofit2.Retrofit
 
-class RetrofitNetworkClient(private val context: Context) : NetworkClient {
+class RetrofitNetworkClient(private val context: Context,
+                            private val iTunsService: RetrofitTrackApi) : NetworkClient {
 
-    private val itunsBaseUrl = "https://itunes.apple.com"
-
-    private val retrofit: Retrofit by lazy {
-        getKoin().get<Retrofit> { parametersOf(itunsBaseUrl) }
-    }
-
-    private val iTunsService = retrofit.create(RetrofitTrackApi::class.java)
-
-    override fun doRequest(dto: Any): Response {
+  override fun doRequest(dto: Any): Response {
 
         if (!isConnected()) {
             return Response().apply { resultCode = -1 }

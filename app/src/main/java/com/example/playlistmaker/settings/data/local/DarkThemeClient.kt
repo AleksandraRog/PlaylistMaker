@@ -5,11 +5,11 @@ import com.example.playlistmaker.settings.data.dto.DarkThemeResponse
 import com.example.playlistmaker.common.data.dto.Response
 import java.io.IOException
 
-class DarkThemeClient() : SharedPreferencesClient {
+class DarkThemeClient(private val darkThemeManager: DarkThemeManager) : SharedPreferencesClient {
 
     override fun doRequest(): Response {
         try {
-            val resp = DarkThemeManager.getData()
+            val resp = darkThemeManager.getData()
             return if (resp == null)
                 Response().apply { resultCode = -1 }
             else

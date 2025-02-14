@@ -4,6 +4,12 @@ import android.app.Application
 import android.content.res.Configuration
 import android.content.res.Resources
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.common.di.dataModule
+import com.example.playlistmaker.common.di.experimetnKoinModule
+import com.example.playlistmaker.common.di.interactorModule
+import com.example.playlistmaker.common.di.repositoryModule
+import com.example.playlistmaker.common.di.useCaseModule
+import com.example.playlistmaker.common.di.viewModelModule
 import com.example.playlistmaker.common.domain.consumer.ConsumerData
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -16,7 +22,8 @@ class App() : Application() {
 
         startKoin {
             androidContext(this@App)
-            modules(experimetnKoinModule)
+            modules(experimetnKoinModule, dataModule, interactorModule, repositoryModule,
+                useCaseModule, viewModelModule)
         }
     }
 

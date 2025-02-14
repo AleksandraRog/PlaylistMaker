@@ -5,10 +5,6 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.common.Creator
 import com.example.playlistmaker.common.domain.consumer.Consumer
 import com.example.playlistmaker.common.domain.consumer.ConsumerData
 import com.example.playlistmaker.common.domain.model.Track
@@ -18,7 +14,7 @@ import com.example.playlistmaker.player.domain.usecase.UpdateTimerTaskUseCase
 import com.example.playlistmaker.player.presentation.model.PlayerState
 
 class PlayerViewModel(
-    trackId: Int, private val getTrackByIdUseCase: GetTrackByIdUseCase,
+    trackId: Int, getTrackByIdUseCase: GetTrackByIdUseCase,
     private val audioPlayerInteractor: AudioPlayerInteractor,
 ) : ViewModel() {
 
@@ -130,12 +126,5 @@ class PlayerViewModel(
     companion object {
         private const val DELAY = 1000L
         private val SEARCH_REQUEST_TOKEN = Any()
-        fun getViewModelFactory(trackId: Int): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val interactor = Creator.provideAudioPlayerInteractor()
-                val useCase = Creator.provideGetTrackByIdUseCase()
-                PlayerViewModel(trackId, useCase, interactor)
-            }
-        }
     }
 }

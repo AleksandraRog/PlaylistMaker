@@ -21,6 +21,13 @@ class HistoryRepositoryImpl(private val historyManager: HistoryTrackManager) :
     }
 
     override fun getTrackById(trackId: Int): ConsumerData<Track> {
-        return ConsumerData(loadHistory().result.find { it.trackId == trackId } ?: loadHistory().result.last)
+
+        val resalt = loadHistory().result.find { it.trackId == trackId }
+
+        return if (resalt== null) {
+            getTrackById(trackId)
+        } else {
+            ConsumerData(resalt)
+        }
     }
 }

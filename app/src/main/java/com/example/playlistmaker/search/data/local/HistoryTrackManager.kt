@@ -5,15 +5,10 @@ import com.example.playlistmaker.common.data.dto.TrackDto
 import com.example.playlistmaker.common.data.local.LocalStorageManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import org.koin.java.KoinJavaComponent.getKoin
 import java.util.LinkedList
 
-class HistoryTrackManager : LocalStorageManager<LinkedList<TrackDto>> {
-
-    private val sharedPreferences: SharedPreferences by lazy {
-        getKoin().get<SharedPreferences>()
-    }
-    private val gson: Gson by lazy { getKoin().get<Gson>() }
+class HistoryTrackManager(private val sharedPreferences : SharedPreferences,
+                          private val gson: Gson,) : LocalStorageManager<LinkedList<TrackDto>> {
 
     override fun getData(): LinkedList<TrackDto> {
         val json = sharedPreferences.getString(HISTORY_LIST_KEY, null)

@@ -8,24 +8,24 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
-import com.example.playlistmaker.common.App
 import com.example.playlistmaker.R
+import com.example.playlistmaker.common.App
 import com.example.playlistmaker.common.ScreenSize
-import com.example.playlistmaker.databinding.ActivityMainBinding
 import com.example.playlistmaker.common.ui.LibraryActivity
+import com.example.playlistmaker.databinding.ActivityMainBinding
 import com.example.playlistmaker.main.presentation.MainViewModel
 import com.example.playlistmaker.main.presentation.Screens
 import com.example.playlistmaker.search.ui.SearchActivity
 import com.example.playlistmaker.settings.presentation.DarkThemeViewModel
 import com.example.playlistmaker.settings.ui.SettingsActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var app: App
-    private lateinit var darkThemeViewModel: DarkThemeViewModel
     private lateinit var binding: ActivityMainBinding
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by viewModel()
+    private val darkThemeViewModel: DarkThemeViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -45,15 +45,8 @@ class MainActivity : AppCompatActivity() {
             )
             insets
         }
-        darkThemeViewModel = ViewModelProvider(
-            this,
-            DarkThemeViewModel.getViewModelFactory()
-        )[DarkThemeViewModel::class.java]
 
-        viewModel = ViewModelProvider(this, MainViewModel.getViewModelFactory()
-        )[MainViewModel::class.java]
-
-        viewModel.getScreenStateLiveData().observe(this) { screen  ->
+        viewModel.getScreenStateLiveData().observe(this) { screen ->
             navigate(screen)
         }
 
@@ -79,7 +72,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun navigate(screens: Screens){
+    private fun navigate(screens: Screens) {
         val clazz: Class<out Activity> = when (screens) {
             Screens.SETTING -> SettingsActivity::class.java
             Screens.SEARCH -> SearchActivity::class.java
@@ -88,4 +81,5 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent(this, clazz))
         finish()
     }
+
 }

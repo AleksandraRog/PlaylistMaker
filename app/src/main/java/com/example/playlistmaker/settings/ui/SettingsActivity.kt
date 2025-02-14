@@ -10,7 +10,6 @@ import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
 import com.example.playlistmaker.common.App
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
@@ -18,43 +17,40 @@ import com.example.playlistmaker.main.ui.MainActivity
 import com.example.playlistmaker.settings.presentation.DarkThemeViewModel
 import com.example.playlistmaker.sharing.domain.model.EmailData
 import com.example.playlistmaker.sharing.presentation.SharingsViewModel
+import org.koin.android.ext.android.getKoin
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var app: App
     private lateinit var binding: ActivitySettingsBinding
-    private lateinit var sharingsViewModel: SharingsViewModel
-    private lateinit var darkThemeViewModel: DarkThemeViewModel
+    private val sharingsViewModel: SharingsViewModel by lazy { getKoin().get<SharingsViewModel> {
+        parametersOf(
+            getString(R.string.link_course),
+            getString(R.string.link_arrow),
+            EmailData(
+                getString(R.string.support_email),
+                getString(R.string.theme_support_message),
+                getString(R.string.text_support_message)
+            )
+        )
+    }}
+
+    private val darkThemeViewModel: DarkThemeViewModel by viewModel()
 
     private var intentValue: Intent? = null
     private var isDarkMode: Boolean? = null
     private var changeModeListener: Boolean? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+      override fun onCreate(savedInstanceState: Bundle?) {
         app = application as App
         binding = ActivitySettingsBinding.inflate(layoutInflater)
+
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        sharingsViewModel = ViewModelProvider(
-            this,
-            SharingsViewModel.getViewModelFactory(
-                getString(R.string.link_course),
-                getString(R.string.link_arrow),
-                EmailData(
-                    getString(R.string.support_email),
-                    getString(R.string.theme_support_message),
-                    getString(R.string.text_support_message)
-                )
-            )
-        )[SharingsViewModel::class.java]
-
-        darkThemeViewModel = ViewModelProvider(
-            this,
-            DarkThemeViewModel.getViewModelFactory()
-        )[DarkThemeViewModel::class.java]
-
-        darkThemeViewModel.getDarkThemeLiveData().observe(this){
+        darkThemeViewModel.getDarkThemeLiveData().observe(this) {
 
             binding.switchTheme.isChecked = it
             isDarkMode = it

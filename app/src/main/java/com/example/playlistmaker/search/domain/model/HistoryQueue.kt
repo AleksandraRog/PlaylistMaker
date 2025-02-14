@@ -1,13 +1,16 @@
 package com.example.playlistmaker.search.domain.model
-import com.example.playlistmaker.common.Creator
 import com.example.playlistmaker.common.domain.model.Track
+import com.example.playlistmaker.search.domain.usecase.SaveHistoryUseCase
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.util.LinkedList
 import java.util.Queue
 import java.util.function.Predicate
 
-class HistoryQueue(private val queue: Queue<Track> = LinkedList()) : Queue<Track> by queue {
+class HistoryQueue(private val queue: Queue<Track> = LinkedList()) : Queue<Track> by queue,
+    KoinComponent {
 
-    private val saveHistoryUseCase = Creator.provideSaveHistoryUseCase()
+    private val saveHistoryUseCase: SaveHistoryUseCase by inject()
 
     override fun offer(e: Track?): Boolean {
         val result = queue.offer(e)
