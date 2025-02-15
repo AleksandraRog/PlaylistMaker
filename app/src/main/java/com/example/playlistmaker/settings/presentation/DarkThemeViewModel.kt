@@ -1,8 +1,6 @@
 package com.example.playlistmaker.settings.presentation
 
 import android.app.Application
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,7 +14,6 @@ class DarkThemeViewModel(
     private val settingsInteractor: DarkThemeInteractor,
 ) : ViewModel() {
 
-    private val handler = Handler(Looper.getMainLooper())
     private var darkThemeLiveData = MutableLiveData<Boolean>()
     val app = application as App
 
@@ -34,11 +31,6 @@ class DarkThemeViewModel(
     }
 
     fun getDarkThemeLiveData(): LiveData<Boolean> = darkThemeLiveData
-
-    override fun onCleared() {
-        super.onCleared()
-        handler.removeCallbacksAndMessages(null)
-    }
 
     fun configDarkTheme(enableTheme: Boolean) {
 
