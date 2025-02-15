@@ -13,7 +13,7 @@
         <item name="android:statusBarColor">?attr/colorSecondary</item>
         <item name="android:navigationBarColor">?attr/colorSecondary</item>
         <!-- Customize your theme here. -->
-        <item name="android:background">?attr/colorSecondary</item>
+        <item name="android:colorBackground">?attr/colorSecondary</item>
         <item name="android:textColor">?attr/colorOnSecondary</item>
     </style>
 

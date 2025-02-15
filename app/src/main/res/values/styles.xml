@@ -108,4 +108,11 @@
         <item name="iconTint">@color/YP_white</item>
         <item name="iconSize">23dp</item>
     </style>
+
+    <style name="CustomTabText" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="textAllCaps">false</item>
+        <item name="android:textSize">@dimen/library_text_size</item>
+        <item name="fontFamily">@font/ys_display_medium</item>
+
+    </style>
 </resources>

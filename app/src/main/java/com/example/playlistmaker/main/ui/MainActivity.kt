@@ -11,8 +11,8 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.playlistmaker.R
 import com.example.playlistmaker.common.App
 import com.example.playlistmaker.common.ScreenSize
-import com.example.playlistmaker.common.ui.LibraryActivity
 import com.example.playlistmaker.databinding.ActivityMainBinding
+import com.example.playlistmaker.library.ui.LibraryActivity
 import com.example.playlistmaker.main.presentation.MainViewModel
 import com.example.playlistmaker.main.presentation.Screens
 import com.example.playlistmaker.search.ui.SearchActivity
@@ -70,6 +70,7 @@ class MainActivity : AppCompatActivity() {
         binding.settingButton.setOnClickListener {
             viewModel.navigateTo(Screens.SETTING)
         }
+
     }
 
     private fun navigate(screens: Screens) {

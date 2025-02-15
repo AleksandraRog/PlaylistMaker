@@ -38,7 +38,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".common.ui.LibraryActivity"
+            android:name=".library.ui.LibraryActivity"
             android:exported="false" />
         <activity
             android:name=".search.ui.SearchActivity"

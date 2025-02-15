@@ -1,5 +1,8 @@
 package com.example.playlistmaker.common.di
 
+import com.example.playlistmaker.library.presentation.FavoriteTracksViewModel
+import com.example.playlistmaker.library.presentation.LibraryViewModel
+import com.example.playlistmaker.library.presentation.PlaylistsViewModel
 import com.example.playlistmaker.main.presentation.MainViewModel
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.search.presentation.SearchViewModel
@@ -41,5 +44,16 @@ val viewModelModule = module {
 
     viewModel {
       MainViewModel()
+    }
+
+    viewModel {
+        LibraryViewModel()
+    }
+
+    viewModel {
+        FavoriteTracksViewModel()
+    }
+    viewModel {
+        PlaylistsViewModel()
     }
 }
