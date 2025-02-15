@@ -2,9 +2,7 @@ package com.example.playlistmaker.main.ui
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -13,14 +11,13 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.playlistmaker.R
 import com.example.playlistmaker.common.App
 import com.example.playlistmaker.common.ScreenSize
-import com.example.playlistmaker.library.ui.LibraryActivity
 import com.example.playlistmaker.databinding.ActivityMainBinding
+import com.example.playlistmaker.library.ui.LibraryActivity
 import com.example.playlistmaker.main.presentation.MainViewModel
 import com.example.playlistmaker.main.presentation.Screens
 import com.example.playlistmaker.search.ui.SearchActivity
 import com.example.playlistmaker.settings.presentation.DarkThemeViewModel
 import com.example.playlistmaker.settings.ui.SettingsActivity
-import com.google.android.material.color.MaterialColors
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
@@ -74,8 +71,6 @@ class MainActivity : AppCompatActivity() {
             viewModel.navigateTo(Screens.SETTING)
         }
 
-        val color = MaterialColors.getColor(this, com.google.android.material.R.attr.colorSecondary, Color.BLACK)
-        Log.d("setBackground", "проверка $color")
     }
 
     private fun navigate(screens: Screens) {
