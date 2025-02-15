@@ -1,6 +1,9 @@
 package com.example.playlistmaker.library.presentation
 
-enum class PagerState(val number: Int, val titleName: String){
-    LIBRARIES(1,"Плейлисты"),
-    FAVORITE_TRACKS(0,"Избранные треки");
- }
+
+import org.koin.java.KoinJavaComponent.getKoin
+
+enum class PagerState(val number: Int, val titleName: String) {
+    LIBRARIES(1,    getKoin().get<GetValueString>().playlists),
+    FAVORITE_TRACKS(0,getKoin().get<GetValueString>().favoriteTracks);
+}
