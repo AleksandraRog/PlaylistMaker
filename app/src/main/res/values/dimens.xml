@@ -10,4 +10,5 @@
     <dimen name="start_margin">16dp</dimen>
     <dimen name="end_margin_setting">12dp</dimen>
     <dimen name="bottom_padding">12dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

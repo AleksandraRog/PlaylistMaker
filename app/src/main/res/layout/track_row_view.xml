@@ -60,12 +60,12 @@
 
     <ImageView
         android:id="@+id/imageGo"
-        style="@style/ImageViewTrackViewHolder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:src="@drawable/vector_arrow"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:tint="?attr/colorQuaternaryVariant" />
 </androidx.constraintlayout.widget.ConstraintLayout>

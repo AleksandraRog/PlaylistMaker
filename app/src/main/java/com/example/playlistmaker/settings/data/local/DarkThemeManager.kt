@@ -7,7 +7,7 @@ class DarkThemeManager(val sharedPreferences: SharedPreferences) : LocalStorageM
 
     override fun getData(): Boolean? {
         return if (sharedPreferences.contains(DARK_THEME_KEY)) {
-            sharedPreferences.getBoolean(DARK_THEME_KEY, false) // или true, если нужно
+            sharedPreferences.getBoolean(DARK_THEME_KEY, false)
         } else {
             null
         }

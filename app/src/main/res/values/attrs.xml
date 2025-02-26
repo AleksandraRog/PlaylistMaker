@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="colorQuaternary" format="color" />
+    <attr name="colorOnQuaternary" format="color" />
+    <attr name="colorQuaternaryVariant" format="color" />
+</resources>

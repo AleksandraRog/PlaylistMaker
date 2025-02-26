@@ -21,7 +21,7 @@ import com.example.playlistmaker.player.presentation.PlayerPropertyState
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.player.presentation.TrackScreenState
 import com.example.playlistmaker.player.presentation.model.PlayerState
-import com.example.playlistmaker.search.ui.SearchActivity
+import com.example.playlistmaker.search.ui.SearchFragment
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
@@ -40,7 +40,9 @@ class PlayerActivity : AppCompatActivity() {
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val trackId = intent.getIntExtra(SearchActivity.TRACK_EXTRA, -1)
+        val trackId = intent?.extras?.getInt(SearchFragment.TRACK_EXTRA, -1) ?: -1
+
+        if (trackId == -1) { onBackPressed()}
 
         viewModel = getViewModel{ parametersOf (trackId) }
 

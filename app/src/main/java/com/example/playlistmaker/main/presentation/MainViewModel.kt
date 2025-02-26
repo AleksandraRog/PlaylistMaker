@@ -6,11 +6,11 @@ import androidx.lifecycle.ViewModel
 
 class MainViewModel : ViewModel() {
 
-    private var screenStateLiveData = MutableLiveData<Screens>()
+    private var screenStateLiveData = MutableLiveData<Boolean>()
 
-    fun getScreenStateLiveData(): LiveData<Screens> = screenStateLiveData
+    fun getScreenStateLiveData(): LiveData<Boolean> = screenStateLiveData
 
-    fun navigateTo(screen: Screens) {
+    fun focusChange(screen: Boolean) {
         screenStateLiveData.value = screen
     }
 }
