@@ -8,28 +8,21 @@
     android:orientation="vertical"
     tools:context=".main.ui.MainActivity">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/top_toolbar_frame"
-        style="@style/TopFrame"
-        app:navigationIcon="@null"
-        app:title="@string/app_name" />
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        app:navGraph="@navigation/main_navigation_graph"
+        app:defaultNavHost="true"/>
 
-    <Button
-        android:id="@+id/search_button"
-        style="@style/ButtonGreat"
-        android:text="@string/button_search"
-        app:icon="@drawable/vector_search" />
-
-    <Button
-        android:id="@+id/library_button"
-        style="@style/ButtonGreat"
-        android:text="@string/button_library"
-        app:icon="@drawable/vector_library" />
-
-    <Button
-        android:id="@+id/setting_button"
-        style="@style/ButtonGreat"
-        android:layout_marginBottom="28dp"
-        android:text="@string/button_setting"
-        app:icon="@drawable/vector_setting" />
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:backgroundTint="?attr/colorSecondary"
+        app:itemIconTint="@color/bottom_nav_colors"
+        app:itemTextColor="@color/bottom_nav_colors"
+        app:menu="@menu/bottom_navigation_menu" />
 </LinearLayout>

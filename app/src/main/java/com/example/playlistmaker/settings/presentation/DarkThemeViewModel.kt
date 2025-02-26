@@ -14,7 +14,8 @@ class DarkThemeViewModel(
     private val settingsInteractor: DarkThemeInteractor,
 ) : ViewModel() {
 
-    private var darkThemeLiveData = MutableLiveData<Boolean>()
+    private var darkThemeLiveData = MutableLiveData<Pair<Boolean,Boolean?>>()
+
     val app = application as App
 
     init {
@@ -24,22 +25,25 @@ class DarkThemeViewModel(
             consumer = object : DarkThemeInteractor.DarkThemeConsumer {
                 override fun consume(data: ConsumerData<Boolean>) {
                     val darkTheme = app.getDarkTheme(data)
-                    darkThemeLiveData.value = darkTheme
+                    darkThemeLiveData.value= Pair(darkTheme, null)
+
                     app.switchTheme(darkTheme)
+
                 }
             })
     }
 
-    fun getDarkThemeLiveData(): LiveData<Boolean> = darkThemeLiveData
+    fun getDarkThemeLiveData(): LiveData<Pair<Boolean,Boolean?>> = darkThemeLiveData
 
     fun configDarkTheme(enableTheme: Boolean) {
 
-        settingsInteractor.observeThemeChanges(consumer = object :
-            DarkThemeInteractor.DarkThemeConsumer {
-            override fun consume(data: ConsumerData<Boolean>) {
-                darkThemeLiveData.postValue(data.result)
-            }
-        })
         settingsInteractor.saveDarkTheme(enableTheme)
+        val previous = darkThemeLiveData.value?.first
+        darkThemeLiveData.postValue(Pair(enableTheme, previous))
+    }
+
+    fun configPreviousDarkTheme  (enableTheme: Boolean) {
+        val previous = darkThemeLiveData.value?.first
+        darkThemeLiveData.postValue(Pair(previous!!, enableTheme))
     }
 }

@@ -5,7 +5,8 @@
     android:id="@+id/search_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".search.ui.SearchFragment">
 
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -13,6 +14,7 @@
         style="@style/TopFrame"
         android:layout_marginBottom="0dp"
         app:navigationContentDescription="@null"
+        app:navigationIcon="@null"
         app:title="@string/button_search" />
 
     <FrameLayout
@@ -58,4 +60,4 @@
         layout="@layout/error_view_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-    </LinearLayout>
+</LinearLayout>

@@ -13,6 +13,8 @@ sealed interface TracksState {
 
     data object Empty : TracksState
 
+    data object Default : TracksState
+
     data class Content(val tracks: List<Track>) : TracksState
 
     data class History(val tracks: HistoryQueue) : TracksState

@@ -5,7 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.playlistmaker.common.domain.consumer.Consumer
 import com.example.playlistmaker.common.domain.consumer.ConsumerData
@@ -16,24 +16,37 @@ import com.example.playlistmaker.search.domain.model.HistoryQueue
 import com.example.playlistmaker.search.domain.usecase.UpdateHistoryQueueUseCase
 import java.util.LinkedList
 
-class SearchViewModel(
-    application: Application,
+class SearchViewModel(application: Application,
     private val historyInteractor: HistoryInteractor,
     private val tracksInteractor: TracksInteractor,
     private val updateHistoryQueueUseCase: UpdateHistoryQueueUseCase
 ) : AndroidViewModel(application) {
+    private val stateLiveData = MutableLiveData<TracksState>()
+    private val previousStateLiveData = MutableLiveData<TracksState>()
 
-    private var lastSearchText: String? = null
-    private val handler = Handler(Looper.getMainLooper())
+
+    init {
+        stateLiveData.value = TracksState.Default
+    }
 
     val tracks = ArrayList<Track>()
     var historyTracks = HistoryQueue(LinkedList<Track>())
+    private val handler = Handler(Looper.getMainLooper())
 
-    private val stateLiveData = MutableLiveData<TracksState>()
-    fun observeState(): LiveData<TracksState> = stateLiveData
+    val observeState = MediatorLiveData<TracksState>().apply {
+        addSource(stateLiveData) { newValue ->
+            previousStateLiveData.value = this.value
+            this.value = newValue
+        }
+    }
 
     override fun onCleared() {
+        super.onCleared()
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+    }
+
+    fun restoreState() {
+        stateLiveData.postValue(previousStateLiveData.value)
     }
 
     private fun loadHistory() {
@@ -47,21 +60,6 @@ class SearchViewModel(
                 stateLiveData.postValue(tracksState)
             }
         })
-    }
-
-    private fun searchDebounce(changedText: String) {
-        if (lastSearchText == changedText) {
-            return
-        }
-        this.lastSearchText = changedText
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-        val searchRunnable = Runnable { search(changedText) }
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-        handler.postAtTime(
-            searchRunnable,
-            SEARCH_REQUEST_TOKEN,
-            postTime,
-        )
     }
 
     private fun search(newSearchText: String): Boolean {
@@ -117,7 +115,17 @@ class SearchViewModel(
         stateLiveData.postValue(TracksState.EmptyHistory)
     }
 
+    private fun searchDebounce(changedText: String) {
+
+        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+        val searchRunnable = Runnable { search(changedText) }
+        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
+        handler.postAtTime( searchRunnable,
+            SEARCH_REQUEST_TOKEN, postTime,)
+    }
+
     companion object {
+
         private val SEARCH_REQUEST_TOKEN = Any()
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }

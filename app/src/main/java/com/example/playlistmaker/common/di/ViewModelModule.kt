@@ -1,5 +1,6 @@
 package com.example.playlistmaker.common.di
 
+import com.example.playlistmaker.R
 import com.example.playlistmaker.library.presentation.FavoriteTracksViewModel
 import com.example.playlistmaker.library.presentation.LibraryViewModel
 import com.example.playlistmaker.library.presentation.PlaylistsViewModel
@@ -11,6 +12,7 @@ import com.example.playlistmaker.sharing.domain.interactors.SharingInteractor
 import com.example.playlistmaker.sharing.domain.model.EmailData
 import com.example.playlistmaker.sharing.presentation.SharingsViewModel
 import org.koin.android.ext.koin.androidApplication
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -21,9 +23,11 @@ val viewModelModule = module {
       }
 
     viewModel {params ->
-        val appLink: String = params.get()
-        val termsLink: String = params.get()
-        val emailData: EmailData = params.get()
+        val appLink: String = androidContext().getString(R.string.link_course)
+        val termsLink: String = androidContext().getString(R.string.link_arrow)
+        val emailData: EmailData = EmailData(androidContext().getString(R.string.support_email),
+            androidContext().getString(R.string.theme_support_message),
+            androidContext().getString(R.string.text_support_message))
 
         val sharingInteractor = get<SharingInteractor>().apply {
             getShareAppLink = { appLink }
