@@ -1,6 +1,7 @@
 package com.example.playlistmaker.player.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
@@ -46,6 +47,7 @@ class PlayerActivity : AppCompatActivity() {
 
         viewModel = getViewModel{ parametersOf (trackId) }
 
+
         setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
@@ -83,6 +85,7 @@ class PlayerActivity : AppCompatActivity() {
 
         binding.topToolbarFrame.setNavigationOnClickListener {
             onBackPressed()
+            finish()
         }
 
         binding.likeButton.setOnCheckedChangeListener { _, isChecked ->
@@ -92,6 +95,7 @@ class PlayerActivity : AppCompatActivity() {
         binding.addButton.setOnClickListener {
 
         }
+
     }
 
     private fun updateTimer(playerPropertyState: PlayerPropertyState) {
@@ -150,15 +154,15 @@ class PlayerActivity : AppCompatActivity() {
 
         var visibilityView = View.GONE
 
+        progressBar = CustomCircularProgressIndicator(this).apply {
+            id = View.generateViewId()
+            layoutParams = ConstraintLayout.LayoutParams(
+                ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                ConstraintLayout.LayoutParams.WRAP_CONTENT
+            )
+        }
         if (loading) {
 
-            progressBar = CustomCircularProgressIndicator(this).apply {
-                id = View.generateViewId()
-                layoutParams = ConstraintLayout.LayoutParams(
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT
-                )
-            }
 
             val constraintSetProgressBar = ConstraintSet()
             constraintSetProgressBar.clone(binding.root)
@@ -256,4 +260,6 @@ class PlayerActivity : AppCompatActivity() {
             }
         }
     }
+
+
 }

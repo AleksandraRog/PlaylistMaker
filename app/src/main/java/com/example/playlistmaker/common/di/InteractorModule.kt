@@ -26,7 +26,7 @@ val interactorModule = module {
         DarkThemeInteractorImpl(get())
     }
 
-    single<AudioPlayerInteractor> {
+    factory <AudioPlayerInteractor> {
         AudioPlayerInteractorImpl(get())
     }
 

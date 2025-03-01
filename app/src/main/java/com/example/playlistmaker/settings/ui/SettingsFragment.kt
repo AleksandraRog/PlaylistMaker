@@ -3,6 +3,7 @@ package com.example.playlistmaker.settings.ui
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +13,6 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.playlistmaker.R
-import com.example.playlistmaker.common.App
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.main.presentation.MainViewModel
 import com.example.playlistmaker.settings.presentation.DarkThemeViewModel
@@ -24,7 +24,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsFragment : Fragment() {
 
-    private lateinit var app: App
     private lateinit var binding: ActivitySettingsBinding
     private val sharingsViewModel: SharingsViewModel by viewModel()
     private val mainViewModel: MainViewModel by activityViewModel()
@@ -36,7 +35,6 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         sharingsViewModel.getSharingObjectLiveData().observe(viewLifecycleOwner) {
 
             if (it.intent is Intent) {
@@ -50,12 +48,12 @@ class SettingsFragment : Fragment() {
 
             binding.switchTheme.isChecked = it.first
             isDarkMode = it.first
-            if (it.second != null && it.second !=it.first) {
 
+            if (it.second != null && it.second !=it.first) {
                 reColors(requireActivity().window.decorView as ViewGroup)
-    //            requireActivity().window.decorView.systemUiVisibility = systemUiVisibility(it.first)
+                requireActivity().window.decorView.systemUiVisibility = systemUiVisibility(it.first)
                 darkThemeViewModel.configPreviousDarkTheme(it.first)
-            }
+           }
         }
 
         binding.switchTheme.setOnCheckedChangeListener { _, isChecked ->
@@ -91,7 +89,7 @@ class SettingsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        app = requireActivity().application as App
+        Log.d("MainActivity","SettingsFragment ${1}")
     }
 
     private fun lifecycleObserver(hasFocus: Boolean) {
@@ -184,9 +182,10 @@ class SettingsFragment : Fragment() {
             ContextCompat.getColor(requireContext, R.color.black) else
             ContextCompat.getColor(requireContext, R.color.YP_white)
 
+        requireActivity().window.statusBarColor = backgroundColor
         requireActivity().window.navigationBarColor = navigationBarColor
 
-        for (i in 0 until viewGroup.childCount) {
+          for (i in 0 until viewGroup.childCount) {
             val view = viewGroup.getChildAt(i)
             when (view) {
 
@@ -208,6 +207,8 @@ class SettingsFragment : Fragment() {
                     view.setBackgroundColor(backgroundColor)
                 }
 
+
+
                 is TextView -> {
                     view.setTextColor(textColor)
                     view.setBackgroundColor(backgroundColor)
@@ -222,8 +223,11 @@ class SettingsFragment : Fragment() {
                     view.setBackgroundColor(backgroundColor)
                 }
                 is ViewGroup -> {
-                    view.setBackgroundColor(backgroundColor)
-                    reColors(view)
+                    if(view.id != R.id.lineView){
+
+                        view.setBackgroundColor(backgroundColor)
+                        reColors(view)
+                    }
                 }
 
             }

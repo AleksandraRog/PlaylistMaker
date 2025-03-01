@@ -3,4 +3,5 @@
     <attr name="colorQuaternary" format="color" />
     <attr name="colorOnQuaternary" format="color" />
     <attr name="colorQuaternaryVariant" format="color" />
+    <attr name="colorTertiaryVariant" format="color" />
 </resources>

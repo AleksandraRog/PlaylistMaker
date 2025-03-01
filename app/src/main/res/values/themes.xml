@@ -12,12 +12,15 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorSecondary</item>
         <item name="android:navigationBarColor">?attr/colorSecondary</item>
+        <item name="android:windowLightStatusBar">true</item>
         <!-- Customize your theme here. -->
         <item name="colorQuaternary">@color/YP_light_gray</item>
         <item name="colorOnQuaternary">@color/YP_text_grey</item>
         <item name="colorQuaternaryVariant">@color/YP_text_grey</item>
+
         <item name="android:colorBackground">?attr/colorSecondary</item>
         <item name="android:textColor">?attr/colorOnSecondary</item>
+        <item name="android:windowBackgroundFallback">@color/teal_200</item>
     </style>
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker">
@@ -42,13 +45,14 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorSecondary</item>
         <item name="android:navigationBarColor">?attr/colorSecondary</item>
-        <item name="android:windowLightStatusBar">false</item>
+
         <!-- Customize your theme here. -->
         <item name="colorQuaternary">@color/YP_white</item>
         <item name="colorOnQuaternary">@color/YP_black</item>
         <item name="colorQuaternaryVariant">@color/YP_white</item>
         <item name="android:colorBackground">?attr/colorSecondary</item>
         <item name="android:textColor">?attr/colorOnSecondary</item>
+
     </style>
 
     <style name="Base.Theme.PlaylistMaker.Light" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -63,7 +67,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorSecondary</item>
         <item name="android:navigationBarColor">?attr/colorSecondary</item>
-
+        <item name="android:windowLightStatusBar">false</item>
         <!-- Customize your theme here. -->
         <item name="colorQuaternary">@color/YP_light_gray</item>
         <item name="colorOnQuaternary">@color/YP_text_grey</item>

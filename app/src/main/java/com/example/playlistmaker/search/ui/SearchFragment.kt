@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,7 +54,7 @@ class SearchFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        Log.d("MainActivity","SearchFragment ${1}")
         ScreenSize.initSizeTrackViewHolder(requireContext())
 
    }
@@ -90,8 +91,6 @@ class SearchFragment : Fragment() {
             render(it)
 
         }
-
-
 
         binding.clearIcon.setOnClickListener {
             val inputMethodManager =
@@ -161,8 +160,8 @@ class SearchFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         simpleTextWatcher.let { inputEditText.removeTextChangedListener(it) }
 
     }

@@ -9,6 +9,8 @@ interface AudioPlayerInteractor {
 
     fun stop(consumer: PlayerStateConsumer)
 
+    fun release(consumer: PlayerStateConsumer)
+
     fun prepare(url: String,
                 prepareConsumer: PlayerStateConsumer,
                 completionConsumer: PlayerStateConsumer

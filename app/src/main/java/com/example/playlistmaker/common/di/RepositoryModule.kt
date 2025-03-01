@@ -26,7 +26,7 @@ val repositoryModule = module {
        DarkThemeRepositoryImpl(get(), get())
     }
 
-    single<PlayerRepository> {
+    factory<PlayerRepository> {
         PlayerRepositoryImpl(get())
     }
 

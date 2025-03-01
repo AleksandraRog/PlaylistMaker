@@ -40,9 +40,11 @@ class MainActivity : AppCompatActivity() {
             val paddingBottom =
                 if (ime.bottom > 0) {
                     binding.bottomNavigationView.visibility = View.GONE
+                    binding.lineView.visibility = View.GONE
                     ime.bottom
                 } else {
                     binding.bottomNavigationView.visibility = View.VISIBLE
+                    binding.lineView.visibility = View.VISIBLE
                     0
                 }
 
@@ -53,7 +55,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        darkThemeViewModel.getDarkThemeLiveData().observe(this) {
+    darkThemeViewModel.getDarkThemeLiveData().observe(this) {
 
             if (it.second != null) {
 
@@ -61,11 +63,12 @@ class MainActivity : AppCompatActivity() {
                 app.switchTheme(it.first)
                 if (it.first) {
                     setTheme(R.style.Base_Theme_PlaylistMaker_Dark)
+
                 } else {
                     setTheme(R.style.Base_Theme_PlaylistMaker_Light)
                 }
 
-                window.decorView.systemUiVisibility = systemUiVisibility(it.first)
+
                 changeModeListener = null
             }
         }
@@ -74,7 +77,9 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         val navController = navHostFragment.navController
         val bottomNavigationView = binding.bottomNavigationView
+
         bottomNavigationView.setupWithNavController(navController)
+
     }
 
     override fun recreate() {
@@ -90,7 +95,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun systemUiVisibility(isLightBackground: Boolean): Int {
-        return if (isLightBackground) 0 else (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+        return if (isLightBackground) 0 else
+                (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
         View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
 
             View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or
