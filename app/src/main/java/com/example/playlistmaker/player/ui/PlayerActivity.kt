@@ -1,7 +1,6 @@
 package com.example.playlistmaker.player.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
@@ -33,7 +32,7 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlayerBinding
     private lateinit var viewModel: PlayerViewModel
     private lateinit var progressBar: CustomCircularProgressIndicator
-
+    var progressBarId: Int? = null
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -43,7 +42,7 @@ class PlayerActivity : AppCompatActivity() {
 
         val trackId = intent?.extras?.getInt(SearchFragment.TRACK_EXTRA, -1) ?: -1
 
-        if (trackId == -1) { onBackPressed()}
+        if (trackId == -1) { onBackPressedDispatcher.onBackPressed()}
 
         viewModel = getViewModel{ parametersOf (trackId) }
 
@@ -84,7 +83,7 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         binding.topToolbarFrame.setNavigationOnClickListener {
-            onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
             finish()
         }
 
@@ -153,16 +152,17 @@ class PlayerActivity : AppCompatActivity() {
     private fun changeContentVisibility(loading: Boolean) {
 
         var visibilityView = View.GONE
+        var unvisibilityView = View.GONE
 
-        progressBar = CustomCircularProgressIndicator(this).apply {
-            id = View.generateViewId()
-            layoutParams = ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                ConstraintLayout.LayoutParams.WRAP_CONTENT
-            )
-        }
         if (loading) {
-
+            progressBar = CustomCircularProgressIndicator(this).apply {
+                id = View.generateViewId()
+                this@PlayerActivity.progressBarId = id
+                layoutParams = ConstraintLayout.LayoutParams(
+                    ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                    ConstraintLayout.LayoutParams.WRAP_CONTENT
+                )
+            }
 
             val constraintSetProgressBar = ConstraintSet()
             constraintSetProgressBar.clone(binding.root)
@@ -215,13 +215,13 @@ class PlayerActivity : AppCompatActivity() {
                 ConstraintSet.END
             )
             constraintSetToolbar.applyTo(binding.root)
-
             visibilityView = View.GONE
+            unvisibilityView = View.VISIBLE
+        } else if (progressBarId!=null){
 
-        } else {
-
+            progressBar = findViewById(progressBarId!!)
             visibilityView = View.VISIBLE
-
+            unvisibilityView = View.GONE
             val constraintSetToolbar = ConstraintSet()
             constraintSetToolbar.clone(binding.root)
             constraintSetToolbar.connect(
@@ -257,7 +257,7 @@ class PlayerActivity : AppCompatActivity() {
             val view = (binding.root as ViewGroup).getChildAt(i)
             if (view.id != progressBar.id) {
                 view.visibility = visibilityView
-            }
+            } else view.visibility = unvisibilityView
         }
     }
 

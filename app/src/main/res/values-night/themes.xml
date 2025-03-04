@@ -14,7 +14,6 @@
         <item name="colorQuaternary">@color/YP_white</item>
         <item name="colorOnQuaternary">@color/YP_black</item>
         <item name="colorQuaternaryVariant">@color/YP_white</item>
-
         <item name="android:colorBackground">?attr/colorSecondary</item>
         <item name="android:textColor">?attr/colorOnSecondary</item>
     </style>
@@ -27,5 +26,4 @@
         <!-- Status bar color. -->
         <!-- Customize your theme here. -->
     </style>
-
 </resources>

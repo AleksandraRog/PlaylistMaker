@@ -1,7 +1,9 @@
 package com.example.playlistmaker.main.ui
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
@@ -25,12 +27,10 @@ class MainActivity : AppCompatActivity() {
     private var changeModeListener: Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         app = application as App
         ScreenSize.initSize(this)
-
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT))
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -55,20 +55,17 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-    darkThemeViewModel.getDarkThemeLiveData().observe(this) {
+        darkThemeViewModel.getDarkThemeLiveData().observe(this) {
+            window.decorView.systemUiVisibility = systemUiVisibility(it.first)
 
             if (it.second != null) {
-
                 changeModeListener = it.first
                 app.switchTheme(it.first)
                 if (it.first) {
                     setTheme(R.style.Base_Theme_PlaylistMaker_Dark)
-
                 } else {
                     setTheme(R.style.Base_Theme_PlaylistMaker_Light)
                 }
-
-
                 changeModeListener = null
             }
         }
@@ -79,10 +76,10 @@ class MainActivity : AppCompatActivity() {
         val bottomNavigationView = binding.bottomNavigationView
 
         bottomNavigationView.setupWithNavController(navController)
-
     }
 
     override fun recreate() {
+
         if (changeModeListener == null) {
             super.recreate()
         }
@@ -90,16 +87,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-
         viewModel.focusChange(hasFocus)
     }
 
     private fun systemUiVisibility(isLightBackground: Boolean): Int {
         return if (isLightBackground) 0 else
-                (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-        View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-
-            View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or
+            (View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or
                     View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR)
     }
 }

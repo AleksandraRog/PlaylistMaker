@@ -6,7 +6,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,9 +53,7 @@ class SearchFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("MainActivity","SearchFragment ${1}")
         ScreenSize.initSizeTrackViewHolder(requireContext())
-
    }
 
     override fun onCreateView(
@@ -87,9 +84,7 @@ class SearchFragment : Fragment() {
             if(it is TracksState.History){
                 inputEditText.requestFocus()
             }
-
             render(it)
-
         }
 
         binding.clearIcon.setOnClickListener {
@@ -294,8 +289,6 @@ class SearchFragment : Fragment() {
             is TracksState.AnyTrack -> goToPlayerActivity(state.trackId)
         }
     }
-
-
 
     companion object {
         const val EDIT_TEXT_KEY = "EDIT_TEXT_KEY"

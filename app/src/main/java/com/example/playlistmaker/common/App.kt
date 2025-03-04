@@ -11,6 +11,8 @@ import com.example.playlistmaker.common.di.repositoryModule
 import com.example.playlistmaker.common.di.useCaseModule
 import com.example.playlistmaker.common.di.viewModelModule
 import com.example.playlistmaker.common.domain.consumer.ConsumerData
+import com.example.playlistmaker.settings.domain.interactors.DarkThemeInteractor
+import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -25,6 +27,8 @@ class App() : Application() {
             modules(experimetnKoinModule, dataModule, interactorModule, repositoryModule,
                 useCaseModule, viewModelModule)
         }
+        val darkThemeInteractor = getKoin().get<DarkThemeInteractor>()
+        switchTheme(getDarkTheme(darkThemeInteractor.getThemeSync()))
     }
 
     fun getDarkTheme(data: ConsumerData<Boolean>): Boolean {

@@ -1,6 +1,7 @@
 package com.example.playlistmaker.settings.domain.interactors
 
 import com.example.playlistmaker.common.domain.consumer.Consumer
+import com.example.playlistmaker.common.domain.consumer.ConsumerData
 import com.example.playlistmaker.settings.presentation.ThreadFlag
 
 interface DarkThemeInteractor {
@@ -9,7 +10,7 @@ interface DarkThemeInteractor {
 
     fun saveDarkTheme(darkTheme: Boolean)
 
-    fun observeThemeChanges(consumer: DarkThemeConsumer)
+    fun  getThemeSync() : ConsumerData<Boolean>
 
     interface DarkThemeConsumer : Consumer<Boolean>
 }

@@ -1,7 +1,6 @@
 package com.example.playlistmaker.settings.domain.interactors.impl
 
 import com.example.playlistmaker.common.domain.consumer.ConsumerData
-import com.example.playlistmaker.common.domain.consumer.ListenerConsumer
 import com.example.playlistmaker.settings.domain.interactors.DarkThemeInteractor
 import com.example.playlistmaker.settings.domain.repository.DarkThemeRepository
 import com.example.playlistmaker.settings.presentation.ThreadFlag
@@ -30,15 +29,10 @@ class DarkThemeInteractorImpl (private val darkThemeRepository : DarkThemeReposi
         executor.execute {darkThemeRepository.saveDarkTheme(darkTheme) }
     }
 
-    override fun observeThemeChanges(consumer: DarkThemeInteractor.DarkThemeConsumer) {
-        executor.execute {
-            darkThemeRepository.observeThemeChanges(lisenerConsumer = object :
-                ListenerConsumer<Boolean> {
-                override fun consume(data: ConsumerData<Boolean>) {
-                    consumer.consume(data)
-                }
-            })
-        }
+    override fun getThemeSync(): ConsumerData<Boolean> {
+        return darkThemeRepository.getDarkTheme()
     }
+
+
 }
 

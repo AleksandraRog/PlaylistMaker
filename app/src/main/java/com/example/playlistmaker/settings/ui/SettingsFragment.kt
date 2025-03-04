@@ -3,7 +3,6 @@ package com.example.playlistmaker.settings.ui
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +27,6 @@ class SettingsFragment : Fragment() {
     private val sharingsViewModel: SharingsViewModel by viewModel()
     private val mainViewModel: MainViewModel by activityViewModel()
     private val darkThemeViewModel: DarkThemeViewModel by activityViewModel()
-
     private var intentValue: Intent? = null
     private var isDarkMode: Boolean? = null
     private var changeModeListener: SharingObjects? = null
@@ -51,7 +49,6 @@ class SettingsFragment : Fragment() {
 
             if (it.second != null && it.second !=it.first) {
                 reColors(requireActivity().window.decorView as ViewGroup)
-                requireActivity().window.decorView.systemUiVisibility = systemUiVisibility(it.first)
                 darkThemeViewModel.configPreviousDarkTheme(it.first)
            }
         }
@@ -84,12 +81,6 @@ class SettingsFragment : Fragment() {
 
         binding = ActivitySettingsBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d("MainActivity","SettingsFragment ${1}")
     }
 
     private fun lifecycleObserver(hasFocus: Boolean) {
@@ -182,7 +173,6 @@ class SettingsFragment : Fragment() {
             ContextCompat.getColor(requireContext, R.color.black) else
             ContextCompat.getColor(requireContext, R.color.YP_white)
 
-        requireActivity().window.statusBarColor = backgroundColor
         requireActivity().window.navigationBarColor = navigationBarColor
 
           for (i in 0 until viewGroup.childCount) {
@@ -206,9 +196,6 @@ class SettingsFragment : Fragment() {
                     view.itemTextColor = newColorStateList
                     view.setBackgroundColor(backgroundColor)
                 }
-
-
-
                 is TextView -> {
                     view.setTextColor(textColor)
                     view.setBackgroundColor(backgroundColor)
@@ -232,11 +219,5 @@ class SettingsFragment : Fragment() {
 
             }
         }
-    }
-
-    private fun systemUiVisibility(isLightBackground: Boolean): Int {
-        return if (isLightBackground) 0 else
-            (View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or
-                    View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR)
     }
 }
