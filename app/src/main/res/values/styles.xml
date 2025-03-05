@@ -1,22 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="ButtonGreat" parent="Widget.MaterialComponents.Button.UnelevatedButton">
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:layout_marginHorizontal">@dimen/start_margin</item>
-        <item name="android:layout_marginBottom">@dimen/start_margin</item>
-        <item name="android:textSize">@dimen/primari_text_size</item>
-        <item name="android:gravity">center</item>
-        <item name="android:backgroundTint">@color/YP_white</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:layout_gravity">end</item>
-        <item name="iconGravity">textStart</item>
-        <item name="iconTint">@color/YP_black</item>
-        <item name="iconSize">@dimen/icon_size</item>
-        <item name="cornerRadius">@dimen/button_radius</item>
-    </style>
-
     <style name="List">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -29,7 +12,7 @@
         <item name="android:layout_width">@dimen/icon_size</item>
         <item name="android:layout_height">@dimen/icon_size</item>
         <item name="android:layout_marginEnd">12dp</item>
-        <item name="android:tint">@color/YP_text_grey</item>
+        <item name="android:tint">?attr/colorQuaternaryVariant</item>
     </style>
 
     <style name="TextViewSetting">
@@ -57,16 +40,16 @@
     </style>
 
     <style name="SearchFrame">
-        <item name="android:backgroundTint">@color/YP_light_gray</item>
-        <item name="drawableTint">@color/YP_text_grey</item>
-        <item name="android:textColorHint">@color/YP_text_grey</item>
+        <item name="android:backgroundTint">?attr/colorQuaternary</item>
+        <item name="drawableTint">?attr/colorOnQuaternary</item>
+        <item name="android:textColorHint">?attr/colorOnQuaternary</item>
     </style>
 
     <style name="SubtitleTrackViewHolder">
         <item name="android:textSize">11sp</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
-        <item name="drawableTint">@color/YP_text_grey</item>
-        <item name="android:textColor">@color/YP_text_grey</item>
+        <item name="drawableTint">?attr/colorQuaternaryVariant</item>
+        <item name="android:textColor">?attr/colorQuaternaryVariant</item>
         <item name="android:layout_marginBottom">14dp</item>
     </style>
 

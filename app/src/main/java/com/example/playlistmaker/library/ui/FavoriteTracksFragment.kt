@@ -36,7 +36,7 @@ class FavoriteTracksFragment : Fragment() {
         }
     }
 
-    fun showContent(flag: Boolean){
+    private fun showContent(flag: Boolean){
         if (flag) {
             binding.placeholderMessage.visibility = View.GONE
             binding.favoriteTracksRecyclerview.visibility = View.VISIBLE

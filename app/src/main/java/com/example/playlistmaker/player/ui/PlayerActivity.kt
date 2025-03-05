@@ -21,7 +21,7 @@ import com.example.playlistmaker.player.presentation.PlayerPropertyState
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.player.presentation.TrackScreenState
 import com.example.playlistmaker.player.presentation.model.PlayerState
-import com.example.playlistmaker.search.ui.SearchActivity
+import com.example.playlistmaker.search.ui.SearchFragment
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
@@ -32,7 +32,7 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlayerBinding
     private lateinit var viewModel: PlayerViewModel
     private lateinit var progressBar: CustomCircularProgressIndicator
-
+    var progressBarId: Int? = null
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -40,9 +40,12 @@ class PlayerActivity : AppCompatActivity() {
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val trackId = intent.getIntExtra(SearchActivity.TRACK_EXTRA, -1)
+        val trackId = intent?.extras?.getInt(SearchFragment.TRACK_EXTRA, -1) ?: -1
+
+        if (trackId == -1) { onBackPressedDispatcher.onBackPressed()}
 
         viewModel = getViewModel{ parametersOf (trackId) }
+
 
         setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -80,7 +83,8 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         binding.topToolbarFrame.setNavigationOnClickListener {
-            onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
+            finish()
         }
 
         binding.likeButton.setOnCheckedChangeListener { _, isChecked ->
@@ -90,6 +94,7 @@ class PlayerActivity : AppCompatActivity() {
         binding.addButton.setOnClickListener {
 
         }
+
     }
 
     private fun updateTimer(playerPropertyState: PlayerPropertyState) {
@@ -147,11 +152,12 @@ class PlayerActivity : AppCompatActivity() {
     private fun changeContentVisibility(loading: Boolean) {
 
         var visibilityView = View.GONE
+        var unvisibilityView = View.GONE
 
         if (loading) {
-
             progressBar = CustomCircularProgressIndicator(this).apply {
                 id = View.generateViewId()
+                this@PlayerActivity.progressBarId = id
                 layoutParams = ConstraintLayout.LayoutParams(
                     ConstraintLayout.LayoutParams.WRAP_CONTENT,
                     ConstraintLayout.LayoutParams.WRAP_CONTENT
@@ -209,13 +215,13 @@ class PlayerActivity : AppCompatActivity() {
                 ConstraintSet.END
             )
             constraintSetToolbar.applyTo(binding.root)
-
             visibilityView = View.GONE
+            unvisibilityView = View.VISIBLE
+        } else if (progressBarId!=null){
 
-        } else {
-
+            progressBar = findViewById(progressBarId!!)
             visibilityView = View.VISIBLE
-
+            unvisibilityView = View.GONE
             val constraintSetToolbar = ConstraintSet()
             constraintSetToolbar.clone(binding.root)
             constraintSetToolbar.connect(
@@ -251,7 +257,9 @@ class PlayerActivity : AppCompatActivity() {
             val view = (binding.root as ViewGroup).getChildAt(i)
             if (view.id != progressBar.id) {
                 view.visibility = visibilityView
-            }
+            } else view.visibility = unvisibilityView
         }
     }
+
+
 }

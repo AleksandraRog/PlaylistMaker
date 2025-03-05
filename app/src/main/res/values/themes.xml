@@ -12,9 +12,15 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorSecondary</item>
         <item name="android:navigationBarColor">?attr/colorSecondary</item>
+
         <!-- Customize your theme here. -->
+        <item name="colorQuaternary">@color/YP_light_gray</item>
+        <item name="colorOnQuaternary">@color/YP_text_grey</item>
+        <item name="colorQuaternaryVariant">@color/YP_text_grey</item>
+
         <item name="android:colorBackground">?attr/colorSecondary</item>
         <item name="android:textColor">?attr/colorOnSecondary</item>
+        <item name="android:windowBackgroundFallback">@color/teal_200</item>
     </style>
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker">
@@ -24,5 +30,45 @@
         <item name="colorOnSecondary">@color/YP_white</item>
         <!-- Status bar color. -->
         <!-- Customize your theme here. -->
+    </style>
+
+    <style name="Base.Theme.PlaylistMaker.Light" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/YP_white</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@color/YP_black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/YP_white</item>
+        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorOnSecondary">@color/YP_black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorSecondary</item>
+        <item name="android:navigationBarColor">?attr/colorSecondary</item>
+        <!-- Customize your theme here. -->
+        <item name="colorQuaternary">@color/YP_light_gray</item>
+        <item name="colorOnQuaternary">@color/YP_text_grey</item>
+        <item name="colorQuaternaryVariant">@color/YP_text_grey</item>
+        <item name="android:colorBackground">?attr/colorSecondary</item>
+        <item name="android:textColor">?attr/colorOnSecondary</item>
+    </style>
+
+    <style name="Base.Theme.PlaylistMaker.Dark" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/YP_black</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@color/YP_black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/YP_black</item>
+        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorOnSecondary">@color/YP_white</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorSecondary</item>
+        <item name="android:navigationBarColor">?attr/colorSecondary</item>
+        <!-- Customize your theme here. -->
+        <item name="colorQuaternary">@color/YP_white</item>
+        <item name="colorOnQuaternary">@color/YP_black</item>
+        <item name="colorQuaternaryVariant">@color/YP_white</item>
+        <item name="android:colorBackground">?attr/colorSecondary</item>
+        <item name="android:textColor">?attr/colorOnSecondary</item>
     </style>
 </resources>

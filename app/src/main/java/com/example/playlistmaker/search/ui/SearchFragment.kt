@@ -1,23 +1,20 @@
 package com.example.playlistmaker.search.ui
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ProgressBar
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
-import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
@@ -28,15 +25,13 @@ import com.example.playlistmaker.common.ui.CustomCircularProgressIndicator
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.databinding.ErrorViewGroupBinding
 import com.example.playlistmaker.databinding.HistoryViewGroupBinding
-import com.example.playlistmaker.main.ui.MainActivity
-import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.HistoryQueue
 import com.example.playlistmaker.search.presentation.SearchViewModel
 import com.example.playlistmaker.search.presentation.TracksState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.LinkedList
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
 
     private lateinit var includeView: ViewGroup
     private lateinit var inputEditText: EditText
@@ -46,52 +41,55 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
     private lateinit var errorBinding: ErrorViewGroupBinding
     private lateinit var historyBinding: HistoryViewGroupBinding
+    private lateinit var historyLinearLayoutManager: LinearLayoutManager
 
     private val viewModel: SearchViewModel by viewModel()
-    private val progressBar: ProgressBar by lazy { CustomCircularProgressIndicator(this) }
+    private val progressBar: ProgressBar by lazy { CustomCircularProgressIndicator(requireContext()) }
     private var searchTextValue: String = EDIT_TEXT_DEF
     private val trackAdapter = TrackAdapter()
     private val historyTrackAdapter = TrackAdapter()
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
-    private val historyLinearLayoutManager =
-        LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-   override fun onCreate(savedInstanceState: Bundle?) {
-
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        binding = ActivitySearchBinding.inflate(layoutInflater)
+        ScreenSize.initSizeTrackViewHolder(requireContext())
+   }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+
         errorBinding = ErrorViewGroupBinding.inflate(layoutInflater)
         historyBinding = HistoryViewGroupBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        ScreenSize.initSizeTrackViewHolder(this)
+        binding = ActivitySearchBinding.inflate(inflater, container, false)
 
-        setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
-            val paddingBottom = if (ime.bottom > 0) ime.bottom else
-                systemBars.bottom
-            view.setPadding(
-                systemBars.left, systemBars.top, systemBars.right,
-                paddingBottom
-            )
-            insets
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        initListTrackView()
+
+        if (savedInstanceState!=null){
+            searchTextValue = savedInstanceState.getString(EDIT_TEXT_KEY, EDIT_TEXT_DEF)
+
+            if(savedInstanceState.getBoolean("EDIT_FOCUS_KEY", false)) {inputEditText.requestFocus()}
         }
 
-       initListTrackView()
+        viewModel.observeState.observe(viewLifecycleOwner) {
 
-       viewModel.observeState().observe(this) {
+            if(it is TracksState.History){
+                inputEditText.requestFocus()
+            }
             render(it)
-        }
-
-        binding.topToolbarFrame.setNavigationOnClickListener {
-            onBackPressed()
         }
 
         binding.clearIcon.setOnClickListener {
             val inputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(binding.clearIcon.windowToken, 0)
             inputEditText.setText("")
         }
@@ -114,14 +112,18 @@ class SearchActivity : AppCompatActivity() {
 
                 binding.clearIcon.visibility = clearButtonVisibility(s)
                 searchTextValue = s.toString()
-                if (searchTextValue == "" && inputEditText.hasFocus()) {// && historyTracks.size != 0) {
-                    viewModel.showHistory()
-                    historyLinearLayoutManager.scrollToPosition(0)
-                } else {
-                    if (includeView.childCount > 0) {
-                        updateIncludeViewByClear()
+                if (inputEditText.hasFocus()) {
+                    if (searchTextValue == "") {
+                        viewModel.showHistory()
+
+                    } else {
+                        if (includeView.childCount > 0) {
+                            updateIncludeViewByClear()
+                        }
+
+                        viewModel.showFoundTracks(searchTextValue)
+
                     }
-                    viewModel.showFoundTracks(searchTextValue)
                 }
             }
 
@@ -135,7 +137,6 @@ class SearchActivity : AppCompatActivity() {
         inputEditText.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus && inputEditText.text.isEmpty()) {
                 viewModel.showHistory()
-                historyLinearLayoutManager.scrollToPosition(0)
             } else if (includeView.childCount > 0) {
                 updateIncludeViewByClear()
             }
@@ -152,46 +153,37 @@ class SearchActivity : AppCompatActivity() {
                 viewModel.showTrack(track)
             }
         }
-
-        this.onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                val mainIntent = Intent(this@SearchActivity, MainActivity::class.java)
-                startActivity(mainIntent)
-                finish()
-            }
-        })
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         simpleTextWatcher.let { inputEditText.removeTextChangedListener(it) }
+
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString("EDIT_TEXT_KEY", searchTextValue)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        searchTextValue = savedInstanceState.getString(EDIT_TEXT_KEY, EDIT_TEXT_DEF)
+        outState.putBoolean("EDIT_FOCUS_KEY", inputEditText.hasFocus())
     }
 
     private fun initListTrackView() {
         inputEditText = binding.inputEditText
-        includeView = findViewById(R.id.includeView)
+        includeView = requireActivity().findViewById(R.id.includeView)
     }
 
     private fun goToPlayerActivity(trackId: Int) {
 
-        val playerIntent = Intent(this, PlayerActivity::class.java)
-        playerIntent.putExtra(TRACK_EXTRA, trackId)
-        startActivity(playerIntent)
+        val bundleTrackId = Bundle().apply {
+           putInt(TRACK_EXTRA, trackId)
+        }
+        findNavController().navigate(R.id.action_searchFragment_to_playerActivity, bundleTrackId)
+        viewModel.restoreState()
     }
 
     private fun initListFoundTracksView() {
 
-        recyclerView = RecyclerView(this).apply {
+        recyclerView = RecyclerView(requireContext()).apply {
             layoutParams = ViewGroup.MarginLayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
@@ -200,7 +192,7 @@ class SearchActivity : AppCompatActivity() {
             }
         }
         recyclerView.adapter = trackAdapter
-        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
@@ -221,6 +213,8 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun initHistoryView() {
+        historyLinearLayoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         historyRecyclerView = historyBinding.historyRecyclerview
         historyRecyclerView.adapter = historyTrackAdapter
         historyRecyclerView.layoutManager = historyLinearLayoutManager
@@ -262,7 +256,7 @@ class SearchActivity : AppCompatActivity() {
         errorBinding.renovate.visibility = View.VISIBLE
         errorBinding.placeholderMessage.setCompoundDrawablesWithIntrinsicBounds(
             null,
-            AppCompatResources.getDrawable(this, R.drawable.ic_vector_nolink),
+            AppCompatResources.getDrawable(requireContext(), R.drawable.ic_vector_nolink),
             null,
             null
         )
@@ -275,7 +269,7 @@ class SearchActivity : AppCompatActivity() {
         errorBinding.renovate.visibility = View.GONE
         errorBinding.placeholderMessage.setCompoundDrawablesWithIntrinsicBounds(
             null,
-            AppCompatResources.getDrawable(this, R.drawable.ic_vector_nomusic),
+            AppCompatResources.getDrawable(requireContext(), R.drawable.ic_vector_nomusic),
             null,
             null
         )
@@ -289,7 +283,7 @@ class SearchActivity : AppCompatActivity() {
             is TracksState.Loading -> updateIncludeViewByProgressBar()
             is TracksState.Content -> updateIncludeViewByFoundTracks(state.tracks)
             is TracksState.History -> updateIncludeViewByHistory(state.tracks)
-            is TracksState.EmptyHistory -> updateIncludeViewByClear()
+            is TracksState.EmptyHistory, TracksState.Default -> updateIncludeViewByClear()
             is TracksState.Empty -> showNothingError()
             is TracksState.LinkError -> showLinkError()
             is TracksState.AnyTrack -> goToPlayerActivity(state.trackId)

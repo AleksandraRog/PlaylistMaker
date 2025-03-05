@@ -2,10 +2,10 @@ package com.example.playlistmaker.player.domain.interactors.impl
 
 import com.example.playlistmaker.common.domain.consumer.ConsumerData
 import com.example.playlistmaker.common.domain.consumer.ListenerConsumer
-import com.example.playlistmaker.player.domain.reposirory.PlayerRepository
-import com.example.playlistmaker.player.presentation.model.PlayerState
 import com.example.playlistmaker.player.domain.interactors.AudioPlayerInteractor
 import com.example.playlistmaker.player.domain.interactors.AudioPlayerInteractor.PlayerStateConsumer
+import com.example.playlistmaker.player.domain.reposirory.PlayerRepository
+import com.example.playlistmaker.player.presentation.model.PlayerState
 import org.koin.java.KoinJavaComponent.getKoin
 import java.util.concurrent.ExecutorService
 
@@ -28,17 +28,24 @@ class AudioPlayerInteractorImpl(
         }
     }
 
+    override fun release(consumer: PlayerStateConsumer) {
+        executor.execute {
+            consumer.consume(repository.releasePlayer())
+        }
+    }
+
     override fun prepare(
         url: String,
         prepareConsumer: PlayerStateConsumer,
         completionConsumer: PlayerStateConsumer
     ) {
         executor.execute {
+
             repository.preparePlayer(
                 url,
                 prepareListenerConsumer = object : ListenerConsumer<PlayerState> {
                     override fun consume(data: ConsumerData<PlayerState>) {
-                        prepareConsumer.consume(data)
+                       prepareConsumer.consume(data)
                     }
 
                 },

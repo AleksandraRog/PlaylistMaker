@@ -1,23 +1,21 @@
 package com.example.playlistmaker.main.ui
 
-import android.app.Activity
-import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.view.View
+import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.common.App
 import com.example.playlistmaker.common.ScreenSize
 import com.example.playlistmaker.databinding.ActivityMainBinding
-import com.example.playlistmaker.library.ui.LibraryActivity
 import com.example.playlistmaker.main.presentation.MainViewModel
-import com.example.playlistmaker.main.presentation.Screens
-import com.example.playlistmaker.search.ui.SearchActivity
 import com.example.playlistmaker.settings.presentation.DarkThemeViewModel
-import com.example.playlistmaker.settings.ui.SettingsActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
@@ -26,61 +24,75 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModel()
     private val darkThemeViewModel: DarkThemeViewModel by viewModel()
+    private var changeModeListener: Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         app = application as App
         ScreenSize.initSize(this)
-
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT))
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val paddingBottom =
+                if (ime.bottom > 0) {
+                    binding.bottomNavigationView.visibility = View.GONE
+                    binding.lineView.visibility = View.GONE
+                    ime.bottom
+                } else {
+                    binding.bottomNavigationView.visibility = View.VISIBLE
+                    binding.lineView.visibility = View.VISIBLE
+                    0
+                }
+
             view.setPadding(
                 systemBars.left, systemBars.top, systemBars.right,
-                systemBars.bottom
+                paddingBottom
             )
             insets
         }
 
-        viewModel.getScreenStateLiveData().observe(this) { screen ->
-            navigate(screen)
-        }
-
         darkThemeViewModel.getDarkThemeLiveData().observe(this) {
-            window.navigationBarColor = if (it) ContextCompat.getColor(
-                this@MainActivity,
-                R.color.black
-            ) else ContextCompat.getColor(
-                this@MainActivity,
-                R.color.YP_blue_light
-            )
+            window.decorView.systemUiVisibility = systemUiVisibility(it.first)
+
+            if (it.second != null) {
+                changeModeListener = it.first
+                app.switchTheme(it.first)
+                if (it.first) {
+                    setTheme(R.style.Base_Theme_PlaylistMaker_Dark)
+                } else {
+                    setTheme(R.style.Base_Theme_PlaylistMaker_Light)
+                }
+                changeModeListener = null
+            }
         }
 
-        binding.searchButton.setOnClickListener {
-            viewModel.navigateTo(Screens.SEARCH)
-        }
-        binding.libraryButton.setOnClickListener {
-            viewModel.navigateTo(Screens.LIBRARY)
-        }
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
+        val navController = navHostFragment.navController
+        val bottomNavigationView = binding.bottomNavigationView
 
-        binding.settingButton.setOnClickListener {
-            viewModel.navigateTo(Screens.SETTING)
-        }
-
+        bottomNavigationView.setupWithNavController(navController)
     }
 
-    private fun navigate(screens: Screens) {
-        val clazz: Class<out Activity> = when (screens) {
-            Screens.SETTING -> SettingsActivity::class.java
-            Screens.SEARCH -> SearchActivity::class.java
-            Screens.LIBRARY -> LibraryActivity::class.java
+    override fun recreate() {
+
+        if (changeModeListener == null) {
+            super.recreate()
         }
-        startActivity(Intent(this, clazz))
-        finish()
     }
 
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        viewModel.focusChange(hasFocus)
+    }
+
+    private fun systemUiVisibility(isLightBackground: Boolean): Int {
+        return if (isLightBackground) 0 else
+            (View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or
+                    View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR)
+    }
 }

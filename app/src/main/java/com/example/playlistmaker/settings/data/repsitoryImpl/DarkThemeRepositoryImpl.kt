@@ -1,11 +1,9 @@
 package com.example.playlistmaker.settings.data.repsitoryImpl
 
-import android.content.SharedPreferences
 import com.example.playlistmaker.common.data.SharedPreferencesClient
+import com.example.playlistmaker.common.domain.consumer.ConsumerData
 import com.example.playlistmaker.settings.data.dto.DarkThemeResponse
 import com.example.playlistmaker.settings.data.local.DarkThemeManager
-import com.example.playlistmaker.common.domain.consumer.ConsumerData
-import com.example.playlistmaker.common.domain.consumer.ListenerConsumer
 import com.example.playlistmaker.settings.domain.repository.DarkThemeRepository
 
 class DarkThemeRepositoryImpl(private val darkThemeManager: DarkThemeManager,  private val sharedPreferencesClient: SharedPreferencesClient,) :
@@ -21,14 +19,5 @@ class DarkThemeRepositoryImpl(private val darkThemeManager: DarkThemeManager,  p
 
     override fun saveDarkTheme(darkTheme: Boolean) {
         darkThemeManager.saveData(darkTheme)
-    }
-
-    override fun observeThemeChanges(lisenerConsumer: ListenerConsumer<Boolean>) {
-        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key == darkThemeManager.getDarkThemeKey()) {
-                lisenerConsumer.consume(getDarkTheme())
-            }
-        }
-        darkThemeManager.sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
     }
 }

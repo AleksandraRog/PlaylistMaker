@@ -11,4 +11,7 @@ interface PlayerRepository {
     fun pausePlayer() : ConsumerData<PlayerState>
 
     fun preparePlayer(url: String, prepareListenerConsumer: ListenerConsumer<PlayerState>, completionListenerConsumer: ListenerConsumer<PlayerState>)
+
+    fun releasePlayer() : ConsumerData<PlayerState>
+
 }

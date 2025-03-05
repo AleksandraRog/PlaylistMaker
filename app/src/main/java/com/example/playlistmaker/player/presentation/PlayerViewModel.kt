@@ -25,6 +25,7 @@ class PlayerViewModel(
     private var playStatusLiveData = MutableLiveData<PlayerPropertyState>()
 
     init {
+
         getTrackByIdUseCase.execute(trackId, consumer = object : Consumer<Track> {
             override fun consume(data: ConsumerData<Track>) {
                 playerPropertyState = PlayerPropertyState(data.result)
@@ -41,8 +42,10 @@ class PlayerViewModel(
     fun getPlayStatusLiveData(): LiveData<PlayerPropertyState> = playStatusLiveData
 
     override fun onCleared() {
+        releasePlayer()
         mainThreadHandler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
     }
+
     private fun preparePlayer(url: String) {
 
         audioPlayerInteractor.prepare(
@@ -51,7 +54,9 @@ class PlayerViewModel(
                 override fun consume(data: ConsumerData<PlayerState>) {
                     playStatusLiveData.postValue(
                         playerPropertyState.apply { playerState = data.result }
+
                     )
+
                 }
             },
             completionConsumer = object : AudioPlayerInteractor.PlayerStateConsumer {
@@ -62,6 +67,7 @@ class PlayerViewModel(
                             timer = 0L
                         }
                     )
+                    currentTrackTimeInMillis = 0L
                 }
             }
         )
@@ -103,7 +109,17 @@ class PlayerViewModel(
         }
     }
 
+    private fun releasePlayer() {
+        audioPlayerInteractor.release(consumer = object : AudioPlayerInteractor.PlayerStateConsumer {
+            override fun consume(data: ConsumerData<PlayerState>) {
+                playStatusLiveData.postValue(
+                    playerPropertyState.apply { playerState = data.result })
+            }
+        })
+    }
+
     private fun startTimer() {
+
         val startTime = System.currentTimeMillis()
         val currentTime = currentTrackTimeInMillis
         val timerRunnable = object : Runnable {

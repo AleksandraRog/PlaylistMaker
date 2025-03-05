@@ -37,4 +37,8 @@ class SharingsViewModel(
             }
         })
     }
+
+    fun restoreState() {
+        sharingLiveData.postValue(SharingObjects.DEFAULT)
+    }
 }
