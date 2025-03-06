@@ -56,4 +56,8 @@ class AudioPlayerInteractorImpl(
                 })
         }
     }
+
+    override fun currentPosition() : Long {
+        return  repository.currentPosition().result
+    }
 }

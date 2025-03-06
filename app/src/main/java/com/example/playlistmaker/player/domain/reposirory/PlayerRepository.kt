@@ -14,4 +14,5 @@ interface PlayerRepository {
 
     fun releasePlayer() : ConsumerData<PlayerState>
 
+    fun currentPosition() : ConsumerData<Long>
 }

@@ -16,5 +16,7 @@ interface AudioPlayerInteractor {
                 completionConsumer: PlayerStateConsumer
     )
 
+    fun currentPosition() : Long
+
     interface PlayerStateConsumer : Consumer<PlayerState>
 }

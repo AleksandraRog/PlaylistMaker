@@ -1,5 +1,6 @@
 package com.example.playlistmaker.player.data.repositoryImpl
 
+
 import android.media.MediaPlayer
 import com.example.playlistmaker.common.domain.consumer.ConsumerData
 import com.example.playlistmaker.common.domain.consumer.ListenerConsumer
@@ -35,5 +36,10 @@ class PlayerRepositoryImpl(private val mediaPlayer : MediaPlayer) : PlayerReposi
     override fun releasePlayer(): ConsumerData<PlayerState> {
         mediaPlayer.release()
         return ConsumerData(PlayerState.STATE_DEFAULT, 0)
+    }
+
+    override fun currentPosition(): ConsumerData<Long> {
+
+        return if (mediaPlayer.currentPosition in 1 until mediaPlayer.duration) ConsumerData( mediaPlayer.currentPosition.toLong(), 0) else ConsumerData( 0.toLong(), 0)
     }
 }

@@ -2,8 +2,6 @@ package com.example.playlistmaker.search.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -13,7 +11,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ProgressBar
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.view.isNotEmpty
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,6 +28,8 @@ import com.example.playlistmaker.databinding.HistoryViewGroupBinding
 import com.example.playlistmaker.search.domain.model.HistoryQueue
 import com.example.playlistmaker.search.presentation.SearchViewModel
 import com.example.playlistmaker.search.presentation.TracksState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.LinkedList
 
@@ -48,7 +50,6 @@ class SearchFragment : Fragment() {
     private var searchTextValue: String = EDIT_TEXT_DEF
     private val trackAdapter = TrackAdapter()
     private val historyTrackAdapter = TrackAdapter()
-    private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -137,7 +138,7 @@ class SearchFragment : Fragment() {
         inputEditText.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus && inputEditText.text.isEmpty()) {
                 viewModel.showHistory()
-            } else if (includeView.childCount > 0) {
+            } else if (this.includeView.isNotEmpty()) {
                 updateIncludeViewByClear()
             }
         }
@@ -200,14 +201,14 @@ class SearchFragment : Fragment() {
     }
 
     private fun clickDebounce(): Boolean {
+
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            val clickDebounceRunnable = Runnable {
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
                 isClickAllowed = true
             }
-            handler.removeCallbacks(clickDebounceRunnable)
-            handler.postDelayed(clickDebounceRunnable, CLICK_DEBOUNCE_DELAY)
         }
         return current
     }
