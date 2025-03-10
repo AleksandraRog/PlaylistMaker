@@ -4,14 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.common.domain.consumer.Consumer
-import com.example.playlistmaker.common.domain.consumer.ConsumerData
-import com.example.playlistmaker.common.domain.model.Track
 import com.example.playlistmaker.domain.usecases.GetTrackByIdUseCase
 import com.example.playlistmaker.player.domain.interactors.AudioPlayerInteractor
 import com.example.playlistmaker.player.presentation.model.PlayerState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class PlayerViewModel(
@@ -24,17 +22,17 @@ class PlayerViewModel(
     private var playStatusLiveData = MutableLiveData<PlayerPropertyState>()
     private var timerJob: Job? = null
     init {
-
-        getTrackByIdUseCase.execute(trackId, consumer = object : Consumer<Track> {
-            override fun consume(data: ConsumerData<Track>) {
-                playerPropertyState = PlayerPropertyState(data.result)
-                screenStateLiveData.postValue(
-                    TrackScreenState.Content(data.result)
-                )
-
-                preparePlayer(playerPropertyState.track.previewUrl)
-            }
-        })
+        viewModelScope.launch {
+            getTrackByIdUseCase.loadTrackFlow(trackId)
+                .collectLatest { pair ->
+                    playerPropertyState = PlayerPropertyState(pair.first)
+                    screenStateLiveData.postValue(
+                        TrackScreenState.Content(pair.first)
+                    )
+                    playStatusLiveData.postValue(playerPropertyState)
+                    preparePlayer(playerPropertyState.track.previewUrl)
+                }
+        }
     }
 
     fun getScreenStateLiveData(): LiveData<TrackScreenState> = screenStateLiveData
@@ -45,50 +43,53 @@ class PlayerViewModel(
     }
 
     private fun preparePlayer(url: String) {
+        viewModelScope.launch {
+           audioPlayerInteractor.prepareFlow(url)
+                .collect { playerState ->
 
-        audioPlayerInteractor.prepare(
-            url,
-            prepareConsumer = object : AudioPlayerInteractor.PlayerStateConsumer {
-                override fun consume(data: ConsumerData<PlayerState>) {
-                    playStatusLiveData.postValue(
-                        playerPropertyState.apply { playerState = data.result }
+                    if (playerState == PlayerState.STATE_PREPARED) {
 
-                    )
-
+                        playStatusLiveData.postValue(
+                            playerPropertyState.apply {
+                                this@PlayerViewModel.playerPropertyState.playerState =
+                                    playerState
+                                timer = 0L
+                            }
+                        )
+                    }
                 }
-            },
-            completionConsumer = object : AudioPlayerInteractor.PlayerStateConsumer {
-                override fun consume(data: ConsumerData<PlayerState>) {
-                    playStatusLiveData.postValue(
-                        playerPropertyState.apply {
-                            playerState = data.result
-                            timer = 0L
-                        }
-                    )
-                }
-            }
-        )
+        }
     }
 
     private fun startPlayer() {
+        viewModelScope.launch {
+            audioPlayerInteractor.playFlow()
+                .collect { playerState ->
 
-        audioPlayerInteractor.play(consumer = object : AudioPlayerInteractor.PlayerStateConsumer {
-            override fun consume(data: ConsumerData<PlayerState>) {
-                playStatusLiveData.postValue(
-                    playerPropertyState.apply { playerState = data.result })
-                startTimer()
-            }
-        })
+                    playStatusLiveData.postValue(
+                        playerPropertyState.apply {
+                            this@PlayerViewModel.playerPropertyState.playerState =
+                                playerState
+                        }
+                    )
+                    startTimer()
+                }
+        }
     }
 
     fun pausePlayer() {
 
-        audioPlayerInteractor.stop(consumer = object : AudioPlayerInteractor.PlayerStateConsumer {
-            override fun consume(data: ConsumerData<PlayerState>) {
-                playStatusLiveData.postValue(
-                    playerPropertyState.apply { playerState = data.result })
-            }
-        })
+        viewModelScope.launch {
+            audioPlayerInteractor.stopFlow()
+                .collect { playerState ->
+                    playStatusLiveData.postValue(
+                        playerPropertyState.apply {
+                            this@PlayerViewModel.playerPropertyState.playerState =
+                                playerState
+                        }
+                    )
+                }
+        }
     }
 
     fun playbackControl() {
@@ -107,12 +108,18 @@ class PlayerViewModel(
     }
 
     private fun releasePlayer() {
-        audioPlayerInteractor.release(consumer = object : AudioPlayerInteractor.PlayerStateConsumer {
-            override fun consume(data: ConsumerData<PlayerState>) {
-                playStatusLiveData.postValue(
-                    playerPropertyState.apply { playerState = data.result })
-            }
-        })
+
+        viewModelScope.launch {
+            audioPlayerInteractor.releaseFlow()
+                .collect { playerState ->
+                    playStatusLiveData.postValue(
+                        playerPropertyState.apply {
+                            this@PlayerViewModel.playerPropertyState.playerState =
+                                playerState
+                        }
+                    )
+                }
+        }
     }
 
     private fun startTimer() {

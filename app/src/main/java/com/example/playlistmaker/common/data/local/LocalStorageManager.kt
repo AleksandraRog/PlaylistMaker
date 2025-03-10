@@ -4,7 +4,9 @@ interface LocalStorageManager<T> {
     
     fun getData(): T
 
-    fun saveData(data: T)
+    suspend fun saveDataSuspend(data: T)
+
+    suspend fun getDataSuspend(): T
 }
 
 const val PLAYLISTMAKER_PREFERENCES = "PLAYLISTMAKER_PREFERENCES"

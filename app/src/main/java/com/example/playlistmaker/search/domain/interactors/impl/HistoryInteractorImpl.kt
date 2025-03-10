@@ -1,17 +1,17 @@
 package com.example.playlistmaker.search.domain.interactors.impl
 
+import com.example.playlistmaker.common.domain.model.Track
 import com.example.playlistmaker.search.domain.interactors.HistoryInteractor
 import com.example.playlistmaker.search.domain.reposirory.HistoryRepository
-import org.koin.java.KoinJavaComponent.getKoin
-import java.util.concurrent.ExecutorService
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import java.util.LinkedList
 
 class HistoryInteractorImpl(private val repository: HistoryRepository) : HistoryInteractor {
 
-    private val executor: ExecutorService by lazy { getKoin().get<ExecutorService>() }
-
-     override fun loadTracks(consumer: HistoryInteractor.HistoryTracksConsumer) {
-         executor.execute {
-            consumer.consume(repository.loadHistory())
+    override fun loadTracksFlow(): Flow<Pair<LinkedList<Track>, Int>> {
+        return repository.loadHistoryFlow().map { consData ->
+            Pair(consData.result, consData.code)
         }
     }
 }

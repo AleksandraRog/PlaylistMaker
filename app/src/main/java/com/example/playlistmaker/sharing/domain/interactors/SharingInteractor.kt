@@ -1,13 +1,12 @@
 package com.example.playlistmaker.sharing.domain.interactors
 
-import com.example.playlistmaker.common.domain.consumer.Consumer
 import com.example.playlistmaker.sharing.domain.model.EmailData
+import com.example.playlistmaker.sharing.presentation.SharingObjects
+import kotlinx.coroutines.flow.Flow
 
 interface SharingInteractor {
 
-    fun shareApp(consumer: Consumer<Any?>)
-    fun openTerms(consumer: Consumer<Any?>)
-    fun openSupport(consumer: Consumer<Any?>)
+    fun getIntentProperty(sharingObjects: SharingObjects): Flow<SharingObjects>
 
     var getShareAppLink: () -> String
     var getSupportEmailData: () -> EmailData

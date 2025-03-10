@@ -5,8 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.common.domain.consumer.Consumer
-import com.example.playlistmaker.common.domain.consumer.ConsumerData
 import com.example.playlistmaker.common.domain.model.Track
 import com.example.playlistmaker.search.domain.interactors.HistoryInteractor
 import com.example.playlistmaker.search.domain.interactors.TracksInteractor
@@ -45,16 +43,15 @@ class SearchViewModel(application: Application,
     }
 
     private fun loadHistory() {
-
-        historyInteractor.loadTracks(consumer = object : HistoryInteractor.HistoryTracksConsumer {
-            override fun consume(data: ConsumerData<LinkedList<Track>>) {
-                historyTracks = HistoryQueue(data.result)
-
-                val tracksState =
+        viewModelScope.launch {
+            historyInteractor.loadTracksFlow()
+                .collect { pair ->
+                    historyTracks = HistoryQueue(pair.first)
+                                    val tracksState =
                     if (historyTracks.size != 0) TracksState.History(historyTracks) else TracksState.EmptyHistory
                 stateLiveData.postValue(tracksState)
-            }
-        })
+                }
+        }
     }
 
     private fun searchRequest(newSearchText: String) {
@@ -84,16 +81,14 @@ class SearchViewModel(application: Application,
     }
 
     fun showTrack(track: Track) {
-
-        updateHistoryQueueUseCase.execute(
-            track,
-            historyTracks,
-            consumer = object : Consumer<Track> {
-                override fun consume(data: ConsumerData<Track>) {
-                    stateLiveData.postValue(TracksState.AnyTrack(data.result.trackId))
+        viewModelScope.launch {
+            updateHistoryQueueUseCase.executeFlow(
+                track,
+                historyTracks,)
+                .collect { tracksState ->
+                    stateLiveData.postValue(tracksState)
                 }
-            }
-        )
+        }
     }
 
     fun showFoundTracks(changedText: String) {
