@@ -5,29 +5,43 @@ import com.example.playlistmaker.common.domain.consumer.ConsumerData
 import com.example.playlistmaker.common.domain.model.Track
 import com.example.playlistmaker.search.data.local.HistoryTrackManager
 import com.example.playlistmaker.search.domain.reposirory.HistoryRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.mapNotNull
 import java.util.LinkedList
 
 class HistoryRepositoryImpl(private val historyManager: HistoryTrackManager) :
     HistoryRepository {
 
-    override fun registrationDiff(queue: LinkedList<Track>) {
-        historyManager.saveData(TrackMapper.mapToDto(queue))
+    private val _historyFlow = MutableStateFlow(ConsumerData(LinkedList<Track>()))
+    private val historyFlow: StateFlow<ConsumerData<LinkedList<Track>>> = _historyFlow.asStateFlow()
+
+    override fun registrationDiff(queue: LinkedList<Track>) : Flow<Boolean> = flow{
+
+        historyManager.saveDataSuspend(TrackMapper.mapToDto(queue))
+        _historyFlow.value = ConsumerData(TrackMapper.mapToDomainModel(historyManager.getData()))
+        emit(true)
     }
 
-    override fun loadHistory(): ConsumerData<LinkedList<Track>> {
 
-        return ConsumerData(TrackMapper.mapToDomainModel(historyManager.getData()))
-
+    override fun loadHistoryFlow(): Flow<ConsumerData<LinkedList<Track>>> = flow {
+        val consumerData = ConsumerData(TrackMapper.mapToDomainModel(historyManager.getDataSuspend()))
+        _historyFlow.value = consumerData
+        emit(consumerData)
     }
 
-    override fun getTrackById(trackId: Int): ConsumerData<Track> {
+     override fun getTrackByIdFlow(trackId: Int): Flow<ConsumerData<Track>> = flow {
 
-        val resalt = loadHistory().result.find { it.trackId == trackId }
+         val track = historyFlow
+            .mapNotNull { consumerData ->
+                consumerData.result.find { it.trackId == trackId }?.let { ConsumerData(it) }
+            }
+            .first()
 
-        return if (resalt== null) {
-            getTrackById(trackId)
-        } else {
-            ConsumerData(resalt)
-        }
+         emit(track)
     }
 }

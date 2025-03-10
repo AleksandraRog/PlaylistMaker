@@ -1,13 +1,15 @@
 package com.example.playlistmaker.sharing.domain.repsitory
 
-import com.example.playlistmaker.common.domain.consumer.ConsumerData
 import com.example.playlistmaker.sharing.domain.model.EmailData
+import kotlinx.coroutines.flow.Flow
 
 interface ExternalNavigator {
 
-    fun shareLink(link: String,): ConsumerData<Any?>
+    fun openLinkFlow(termsLink: String) : Flow<Any?>
 
-    fun openLink(link: String,): ConsumerData<Any?>
+    fun shareLinkFlow(shareAppLink: String) : Flow<Any?>
 
-    fun openEmail(emailData : EmailData,): ConsumerData<Any?>
+    fun openEmailFlow(supportEmailData: EmailData) : Flow<Any?>
+
+    fun defaultFlow() : Flow<Any?>
 }

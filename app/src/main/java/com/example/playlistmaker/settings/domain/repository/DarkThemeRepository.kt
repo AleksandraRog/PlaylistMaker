@@ -1,10 +1,15 @@
 package com.example.playlistmaker.settings.domain.repository
 
 import com.example.playlistmaker.common.domain.consumer.ConsumerData
+import kotlinx.coroutines.flow.Flow
 
 interface DarkThemeRepository {
 
-    fun getDarkTheme() : ConsumerData<Boolean>
+    suspend fun getDarkTheme() : ConsumerData<Boolean>
 
-    fun saveDarkTheme(darkTheme: Boolean)
+    fun getDarkThemeFlow(): Flow<ConsumerData<Boolean>>
+
+    suspend fun saveDarkTheme(darkTheme: Boolean)
+
+
 }

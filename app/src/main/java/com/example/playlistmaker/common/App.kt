@@ -12,12 +12,18 @@ import com.example.playlistmaker.common.di.useCaseModule
 import com.example.playlistmaker.common.di.viewModelModule
 import com.example.playlistmaker.common.domain.consumer.ConsumerData
 import com.example.playlistmaker.settings.domain.interactors.DarkThemeInteractor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
 
 class App() : Application() {
+
+    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onCreate() {
         super.onCreate()
@@ -27,8 +33,13 @@ class App() : Application() {
             modules(experimetnKoinModule, dataModule, interactorModule, repositoryModule,
                 useCaseModule, viewModelModule)
         }
+
         val darkThemeInteractor = getKoin().get<DarkThemeInteractor>()
-        switchTheme(getDarkTheme(darkThemeInteractor.getThemeSync()))
+
+        applicationScope.launch {
+            val darkTheme = darkThemeInteractor.getThemeSync()
+            switchTheme(getDarkTheme(darkTheme))
+        }
     }
 
     fun getDarkTheme(data: ConsumerData<Boolean>): Boolean {

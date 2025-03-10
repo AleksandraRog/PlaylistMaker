@@ -1,12 +1,9 @@
 package com.example.playlistmaker.search.domain.interactors
 
-import com.example.playlistmaker.common.domain.consumer.Consumer
 import com.example.playlistmaker.common.domain.model.Track
+import kotlinx.coroutines.flow.Flow
 import java.util.LinkedList
 
 interface HistoryInteractor {
-
-    fun loadTracks(consumer: HistoryTracksConsumer)
-
-    interface HistoryTracksConsumer : Consumer<LinkedList<Track>>
+    fun loadTracksFlow(): Flow<Pair<LinkedList<Track>, Int>>
 }

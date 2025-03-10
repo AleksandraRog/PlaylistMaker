@@ -1,20 +1,17 @@
 package com.example.playlistmaker.player.domain.interactors
 
-import com.example.playlistmaker.common.domain.consumer.Consumer
 import com.example.playlistmaker.player.presentation.model.PlayerState
+import kotlinx.coroutines.flow.Flow
 
 interface AudioPlayerInteractor {
 
-    fun play(consumer: PlayerStateConsumer)
+    fun currentPosition() : Long
 
-    fun stop(consumer: PlayerStateConsumer)
+    fun prepareFlow(url: String,) : Flow<PlayerState>
 
-    fun release(consumer: PlayerStateConsumer)
+    fun playFlow() : Flow<PlayerState>
 
-    fun prepare(url: String,
-                prepareConsumer: PlayerStateConsumer,
-                completionConsumer: PlayerStateConsumer
-    )
+    fun stopFlow() : Flow<PlayerState>
 
-    interface PlayerStateConsumer : Consumer<PlayerState>
+    fun releaseFlow() : Flow<PlayerState>
 }
