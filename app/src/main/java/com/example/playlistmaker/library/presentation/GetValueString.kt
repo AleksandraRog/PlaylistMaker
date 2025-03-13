@@ -4,6 +4,4 @@ interface GetValueString {
 
     val playlists: String
     val favoriteTracks: String
-
-
 }

@@ -1,16 +1,15 @@
 package com.example.playlistmaker.settings.domain.interactors
 
-import com.example.playlistmaker.common.domain.consumer.Consumer
 import com.example.playlistmaker.common.domain.consumer.ConsumerData
-import com.example.playlistmaker.settings.presentation.ThreadFlag
+import kotlinx.coroutines.flow.Flow
 
 interface DarkThemeInteractor {
 
-    fun getDarkTheme(threadFlag: ThreadFlag, consumer: DarkThemeConsumer, )
+    fun getDarkThemeFlow() : Flow<ConsumerData<Boolean>>
 
-    fun saveDarkTheme(darkTheme: Boolean)
+    suspend fun saveDarkTheme(darkTheme: Boolean)
 
-    fun  getThemeSync() : ConsumerData<Boolean>
+    suspend fun getThemeSync() : ConsumerData<Boolean>
 
-    interface DarkThemeConsumer : Consumer<Boolean>
+
 }

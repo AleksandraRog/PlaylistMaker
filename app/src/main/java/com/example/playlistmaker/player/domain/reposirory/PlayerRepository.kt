@@ -1,17 +1,18 @@
 package com.example.playlistmaker.player.domain.reposirory
 
 import com.example.playlistmaker.common.domain.consumer.ConsumerData
-import com.example.playlistmaker.common.domain.consumer.ListenerConsumer
 import com.example.playlistmaker.player.presentation.model.PlayerState
+import kotlinx.coroutines.flow.Flow
 
 interface PlayerRepository {
 
-    fun playPlayer() : ConsumerData<PlayerState>
+    fun currentPosition() : ConsumerData<Long>
 
-    fun pausePlayer() : ConsumerData<PlayerState>
+    fun preparePlayerFlow(url: String,) : Flow<PlayerState>
 
-    fun preparePlayer(url: String, prepareListenerConsumer: ListenerConsumer<PlayerState>, completionListenerConsumer: ListenerConsumer<PlayerState>)
+    fun playPlayerFlow() : Flow<PlayerState>
 
-    fun releasePlayer() : ConsumerData<PlayerState>
+    fun pausePlayerFlow() : Flow<PlayerState>
 
+    fun releasePlayerFlow() : Flow<PlayerState>
 }

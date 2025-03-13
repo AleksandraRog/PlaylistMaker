@@ -7,17 +7,21 @@ import com.example.playlistmaker.common.domain.model.Track
 import com.example.playlistmaker.search.data.dto.TracksSearchRequest
 import com.example.playlistmaker.search.data.dto.TracksSearchResponse
 import com.example.playlistmaker.search.domain.reposirory.ApiRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class ApiRepositoryImpl(private val networkClient: NetworkClient) : ApiRepository {
 
-    override fun searchTracks(expression: String): ConsumerData<List<Track>> {
+    override fun searchTracksFlow(expression: String): Flow<ConsumerData<List<Track>>> = flow {
 
-        val tracksSearchResponse = networkClient.doRequest(TracksSearchRequest(expression))
+        val tracksSearchResponse = networkClient.doRequestSuspend(TracksSearchRequest(expression))
         var resultCode = tracksSearchResponse.resultCode
-        val result = if (tracksSearchResponse is TracksSearchResponse) TrackMapper.mapToDomainModel(tracksSearchResponse.results) else emptyList()
-        if (result.isEmpty() && resultCode == 200 ) {
+        val result = if (tracksSearchResponse is TracksSearchResponse) TrackMapper.mapToDomainModel(
+            tracksSearchResponse.results
+        ) else emptyList()
+        if (result.isEmpty() && resultCode == 200) {
             resultCode = 0
         }
-        return ConsumerData(result, resultCode)
+        emit(ConsumerData(result, resultCode))
     }
 }

@@ -3,9 +3,9 @@ package com.example.playlistmaker.sharing.presentation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.playlistmaker.common.domain.consumer.Consumer
-import com.example.playlistmaker.common.domain.consumer.ConsumerData
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.sharing.domain.interactors.SharingInteractor
+import kotlinx.coroutines.launch
 
 class SharingsViewModel(
     private val sharingInteractor: SharingInteractor,
@@ -15,30 +15,27 @@ class SharingsViewModel(
     fun getSharingObjectLiveData(): LiveData<SharingObjects> = sharingLiveData
 
     fun shareApp() {
-        sharingInteractor.shareApp(consumer = object : Consumer<Any?>{
-            override fun consume(data: ConsumerData<Any?>) {
-                sharingLiveData.postValue(SharingObjects.SHARE_APP.apply { intent=data.result})
-            }
-        })
+        getIntentProperty(SharingObjects.SHARE_APP)
     }
 
     fun openTerms() {
-        sharingInteractor.openTerms(consumer = object : Consumer<Any?>{
-            override fun consume(data: ConsumerData<Any?>) {
-                sharingLiveData.postValue(SharingObjects.TERMS.apply { intent=data.result})
-            }
-        })
+        getIntentProperty(SharingObjects.TERMS)
     }
 
     fun openSupport() {
-        sharingInteractor.openSupport(consumer = object : Consumer<Any?>{
-            override fun consume(data: ConsumerData<Any?>) {
-                sharingLiveData.postValue(SharingObjects.SUPPORT.apply { intent=data.result})
-            }
-        })
+        getIntentProperty(SharingObjects.SUPPORT)
     }
 
     fun restoreState() {
         sharingLiveData.postValue(SharingObjects.DEFAULT)
+    }
+
+    private fun getIntentProperty(sharingObjects: SharingObjects) {
+        viewModelScope.launch {
+            sharingInteractor.getIntentProperty(sharingObjects)
+                .collect{ sharingObj ->
+                    sharingLiveData.postValue(sharingObj)
+                }
+        }
     }
 }

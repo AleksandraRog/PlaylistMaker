@@ -25,7 +25,7 @@ val viewModelModule = module {
     viewModel {params ->
         val appLink: String = androidContext().getString(R.string.link_course)
         val termsLink: String = androidContext().getString(R.string.link_arrow)
-        val emailData: EmailData = EmailData(androidContext().getString(R.string.support_email),
+        val emailData = EmailData(androidContext().getString(R.string.support_email),
             androidContext().getString(R.string.theme_support_message),
             androidContext().getString(R.string.text_support_message))
 

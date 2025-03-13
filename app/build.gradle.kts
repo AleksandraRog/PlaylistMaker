@@ -70,5 +70,5 @@ dependencies {
     implementation(libs.moxy.androidx)
     annotationProcessor(libs.moxy.compiler)
     implementation(libs.androidx.appcompat.v161)
-
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.1")
 }
