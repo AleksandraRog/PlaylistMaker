@@ -12,7 +12,7 @@ class DarkThemeClient(private val darkThemeManager: DarkThemeManager) : SharedPr
 
         return withContext(Dispatchers.IO) {
             try {
-                val resp = darkThemeManager.getData()
+                val resp = darkThemeManager.getDataSuspend()
                 if (resp == null) Response().apply { resultCode = -1 }
                 else DarkThemeResponse(resp)
             } catch (e: Throwable) {

@@ -1,8 +1,8 @@
-package com.example.playlistmaker.common.domain.model
+package com.example.playlistmaker.common.data.local
 
 import java.util.Date
 
-data class Track(
+data class TrackPreferencesDto (
     val trackName: String,
     val artistName: String,
     val artworkUrl100: String,
@@ -12,6 +12,5 @@ data class Track(
     val primaryGenreName: String,
     val country: String,
     val trackId: Int,
-    var isFavorite: Boolean = false,
-    val trackTime: TrackTimePeriod?
-)
+    val isFavorite: Boolean,
+    val trackTimeMillis: Long)

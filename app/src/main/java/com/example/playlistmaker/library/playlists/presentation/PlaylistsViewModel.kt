@@ -1,14 +1,14 @@
-package com.example.playlistmaker.library.presentation
+package com.example.playlistmaker.library.playlists.presentation
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class FavoriteTracksViewModel : ViewModel() {
+class PlaylistsViewModel : ViewModel() {
 
     private val stateLiveData = MutableLiveData<Boolean>()
 
-    init{
+    init {
         stateLiveData.value = false
     }
 

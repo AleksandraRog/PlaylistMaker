@@ -9,30 +9,33 @@
         android:id="@+id/searchFragment"
         android:name="com.example.playlistmaker.search.ui.SearchFragment"
         android:label="activity_search"
-        tools:layout="@layout/activity_search" >
+        tools:layout="@layout/activity_search">
         <action
             android:id="@+id/action_searchFragment_to_playerActivity"
-            app:destination="@id/navigation" />
+            app:destination="@id/playerActivity" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.playlistmaker.settings.ui.SettingsFragment"
         android:label="activity_settings"
-        tools:layout="@layout/activity_settings" >
-        <action
-            android:id="@+id/action_settingsFragment_to_libraryFragment"
-            app:destination="@id/libraryFragment" />
-    </fragment>
+        tools:layout="@layout/activity_settings" />
     <fragment
         android:id="@+id/libraryFragment"
         android:name="com.example.playlistmaker.library.ui.LibraryFragment"
         android:label="activity_library"
-        tools:layout="@layout/activity_library" />
-    <navigation android:id="@+id/navigation"
-        app:startDestination="@id/playerActivity">
-        <activity
-            android:id="@+id/playerActivity"
-            android:name="com.example.playlistmaker.player.ui.PlayerActivity"
-            android:label="PlayerActivity" />
-    </navigation>
+        tools:layout="@layout/activity_library">
+        <action
+            android:id="@+id/action_favoriteTracksFragment_to_playerActivity"
+            app:destination="@id/playerActivity" />
+    </fragment>
+    <fragment
+        android:id="@+id/favoriteTracksFragment"
+        android:name="com.example.playlistmaker.library.favorite_tracks.ui.FavoriteTracksFragment"
+        android:label="fragment_favorite_tracks"
+        tools:layout="@layout/fragment_favorite_tracks">
+    </fragment>
+    <activity
+        android:id="@+id/playerActivity"
+        android:name="com.example.playlistmaker.player.ui.PlayerActivity"
+        android:label="PlayerActivity" />
 </navigation>

@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.domain.interactors.impl
 
+import android.util.Log
 import com.example.playlistmaker.common.domain.model.Track
 import com.example.playlistmaker.search.domain.interactors.HistoryInteractor
 import com.example.playlistmaker.search.domain.reposirory.HistoryRepository

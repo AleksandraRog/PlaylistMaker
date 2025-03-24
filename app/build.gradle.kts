@@ -1,11 +1,13 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.google.devtools.ksp") version "2.0.21-1.0.26"
+
 }
 
 android {
     namespace = "com.example.playlistmaker"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.playlistmaker"
@@ -35,8 +37,13 @@ android {
     }
 
     buildFeatures {
+        buildConfig = true
         viewBinding = true
     }
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 dependencies {
@@ -45,8 +52,9 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.room.runtime.android)
+    implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
@@ -60,15 +68,14 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.glide)
-    annotationProcessor(libs.compiler)
+    ksp(libs.glide.compiler)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation (libs.koin.android)
-    implementation (libs.koin.android.compat)
     implementation(libs.moxy)
     implementation(libs.moxy.android)
     implementation(libs.moxy.androidx)
     annotationProcessor(libs.moxy.compiler)
     implementation(libs.androidx.appcompat.v161)
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.1")
+    implementation(libs.kotlinx.coroutines.android)
 }

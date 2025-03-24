@@ -1,4 +1,4 @@
-package com.example.playlistmaker.search.ui
+package com.example.playlistmaker.common.ui
 
 import android.graphics.Paint
 import android.text.TextUtils
@@ -8,9 +8,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.common.ScreenSize
-import com.example.playlistmaker.databinding.TrackRowViewBinding
 import com.example.playlistmaker.common.domain.model.Track
 import com.example.playlistmaker.common.presentation.mapper.SizeFormatter
+import com.example.playlistmaker.databinding.TrackRowViewBinding
 
 class TrackViewHolder(private val binding: TrackRowViewBinding) : RecyclerView.ViewHolder(
     binding.root) {

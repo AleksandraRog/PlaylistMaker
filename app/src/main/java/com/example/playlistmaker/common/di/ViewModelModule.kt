@@ -1,9 +1,11 @@
 package com.example.playlistmaker.common.di
 
+import android.os.Bundle
 import com.example.playlistmaker.R
-import com.example.playlistmaker.library.presentation.FavoriteTracksViewModel
+import com.example.playlistmaker.library.favorite_tracks.domain.interactors.FavoriteTracksInteractor
+import com.example.playlistmaker.library.favorite_tracks.presentation.FavoriteTracksViewModel
 import com.example.playlistmaker.library.presentation.LibraryViewModel
-import com.example.playlistmaker.library.presentation.PlaylistsViewModel
+import com.example.playlistmaker.library.playlists.presentation.PlaylistsViewModel
 import com.example.playlistmaker.main.presentation.MainViewModel
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.search.presentation.SearchViewModel
@@ -42,8 +44,8 @@ val viewModelModule = module {
         SearchViewModel( androidApplication(),get(),get(),get(),)
     }
 
-    viewModel {(trackId: Int) ->
-        PlayerViewModel(trackId, get(),get())
+    viewModel {(trackId: Bundle) ->
+        PlayerViewModel(trackId, get(),get(),)
     }
 
     viewModel {
@@ -55,8 +57,9 @@ val viewModelModule = module {
     }
 
     viewModel {
-        FavoriteTracksViewModel()
+        FavoriteTracksViewModel(get<FavoriteTracksInteractor>())
     }
+
     viewModel {
         PlaylistsViewModel()
     }

@@ -1,4 +1,5 @@
 package com.example.playlistmaker.search.domain.model
+
 import com.example.playlistmaker.common.domain.model.Track
 import com.example.playlistmaker.search.domain.usecase.SaveHistoryUseCase
 import org.koin.core.component.KoinComponent

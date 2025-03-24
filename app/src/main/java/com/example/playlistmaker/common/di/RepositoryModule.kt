@@ -1,5 +1,7 @@
 package com.example.playlistmaker.common.di
 
+import com.example.playlistmaker.common.data.repositoryImpl.DbRepositoryImpl
+import com.example.playlistmaker.common.domain.repsitory.DbRepository
 import com.example.playlistmaker.player.data.repositoryImpl.PlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.reposirory.PlayerRepository
 import com.example.playlistmaker.search.data.repositoryImpl.ApiRepositoryImpl
@@ -33,4 +35,9 @@ val repositoryModule = module {
     single<ExternalNavigator> {
         ExternalNavigatorImpl()
     }
+
+    single<DbRepository> {
+        DbRepositoryImpl(get(),)
+    }
+
 }

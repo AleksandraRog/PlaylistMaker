@@ -1,11 +1,13 @@
 package com.example.playlistmaker.player.presentation
 
+import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.domain.usecases.GetTrackByIdUseCase
 import com.example.playlistmaker.player.domain.interactors.AudioPlayerInteractor
+import com.example.playlistmaker.player.domain.interactors.TrackInteractor
+import com.example.playlistmaker.player.presentation.model.PlayerPropertyState
 import com.example.playlistmaker.player.presentation.model.PlayerState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -13,8 +15,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class PlayerViewModel(
-    trackId: Int, getTrackByIdUseCase: GetTrackByIdUseCase,
+    trackId: Bundle,
     private val audioPlayerInteractor: AudioPlayerInteractor,
+    private val trackInteractor: TrackInteractor,
 ) : ViewModel() {
 
     private lateinit var playerPropertyState: PlayerPropertyState
@@ -22,8 +25,9 @@ class PlayerViewModel(
     private var playStatusLiveData = MutableLiveData<PlayerPropertyState>()
     private var timerJob: Job? = null
     init {
+        screenStateLiveData.value = TrackScreenState.Loading
         viewModelScope.launch {
-            getTrackByIdUseCase.loadTrackFlow(trackId)
+            trackInteractor.loadTrackFlow(trackId)
                 .collectLatest { pair ->
                     playerPropertyState = PlayerPropertyState(pair.first)
                     screenStateLiveData.postValue(
@@ -130,6 +134,20 @@ class PlayerViewModel(
                     .postValue(playerPropertyState.apply { timer = audioPlayerInteractor.currentPosition()
                     })
             }
+        }
+    }
+
+    fun favoriteControl(isChecked: Boolean) {
+        viewModelScope.launch {
+            trackInteractor.favoriteControl(this@PlayerViewModel.playerPropertyState.track, isChecked)
+                .collect { favoriteState ->
+                    playStatusLiveData.postValue(
+                        playerPropertyState.apply {
+                            this@PlayerViewModel.playerPropertyState.isFavorite =
+                                favoriteState
+                        }
+                    )
+                }
         }
     }
 }

@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.res.Configuration
 import android.content.res.Resources
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.BuildConfig
 import com.example.playlistmaker.common.di.dataModule
 import com.example.playlistmaker.common.di.experimetnKoinModule
 import com.example.playlistmaker.common.di.interactorModule
@@ -18,7 +19,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
 
 
 class App() : Application() {
@@ -30,6 +33,9 @@ class App() : Application() {
 
         startKoin {
             androidContext(this@App)
+            if (BuildConfig.DEBUG) {
+                androidLogger(Level.DEBUG) // Включаем логирование только в debug
+            }
             modules(experimetnKoinModule, dataModule, interactorModule, repositoryModule,
                 useCaseModule, viewModelModule)
         }

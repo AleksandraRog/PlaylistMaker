@@ -2,8 +2,10 @@ package com.example.playlistmaker.common.di
 
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
+import androidx.room.Room
 import com.example.playlistmaker.common.data.NetworkClient
 import com.example.playlistmaker.common.data.SharedPreferencesClient
+import com.example.playlistmaker.common.data.db.AppDatabase
 import com.example.playlistmaker.common.data.local.CustomDateTypeAdapter
 import com.example.playlistmaker.common.data.local.CustomTimeTypeAdapter
 import com.example.playlistmaker.common.data.local.PLAYLISTMAKER_PREFERENCES
@@ -68,5 +70,14 @@ val dataModule = module {
 
     single<NetworkClient> {
         RetrofitNetworkClient(get(), get())
+    }
+
+    single {
+        val androidContext = androidContext()
+        val appDatabase = AppDatabase::class.java
+        val db = Room.databaseBuilder(androidContext,
+            appDatabase, "database.db")
+            .build()
+        db
     }
 }
