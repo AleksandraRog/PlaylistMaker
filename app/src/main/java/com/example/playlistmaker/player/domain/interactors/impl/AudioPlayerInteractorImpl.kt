@@ -1,13 +1,13 @@
 package com.example.playlistmaker.player.domain.interactors.impl
 
+import com.example.playlistmaker.common.domain.repsitory.DbRepository
 import com.example.playlistmaker.player.domain.interactors.AudioPlayerInteractor
 import com.example.playlistmaker.player.domain.reposirory.PlayerRepository
 import com.example.playlistmaker.player.presentation.model.PlayerState
 import kotlinx.coroutines.flow.Flow
 
 class AudioPlayerInteractorImpl(
-    private val repository: PlayerRepository
-): AudioPlayerInteractor {
+    private val repository: PlayerRepository,): AudioPlayerInteractor {
 
     override fun prepareFlow(url: String): Flow<PlayerState> {
         return repository.preparePlayerFlow(url)

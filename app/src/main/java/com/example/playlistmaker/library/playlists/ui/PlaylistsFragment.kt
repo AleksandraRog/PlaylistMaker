@@ -1,4 +1,4 @@
-package com.example.playlistmaker.library.ui
+package com.example.playlistmaker.library.playlists.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
-import com.example.playlistmaker.library.presentation.PlaylistsViewModel
+import com.example.playlistmaker.library.playlists.presentation.PlaylistsViewModel
 
 class PlaylistsFragment : Fragment() {
 

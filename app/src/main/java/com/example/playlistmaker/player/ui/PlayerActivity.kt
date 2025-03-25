@@ -17,11 +17,10 @@ import com.example.playlistmaker.common.domain.model.TrackTimePeriod
 import com.example.playlistmaker.common.presentation.mapper.SizeFormatter
 import com.example.playlistmaker.common.ui.CustomCircularProgressIndicator
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
-import com.example.playlistmaker.player.presentation.PlayerPropertyState
+import com.example.playlistmaker.player.presentation.model.PlayerPropertyState
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.player.presentation.TrackScreenState
 import com.example.playlistmaker.player.presentation.model.PlayerState
-import com.example.playlistmaker.search.ui.SearchFragment
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
@@ -33,6 +32,7 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var viewModel: PlayerViewModel
     private lateinit var progressBar: CustomCircularProgressIndicator
     var progressBarId: Int? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -40,12 +40,12 @@ class PlayerActivity : AppCompatActivity() {
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val trackId = intent?.extras?.getInt(SearchFragment.TRACK_EXTRA, -1) ?: -1
-
-        if (trackId == -1) { onBackPressedDispatcher.onBackPressed()}
-
-        viewModel = getViewModel{ parametersOf (trackId) }
-
+        val trackIdBundle = intent?.extras
+        if (trackIdBundle != null) {
+            viewModel = getViewModel{ parametersOf (trackIdBundle) }
+        } else {
+            onBackPressedDispatcher.onBackPressed()
+        }
 
         setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -87,8 +87,8 @@ class PlayerActivity : AppCompatActivity() {
             finish()
         }
 
-        binding.likeButton.setOnCheckedChangeListener { _, isChecked ->
-
+        binding.likeButton.setOnClickListener {
+           viewModel.favoriteControl(binding.likeButton.isChecked)
         }
 
         binding.addButton.setOnClickListener {
@@ -147,6 +147,7 @@ class PlayerActivity : AppCompatActivity() {
         binding.primaryGenreName.text = track.primaryGenreName
         binding.country.text = track.country
         binding.currentTrackTime.text = TrackTimePeriod.fromMillis(0L).toString()
+        binding.likeButton.isChecked = track.isFavorite
     }
 
     private fun changeContentVisibility(loading: Boolean) {

@@ -22,11 +22,10 @@ class HistoryRepositoryImpl(private val historyManager: HistoryTrackManager) :
 
     override fun registrationDiff(queue: LinkedList<Track>) : Flow<Boolean> = flow{
 
-        historyManager.saveDataSuspend(TrackMapper.mapToDto(queue))
-        _historyFlow.value = ConsumerData(TrackMapper.mapToDomainModel(historyManager.getData()))
-        emit(true)
+        val reg = historyManager.saveDataSuspend(TrackMapper.mapToPreferencesDto(queue))
+        _historyFlow.value = ConsumerData(TrackMapper.mapToDomainModel(historyManager.getDataSuspend()))
+        emit(reg)
     }
-
 
     override fun loadHistoryFlow(): Flow<ConsumerData<LinkedList<Track>>> = flow {
         val consumerData = ConsumerData(TrackMapper.mapToDomainModel(historyManager.getDataSuspend()))
@@ -41,7 +40,6 @@ class HistoryRepositoryImpl(private val historyManager: HistoryTrackManager) :
                 consumerData.result.find { it.trackId == trackId }?.let { ConsumerData(it) }
             }
             .first()
-
          emit(track)
     }
 }

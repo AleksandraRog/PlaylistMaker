@@ -6,6 +6,8 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.common.domain.model.Track
+import com.example.playlistmaker.common.presentation.TracksState
+import com.example.playlistmaker.common.presentation.UiState
 import com.example.playlistmaker.search.domain.interactors.HistoryInteractor
 import com.example.playlistmaker.search.domain.interactors.TracksInteractor
 import com.example.playlistmaker.search.domain.model.HistoryQueue
@@ -20,18 +22,18 @@ class SearchViewModel(application: Application,
     private val tracksInteractor: TracksInteractor,
     private val updateHistoryQueueUseCase: UpdateHistoryQueueUseCase
 ) : AndroidViewModel(application) {
-    private val stateLiveData = MutableLiveData<TracksState>()
-    private val previousStateLiveData = MutableLiveData<TracksState>()
+    private val stateLiveData = MutableLiveData<UiState>()
+    private val previousStateLiveData = MutableLiveData<UiState>()
     private var searchJob: Job? = null
 
     init {
-        stateLiveData.value = TracksState.Default
+        stateLiveData.value = UiState.Default
     }
 
     val tracks = ArrayList<Track>()
     var historyTracks = HistoryQueue(LinkedList<Track>())
 
-    val observeState = MediatorLiveData<TracksState>().apply {
+    val observeState = MediatorLiveData<UiState>().apply {
         addSource(stateLiveData) { newValue ->
             previousStateLiveData.value = this.value
             this.value = newValue
@@ -70,14 +72,14 @@ class SearchViewModel(application: Application,
         tracks.clear()
         if (errorCode == 200 && foundTracks.isNotEmpty()) {
             tracks.addAll(foundTracks)
-            stateLiveData.postValue(TracksState.Content(tracks))
+            stateLiveData.postValue(UiState.Content(tracks))
         } else {
             showMessage(errorCode)
         }
     }
 
     private fun showMessage(responseCode: Int) {
-        stateLiveData.postValue(if (responseCode == 0) TracksState.Empty else TracksState.LinkError)
+        stateLiveData.postValue(if (responseCode == 0) UiState.Empty else TracksState.LinkError)
     }
 
     fun showTrack(track: Track) {
@@ -92,12 +94,12 @@ class SearchViewModel(application: Application,
     }
 
     fun showFoundTracks(changedText: String) {
-        stateLiveData.postValue(TracksState.Loading)
+        stateLiveData.postValue(UiState.Loading)
         searchDebounce(changedText)
     }
 
     fun showHistory() {
-        stateLiveData.postValue(TracksState.Loading)
+        stateLiveData.postValue(UiState.Loading)
         loadHistory()
     }
 

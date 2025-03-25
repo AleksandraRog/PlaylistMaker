@@ -9,64 +9,48 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.ProgressBar
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isNotEmpty
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.common.ScreenSize
-import com.example.playlistmaker.common.domain.model.Track
-import com.example.playlistmaker.common.presentation.mapper.SizeFormatter
-import com.example.playlistmaker.common.ui.CustomCircularProgressIndicator
+import com.example.playlistmaker.common.domain.model.ExtraActionBundleKey
+import com.example.playlistmaker.common.presentation.TracksState
+import com.example.playlistmaker.common.presentation.UiState
+import com.example.playlistmaker.common.ui.IncludeFragment
+import com.example.playlistmaker.common.ui.TrackAdapter
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.databinding.ErrorViewGroupBinding
 import com.example.playlistmaker.databinding.HistoryViewGroupBinding
 import com.example.playlistmaker.search.domain.model.HistoryQueue
 import com.example.playlistmaker.search.presentation.SearchViewModel
-import com.example.playlistmaker.search.presentation.TracksState
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.LinkedList
 
-class SearchFragment : Fragment() {
+class SearchFragment() : IncludeFragment<ActivitySearchBinding>() {
 
-    private lateinit var includeView: ViewGroup
+
     private lateinit var inputEditText: EditText
-    private lateinit var recyclerView: RecyclerView
     private lateinit var historyRecyclerView: RecyclerView
     private lateinit var simpleTextWatcher: TextWatcher
-    private lateinit var binding: ActivitySearchBinding
     private lateinit var errorBinding: ErrorViewGroupBinding
     private lateinit var historyBinding: HistoryViewGroupBinding
     private lateinit var historyLinearLayoutManager: LinearLayoutManager
 
     private val viewModel: SearchViewModel by viewModel()
-    private val progressBar: ProgressBar by lazy { CustomCircularProgressIndicator(requireContext()) }
     private var searchTextValue: String = EDIT_TEXT_DEF
-    private val trackAdapter = TrackAdapter()
     private val historyTrackAdapter = TrackAdapter()
-    private var isClickAllowed = true
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        ScreenSize.initSizeTrackViewHolder(requireContext())
-   }
+    override val navigateIdAction: Int = R.id.action_searchFragment_to_playerActivity
+    override val extraActionBundleKey: ExtraActionBundleKey = ExtraActionBundleKey.TRACK_EXTRA_HISTORY
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-
+    override fun createBinding(
+        increateBindingflater: LayoutInflater,
+        container: ViewGroup?
+    ): ActivitySearchBinding {
         errorBinding = ErrorViewGroupBinding.inflate(layoutInflater)
         historyBinding = HistoryViewGroupBinding.inflate(layoutInflater)
-        binding = ActivitySearchBinding.inflate(inflater, container, false)
-
-        return binding.root
+        return ActivitySearchBinding.inflate(increateBindingflater, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -85,7 +69,7 @@ class SearchFragment : Fragment() {
             if(it is TracksState.History){
                 inputEditText.requestFocus()
             }
-            render(it)
+            showContentRender(it)
         }
 
         binding.clearIcon.setOnClickListener {
@@ -118,7 +102,7 @@ class SearchFragment : Fragment() {
                         viewModel.showHistory()
 
                     } else {
-                        if (includeView.childCount > 0) {
+                        if (includeView.isNotEmpty()) {
                             updateIncludeViewByClear()
                         }
 
@@ -170,47 +154,24 @@ class SearchFragment : Fragment() {
 
     private fun initListTrackView() {
         inputEditText = binding.inputEditText
-        includeView = requireActivity().findViewById(R.id.includeView)
     }
 
-    private fun goToPlayerActivity(trackId: Int) {
-
-        val bundleTrackId = Bundle().apply {
-           putInt(TRACK_EXTRA, trackId)
-        }
-        findNavController().navigate(R.id.action_searchFragment_to_playerActivity, bundleTrackId)
+    override fun goToPlayerActivity(trackId: Int) {
+        super.goToPlayerActivity(trackId)
         viewModel.restoreState()
     }
 
-    private fun initListFoundTracksView() {
+    override fun renderUiIncludeState(state: UiState.UiIncludeState) {
+        when (state) {
+            is TracksState.History -> updateIncludeViewByHistory(state.tracks)
+            is TracksState.EmptyHistory  -> updateIncludeViewByClear()
+            is TracksState.LinkError -> showLinkError()
 
-        recyclerView = RecyclerView(requireContext()).apply {
-            layoutParams = ViewGroup.MarginLayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            ).apply {
-                topMargin = SizeFormatter.dpToPx(16f, context)
-            }
         }
-        recyclerView.adapter = trackAdapter
-        recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
-    }
-
-    private fun clickDebounce(): Boolean {
-
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            viewLifecycleOwner.lifecycleScope.launch {
-                delay(CLICK_DEBOUNCE_DELAY)
-                isClickAllowed = true
-            }
-        }
-        return current
     }
 
     private fun initHistoryView() {
@@ -229,27 +190,12 @@ class SearchFragment : Fragment() {
         historyLinearLayoutManager.scrollToPosition(0)
     }
 
-    private fun updateIncludeViewByProgressBar() {
-        updateIncludeView(progressBar)
-    }
-
     private fun updateIncludeViewByError() {
         updateIncludeView(errorBinding.root)
     }
 
-    private fun updateIncludeViewByFoundTracks(tracks: List<Track>) {
-        initListFoundTracksView()
-        updateIncludeView(recyclerView)
-        trackAdapter.updateTracks(tracks)
-    }
-
-    fun updateIncludeViewByClear() {
-        includeView.removeAllViews()
-    }
-
-    private fun updateIncludeView(includedView: View?) {
-        includeView.removeAllViews()
-        includeView.addView(includedView)
+    override fun updateIncludeViewByEmpty() {
+        showNothingError()
     }
 
     private fun showLinkError() {
@@ -278,23 +224,8 @@ class SearchFragment : Fragment() {
         updateIncludeViewByError()
     }
 
-    private fun render(state: TracksState) {
-
-        when (state) {
-            is TracksState.Loading -> updateIncludeViewByProgressBar()
-            is TracksState.Content -> updateIncludeViewByFoundTracks(state.tracks)
-            is TracksState.History -> updateIncludeViewByHistory(state.tracks)
-            is TracksState.EmptyHistory, TracksState.Default -> updateIncludeViewByClear()
-            is TracksState.Empty -> showNothingError()
-            is TracksState.LinkError -> showLinkError()
-            is TracksState.AnyTrack -> goToPlayerActivity(state.trackId)
-        }
-    }
-
     companion object {
         const val EDIT_TEXT_KEY = "EDIT_TEXT_KEY"
         const val EDIT_TEXT_DEF = ""
-        const val TRACK_EXTRA = "TRACK_EXTRA"
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

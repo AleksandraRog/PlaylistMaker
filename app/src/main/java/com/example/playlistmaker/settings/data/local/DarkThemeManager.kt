@@ -7,20 +7,13 @@ import kotlinx.coroutines.withContext
 
 class DarkThemeManager(val sharedPreferences: SharedPreferences) : LocalStorageManager<Boolean?> {
 
-    override fun getData(): Boolean? {
-        return if (sharedPreferences.contains(DARK_THEME_KEY)) {
-            sharedPreferences.getBoolean(DARK_THEME_KEY, false)
-        } else {
-            null
-        }
-    }
 
-    override suspend fun saveDataSuspend(data: Boolean?) {
-        if (data != null) {
+    override suspend fun saveDataSuspend(data: Boolean?) : Boolean {
+        return if (data != null) {
             withContext(Dispatchers.IO) {
                 sharedPreferences.edit().putBoolean(DARK_THEME_KEY, data).apply()
-            }
-        }
+            true}
+        } else false
     }
 
     override suspend fun getDataSuspend(): Boolean? {
