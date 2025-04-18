@@ -49,7 +49,7 @@ class PlaylistsFragment() : IncludeFragment<FragmentPlaylistsBinding, ItemPlayli
         }
 
         adapter.setOnItemClickListener = { playlist ->
-            viewModel.del(playlist.playlist)
+
         }
 
         binding.newPlaylistButton.setOnClickListener {
