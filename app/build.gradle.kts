@@ -78,4 +78,8 @@ dependencies {
     annotationProcessor(libs.moxy.compiler)
     implementation(libs.androidx.appcompat.v161)
     implementation(libs.kotlinx.coroutines.android)
+    implementation (libs.kotlin.reflect)
+    implementation (libs.rxjava)
+    implementation (libs.peko)
+    implementation(libs.vanniktech.android.image.cropper)
 }

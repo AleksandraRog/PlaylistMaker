@@ -6,8 +6,8 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.common.domain.model.Track
-import com.example.playlistmaker.common.presentation.TracksState
-import com.example.playlistmaker.common.presentation.UiState
+import com.example.playlistmaker.common.presentation.ListUiState
+import com.example.playlistmaker.common.presentation.TrackListUiState
 import com.example.playlistmaker.search.domain.interactors.HistoryInteractor
 import com.example.playlistmaker.search.domain.interactors.TracksInteractor
 import com.example.playlistmaker.search.domain.model.HistoryQueue
@@ -22,18 +22,18 @@ class SearchViewModel(application: Application,
     private val tracksInteractor: TracksInteractor,
     private val updateHistoryQueueUseCase: UpdateHistoryQueueUseCase
 ) : AndroidViewModel(application) {
-    private val stateLiveData = MutableLiveData<UiState>()
-    private val previousStateLiveData = MutableLiveData<UiState>()
+    private val stateLiveData = MutableLiveData<ListUiState<Track>>()
+    private val previousStateLiveData = MutableLiveData<ListUiState<Track>>()
     private var searchJob: Job? = null
 
     init {
-        stateLiveData.value = UiState.Default
+        stateLiveData.value = ListUiState.Default as ListUiState<Track>
     }
 
-    val tracks = ArrayList<Track>()
-    var historyTracks = HistoryQueue(LinkedList<Track>())
+    private val tracks = ArrayList<Track>()
+    private var historyTracks = HistoryQueue(LinkedList())
 
-    val observeState = MediatorLiveData<UiState>().apply {
+    val observeState = MediatorLiveData<ListUiState<Track>>().apply {
         addSource(stateLiveData) { newValue ->
             previousStateLiveData.value = this.value
             this.value = newValue
@@ -49,9 +49,9 @@ class SearchViewModel(application: Application,
             historyInteractor.loadTracksFlow()
                 .collect { pair ->
                     historyTracks = HistoryQueue(pair.first)
-                                    val tracksState =
-                    if (historyTracks.size != 0) TracksState.History(historyTracks) else TracksState.EmptyHistory
-                stateLiveData.postValue(tracksState)
+                                    val trackListUiState =
+                    if (historyTracks.size != 0) TrackListUiState.History(historyTracks) else TrackListUiState.EmptyHistory
+                stateLiveData.postValue(trackListUiState)
                 }
         }
     }
@@ -72,40 +72,42 @@ class SearchViewModel(application: Application,
         tracks.clear()
         if (errorCode == 200 && foundTracks.isNotEmpty()) {
             tracks.addAll(foundTracks)
-            stateLiveData.postValue(UiState.Content(tracks))
+            stateLiveData.postValue(ListUiState.Content(tracks))
         } else {
             showMessage(errorCode)
         }
     }
 
     private fun showMessage(responseCode: Int) {
-        stateLiveData.postValue(if (responseCode == 0) UiState.Empty else TracksState.LinkError)
+        stateLiveData.postValue(if (responseCode == 0) (ListUiState.Empty as ListUiState<Track>) else TrackListUiState.LinkError as ListUiState<Track>)
     }
 
     fun showTrack(track: Track) {
         viewModelScope.launch {
+
             updateHistoryQueueUseCase.executeFlow(
                 track,
                 historyTracks,)
                 .collect { tracksState ->
+
                     stateLiveData.postValue(tracksState)
                 }
         }
     }
 
     fun showFoundTracks(changedText: String) {
-        stateLiveData.postValue(UiState.Loading)
+        stateLiveData.postValue(ListUiState.Loading as ListUiState<Track>)
         searchDebounce(changedText)
     }
 
     fun showHistory() {
-        stateLiveData.postValue(UiState.Loading)
+        stateLiveData.postValue(ListUiState.Loading as ListUiState<Track>)
         loadHistory()
     }
 
     fun clearHistory() {
         historyTracks.clear()
-        stateLiveData.postValue(TracksState.EmptyHistory)
+        stateLiveData.postValue(TrackListUiState.EmptyHistory as ListUiState<Track>)
     }
 
     private fun searchDebounce(changedText: String) {

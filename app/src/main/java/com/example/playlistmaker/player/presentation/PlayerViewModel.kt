@@ -5,54 +5,62 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.common.presentation.ListUiState
+import com.example.playlistmaker.common.presentation.TrackUiState
+import com.example.playlistmaker.common.presentation.model.ItemPlaylistWrapper
 import com.example.playlistmaker.player.domain.interactors.AudioPlayerInteractor
 import com.example.playlistmaker.player.domain.interactors.TrackInteractor
+import com.example.playlistmaker.player.presentation.mapper.BundleMapper.toModel
 import com.example.playlistmaker.player.presentation.model.PlayerPropertyState
 import com.example.playlistmaker.player.presentation.model.PlayerState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.LinkedList
 
 class PlayerViewModel(
-    trackId: Bundle,
+    trackIdBundle: Bundle,
     private val audioPlayerInteractor: AudioPlayerInteractor,
     private val trackInteractor: TrackInteractor,
 ) : ViewModel() {
 
     private lateinit var playerPropertyState: PlayerPropertyState
-    private var screenStateLiveData = MutableLiveData<TrackScreenState>(TrackScreenState.Loading)
+    private var screenStateLiveData = MutableLiveData<ListUiState<ItemPlaylistWrapper.PlaylistPair>>()
     private var playStatusLiveData = MutableLiveData<PlayerPropertyState>()
     private var timerJob: Job? = null
     init {
-        screenStateLiveData.value = TrackScreenState.Loading
+        screenStateLiveData.value = ListUiState.Loading as ListUiState<ItemPlaylistWrapper.PlaylistPair>
         viewModelScope.launch {
-            trackInteractor.loadTrackFlow(trackId)
+            trackInteractor.loadTrackFlow(trackIdBundle.toModel())
                 .collectLatest { pair ->
-                    playerPropertyState = PlayerPropertyState(pair.first)
-                    screenStateLiveData.postValue(
-                        TrackScreenState.Content(pair.first)
+                    if (pair.first != null) {
+                        playerPropertyState = PlayerPropertyState(pair.first!!)
+                        screenStateLiveData.postValue(
+                            TrackUiState.LoadTrack(pair.first!!)
+                        )
+                        playStatusLiveData.postValue(playerPropertyState)
+                        preparePlayer(playerPropertyState.track.previewUrl)
+                    } else screenStateLiveData.postValue(
+                        ListUiState.Empty as ListUiState<ItemPlaylistWrapper.PlaylistPair>
                     )
-                    playStatusLiveData.postValue(playerPropertyState)
-                    preparePlayer(playerPropertyState.track.previewUrl)
                 }
         }
     }
 
-    fun getScreenStateLiveData(): LiveData<TrackScreenState> = screenStateLiveData
+    fun getScreenStateLiveData(): LiveData<ListUiState<ItemPlaylistWrapper.PlaylistPair>> = screenStateLiveData
     fun getPlayStatusLiveData(): LiveData<PlayerPropertyState> = playStatusLiveData
 
     override fun onCleared() {
         releasePlayer()
     }
 
+    // player state functions
     private fun preparePlayer(url: String) {
         viewModelScope.launch {
            audioPlayerInteractor.prepareFlow(url)
                 .collect { playerState ->
-
                     if (playerState == PlayerState.STATE_PREPARED) {
-
                         playStatusLiveData.postValue(
                             playerPropertyState.apply {
                                 this@PlayerViewModel.playerPropertyState.playerState =
@@ -137,6 +145,7 @@ class PlayerViewModel(
         }
     }
 
+    //track state functions
     fun favoriteControl(isChecked: Boolean) {
         viewModelScope.launch {
             trackInteractor.favoriteControl(this@PlayerViewModel.playerPropertyState.track, isChecked)
@@ -147,6 +156,27 @@ class PlayerViewModel(
                                 favoriteState
                         }
                     )
+                }
+        }
+    }
+
+    // bottomSheet functions
+    fun getPlaylists() {
+        viewModelScope.launch {
+            trackInteractor.loadPlaylists(playerPropertyState.track)
+                .collect { pairList ->
+                    val list = pairList.mapTo(LinkedList<ItemPlaylistWrapper.PlaylistPair>()){ ItemPlaylistWrapper.PlaylistPair(it.first, it.second)}
+                    screenStateLiveData.postValue(ListUiState.Content(list))
+                }
+        }
+    }
+
+    fun addTrack(playlistPair: ItemPlaylistWrapper.PlaylistPair) {
+
+        viewModelScope.launch {
+            trackInteractor.insertTrackToPlaylist(playerPropertyState.track, playlistPair)
+                .collect { message ->
+                    screenStateLiveData.postValue(TrackUiState.ToastMessage(message))
                 }
         }
     }

@@ -1,17 +1,31 @@
 package com.example.playlistmaker.common.di
 
-import com.example.playlistmaker.common.data.repositoryImpl.DbRepositoryImpl
-import com.example.playlistmaker.common.domain.repsitory.DbRepository
+import android.os.Environment
+import com.example.playlistmaker.common.data.repositoryImpl.DbElementKeyRepositoryImpl
+import com.example.playlistmaker.common.data.repositoryImpl.DbPlaylistTableRepositoryImpl
+import com.example.playlistmaker.common.data.repositoryImpl.DbTrackTableRepositoryImpl
+import com.example.playlistmaker.common.domain.repsitory.DbElementKeyRepository
+import com.example.playlistmaker.common.domain.repsitory.DbPlaylistTableRepository
+import com.example.playlistmaker.common.domain.repsitory.DbTrackTableRepository
+import com.example.playlistmaker.favorite_tracks.data.repositoryImpl.FavoriteTracksRepositoryImpl
+import com.example.playlistmaker.favorite_tracks.domain.repository.FavoriteTracksRepository
+import com.example.playlistmaker.new_playlist.data.repsitory.NewPlaylistRepositoryImpl
+import com.example.playlistmaker.new_playlist.domain.repository.NewPlaylistRepository
 import com.example.playlistmaker.player.data.repositoryImpl.PlayerRepositoryImpl
+import com.example.playlistmaker.player.data.repositoryImpl.TrackRepositoryImpl
 import com.example.playlistmaker.player.domain.reposirory.PlayerRepository
+import com.example.playlistmaker.player.domain.reposirory.TrackRepository
+import com.example.playlistmaker.playlists.data.repositoryImpl.PlaylistsRepositoryImpl
+import com.example.playlistmaker.playlists.domain.repository.PlaylistsRepository
 import com.example.playlistmaker.search.data.repositoryImpl.ApiRepositoryImpl
 import com.example.playlistmaker.search.data.repositoryImpl.HistoryRepositoryImpl
-import com.example.playlistmaker.search.domain.reposirory.ApiRepository
-import com.example.playlistmaker.search.domain.reposirory.HistoryRepository
+import com.example.playlistmaker.search.domain.repository.ApiRepository
+import com.example.playlistmaker.search.domain.repository.HistoryRepository
 import com.example.playlistmaker.settings.data.repsitoryImpl.DarkThemeRepositoryImpl
 import com.example.playlistmaker.settings.domain.repository.DarkThemeRepository
 import com.example.playlistmaker.sharing.data.repositoryImpl.ExternalNavigatorImpl
 import com.example.playlistmaker.sharing.domain.repsitory.ExternalNavigator
+import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 
 val repositoryModule = module {
@@ -36,8 +50,32 @@ val repositoryModule = module {
         ExternalNavigatorImpl()
     }
 
-    single<DbRepository> {
-        DbRepositoryImpl(get(),)
+    single<DbElementKeyRepository> {
+        DbElementKeyRepositoryImpl(get(),get(),)
     }
 
+    single<DbTrackTableRepository> {
+        DbTrackTableRepositoryImpl(get(),)
+    }
+
+    single<DbPlaylistTableRepository> {
+        DbPlaylistTableRepositoryImpl(get(),)
+    }
+
+    single<NewPlaylistRepository> {
+        val externalFilesDir = androidApplication().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        NewPlaylistRepositoryImpl(get(),get(),externalFilesDir, get(),)
+    }
+
+    single<TrackRepository> {
+        TrackRepositoryImpl(get(),get(),get(),)
+    }
+
+    single<PlaylistsRepository> {
+        PlaylistsRepositoryImpl(get(),)
+    }
+
+    single<FavoriteTracksRepository> {
+        FavoriteTracksRepositoryImpl(get(),)
+    }
 }

@@ -40,6 +40,7 @@ object TrackMapper {
             trackId = this.trackId!!,
             trackTimeMillis = this.trackTimeMillis ?: 0L,
             systemTime = System.currentTimeMillis(),
+            isFavorite = null,
         )
     }
 
@@ -54,7 +55,7 @@ object TrackMapper {
             primaryGenreName = this.primaryGenreName,
             country = this.country,
             trackId = this.trackId,
-            isFavorite = true,
+            isFavorite = this.isFavorite ?: false,
             trackTime = TrackTimePeriod.fromMillis(this.trackTimeMillis)
         )
     }
@@ -72,6 +73,7 @@ object TrackMapper {
             trackId = this.trackId,
             trackTimeMillis = this.trackTime!!.toMillis()!!,
             systemTime = System.currentTimeMillis(),
+            isFavorite = this.isFavorite,
         )
     }
 
@@ -86,7 +88,7 @@ object TrackMapper {
             primaryGenreName = this.primaryGenreName ?: placeholderString,
             country = this.country ?: placeholderString,
             trackId = this.trackId!!,
-            trackTime = TrackTimePeriod.fromMillis(this.trackTimeMillis)
+            trackTime = TrackTimePeriod.fromMillis(this.trackTimeMillis),
         )
     }
 

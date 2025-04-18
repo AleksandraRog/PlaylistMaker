@@ -1,9 +1,8 @@
 package com.example.playlistmaker.search.domain.interactors.impl
 
-import android.util.Log
 import com.example.playlistmaker.common.domain.model.Track
 import com.example.playlistmaker.search.domain.interactors.HistoryInteractor
-import com.example.playlistmaker.search.domain.reposirory.HistoryRepository
+import com.example.playlistmaker.search.domain.repository.HistoryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.LinkedList

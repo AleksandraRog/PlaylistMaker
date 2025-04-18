@@ -33,4 +33,18 @@ object ScreenSize {
     fun getScreenWidth(): Int = screenWidth
     fun getScreenHeight(): Int = screenHeight
     fun getOtherWidthTrackViewHolder(): Int = otherWidthTrackViewHolder
+
+    fun getGuidePercentForNewPlaylistActivity(
+        bottomHeight: Int,
+        limitGuidelineHeight: Int,
+        baseGuidelineHeight: Int,
+        imeBottomInset: Int,
+    ): Float {
+        val deltaHeight =  imeBottomInset - (screenHeight-bottomHeight)
+        return if (deltaHeight > 0) (baseGuidelineHeight - deltaHeight)
+            .coerceIn(limitGuidelineHeight, screenHeight)
+            .toFloat() / screenHeight
+        else 1f
+
+    }
 }

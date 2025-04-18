@@ -11,8 +11,11 @@ import com.example.playlistmaker.databinding.ActivityLibraryBinding
 import com.example.playlistmaker.library.presentation.LibraryViewModel
 import com.example.playlistmaker.library.presentation.LibraryViewPagerAdapter
 import com.example.playlistmaker.library.presentation.PagerState
+import com.example.playlistmaker.main.presentation.MainViewModel
+import com.example.playlistmaker.common.presentation.model.TopicalFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 class LibraryFragment : Fragment() {
 
@@ -20,9 +23,11 @@ class LibraryFragment : Fragment() {
     private lateinit var tabMediator: TabLayoutMediator
     private var isSmoothScrollEnabled = false
     private val viewModel: LibraryViewModel by viewModels()
+    private val mainViewModel: MainViewModel by activityViewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View {
+        mainViewModel.setFragmentScreen(TopicalFragment.LIBRARY)
         binding = ActivityLibraryBinding.inflate(inflater, container, false)
         return binding.root
     }

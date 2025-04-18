@@ -4,7 +4,7 @@ import com.example.playlistmaker.common.data.mapper.TrackMapper
 import com.example.playlistmaker.common.domain.consumer.ConsumerData
 import com.example.playlistmaker.common.domain.model.Track
 import com.example.playlistmaker.search.data.local.HistoryTrackManager
-import com.example.playlistmaker.search.domain.reposirory.HistoryRepository
+import com.example.playlistmaker.search.domain.repository.HistoryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

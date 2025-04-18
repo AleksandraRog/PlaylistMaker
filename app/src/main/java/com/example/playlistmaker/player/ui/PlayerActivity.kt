@@ -1,37 +1,52 @@
 package com.example.playlistmaker.player.ui
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.common.domain.model.Track
 import com.example.playlistmaker.common.domain.model.TrackTimePeriod
+import com.example.playlistmaker.common.presentation.ListUiState
+import com.example.playlistmaker.common.presentation.TrackUiState
 import com.example.playlistmaker.common.presentation.mapper.SizeFormatter
-import com.example.playlistmaker.common.ui.CustomCircularProgressIndicator
+import com.example.playlistmaker.common.presentation.model.ItemPlaylistWrapper
+import com.example.playlistmaker.common.ui.castom_view.CustomCircularProgressIndicator
+import com.example.playlistmaker.common.ui.castom_view.CustomToast
+import com.example.playlistmaker.common.ui.recycler_components.playlist.PlaylistAdapter
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
-import com.example.playlistmaker.player.presentation.model.PlayerPropertyState
+import com.example.playlistmaker.new_playlist.ui.NewPlaylistActivity
 import com.example.playlistmaker.player.presentation.PlayerViewModel
-import com.example.playlistmaker.player.presentation.TrackScreenState
+import com.example.playlistmaker.player.presentation.model.PlayerPropertyState
 import com.example.playlistmaker.player.presentation.model.PlayerState
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
+import java.util.LinkedList
 import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlayerBinding
     private lateinit var viewModel: PlayerViewModel
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var progressBar: CustomCircularProgressIndicator
-    var progressBarId: Int? = null
+    private var adapter = PlaylistAdapter(PlaylistAdapter.ITEM_VIEW_ROW)
+    private var progressBarId: Int? = null
+    private var isClickAllowed = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -40,43 +55,39 @@ class PlayerActivity : AppCompatActivity() {
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val trackIdBundle = intent?.extras
-        if (trackIdBundle != null) {
-            viewModel = getViewModel{ parametersOf (trackIdBundle) }
-        } else {
-            onBackPressedDispatcher.onBackPressed()
-        }
-
         setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
-            val paddingBottom = if (ime.bottom > 0) ime.bottom else
-                systemBars.bottom
             view.setPadding(
                 systemBars.left, systemBars.top, systemBars.right,
-                paddingBottom
+                systemBars.bottom
             )
             insets
         }
 
-        viewModel.getScreenStateLiveData().observe(this) { screenState ->
+        val trackIdBundle = intent?.extras
 
-            when (screenState) {
-                is TrackScreenState.Content -> {
-                    changeContentVisibility(loading = false)
-                    showTrackView(screenState.trackModel)
-                }
-
-                is TrackScreenState.Loading -> {
-                    changeContentVisibility(loading = true)
-                }
-            }
-
-            viewModel.getPlayStatusLiveData().observe(this) { playerPropertyState ->
-                changeButtonPlay(playerPropertyState)
-                updateTimer(playerPropertyState)
-            }
+        if (trackIdBundle != null) {
+            viewModel = getViewModel { parametersOf(trackIdBundle) }
+        } else {
+            onBackPressedDispatcher.onBackPressed()
         }
+
+        val bottomSheetContainer = binding.standardBottomSheet
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        val dimOverlay = binding.dimOverlay
+
+        viewModel.getScreenStateLiveData().observe(this) { screenState ->
+            showRender(screenState)
+        }
+
+        viewModel.getPlayStatusLiveData().observe(this) { playerPropertyState ->
+            changeButtonPlay(playerPropertyState)
+            updateTimer(playerPropertyState)
+        }
+
 
         binding.playButton.setOnClickListener {
             viewModel.playbackControl()
@@ -88,13 +99,48 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         binding.likeButton.setOnClickListener {
-           viewModel.favoriteControl(binding.likeButton.isChecked)
+            viewModel.favoriteControl(binding.likeButton.isChecked)
         }
 
         binding.addButton.setOnClickListener {
 
+            dimOverlay.visibility = View.VISIBLE
+            viewModel.getPlaylists()
         }
 
+        binding.newPlaylistButton.setOnClickListener {
+            val intent = Intent(this, NewPlaylistActivity::class.java)
+            startActivity(intent)
+        }
+
+        adapter.setOnItemClickListener = { playlistPair ->
+
+            if (clickDebounce()) {
+                if (playlistPair is ItemPlaylistWrapper.PlaylistPair) {
+                    viewModel.addTrack(playlistPair)
+
+                }
+            }
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_COLLAPSED, BottomSheetBehavior.STATE_HIDDEN -> {
+                        dimOverlay.visibility = View.GONE
+                    }
+
+                    else -> {
+                        // empty
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                // empty
+            }
+        })
     }
 
     private fun updateTimer(playerPropertyState: PlayerPropertyState) {
@@ -121,12 +167,27 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         viewModel.pausePlayer()
     }
 
+    private fun <T : ItemPlaylistWrapper.PlaylistPair> showRender(screenState: ListUiState<T>) {
+        when (screenState) {
+            ListUiState.Loading -> changeContentVisibility(loading = true)
+            is TrackUiState.LoadTrack -> showTrackView(screenState.trackModel)
+            is TrackUiState.ToastMessage -> showToast(screenState.message)
+            is ListUiState.Content<T> -> activateAddPanel(
+                LinkedList(
+                    screenState.contentList
+                )
+            )
+        }
+    }
+
     private fun showTrackView(track: Track) {
+
+        changeContentVisibility(loading = false)
 
         Glide.with(this)
             .load(track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
@@ -146,7 +207,7 @@ class PlayerActivity : AppCompatActivity() {
         binding.collectionName.text = track.collectionName
         binding.primaryGenreName.text = track.primaryGenreName
         binding.country.text = track.country
-        binding.currentTrackTime.text = TrackTimePeriod.fromMillis(0L).toString()
+        binding.currentTrackTime.text = TrackTimePeriod.fromMillis(0L).toString().trim()
         binding.likeButton.isChecked = track.isFavorite
     }
 
@@ -159,108 +220,59 @@ class PlayerActivity : AppCompatActivity() {
             progressBar = CustomCircularProgressIndicator(this).apply {
                 id = View.generateViewId()
                 this@PlayerActivity.progressBarId = id
-                layoutParams = ConstraintLayout.LayoutParams(
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT
-                )
+                this.layoutParams = CoordinatorLayout.LayoutParams(
+                    CoordinatorLayout.LayoutParams.WRAP_CONTENT,
+                    CoordinatorLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    gravity = Gravity.CENTER
+                }
             }
-
-            val constraintSetProgressBar = ConstraintSet()
-            constraintSetProgressBar.clone(binding.root)
-            constraintSetProgressBar.connect(
-                progressBar.id,
-                ConstraintSet.TOP,
-                binding.root.id,
-                ConstraintSet.TOP
-            )
-            constraintSetProgressBar.connect(
-                progressBar.id,
-                ConstraintSet.BOTTOM,
-                binding.root.id,
-                ConstraintSet.BOTTOM
-            )
-            constraintSetProgressBar.connect(
-                progressBar.id,
-                ConstraintSet.START,
-                binding.root.id,
-                ConstraintSet.START
-            )
-            constraintSetProgressBar.connect(
-                progressBar.id,
-                ConstraintSet.END,
-                binding.root.id,
-                ConstraintSet.END
-            )
-            constraintSetProgressBar.applyTo(binding.root)
             binding.root.addView(progressBar)
-
-            val constraintSetToolbar = ConstraintSet()
-            constraintSetToolbar.clone(binding.root)
-            constraintSetToolbar.clear(binding.topToolbarFrame.id, ConstraintSet.BOTTOM)
-            constraintSetToolbar.connect(
-                binding.topToolbarFrame.id,
-                ConstraintSet.TOP,
-                binding.root.id,
-                ConstraintSet.TOP
-            )
-            constraintSetToolbar.connect(
-                binding.topToolbarFrame.id,
-                ConstraintSet.START,
-                binding.root.id,
-                ConstraintSet.START
-            )
-            constraintSetToolbar.connect(
-                binding.topToolbarFrame.id,
-                ConstraintSet.END,
-                binding.root.id,
-                ConstraintSet.END
-            )
-            constraintSetToolbar.applyTo(binding.root)
             visibilityView = View.GONE
             unvisibilityView = View.VISIBLE
-        } else if (progressBarId!=null){
-
-            progressBar = findViewById(progressBarId!!)
+        } else {
             visibilityView = View.VISIBLE
             unvisibilityView = View.GONE
-            val constraintSetToolbar = ConstraintSet()
-            constraintSetToolbar.clone(binding.root)
-            constraintSetToolbar.connect(
-                binding.topToolbarFrame.id,
-                ConstraintSet.TOP,
-                binding.root.id,
-                ConstraintSet.TOP
-            )
-            constraintSetToolbar.connect(
-                binding.topToolbarFrame.id,
-                ConstraintSet.START,
-                binding.root.id,
-                ConstraintSet.START
-            )
-            constraintSetToolbar.connect(
-                binding.topToolbarFrame.id,
-                ConstraintSet.END,
-                binding.root.id,
-                ConstraintSet.END
-            )
-            constraintSetToolbar.connect(
-                binding.topToolbarFrame.id,
-                ConstraintSet.BOTTOM,
-                binding.trackImage.id,
-                ConstraintSet.TOP
-            )
-            constraintSetToolbar.applyTo(binding.root)
-
-            binding.root.removeView(progressBar)
         }
 
-        for (i in 0 until (binding.root as ViewGroup).childCount) {
-            val view = (binding.root as ViewGroup).getChildAt(i)
-            if (view.id != progressBar.id) {
-                view.visibility = visibilityView
-            } else view.visibility = unvisibilityView
+        if (progressBarId != null) {
+            progressBar.visibility = unvisibilityView
         }
+        binding.playerActivity.visibility = visibilityView
     }
 
+    private fun activateAddPanel(playlists: LinkedList<ItemPlaylistWrapper.PlaylistPair>) {
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
 
+        val recyclerView = binding.playlistsList
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        adapter.updateList(playlists)
+
+    }
+
+    private fun clickDebounce(): Boolean {
+
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+
+            }
+        }
+        return current
+    }
+
+    private fun showToast(message: String) {
+        CustomToast(this, binding.root)
+            .setMessage(message)
+            .show()
+    }
+
+    companion object {
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+    }
 }

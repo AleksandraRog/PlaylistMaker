@@ -6,13 +6,14 @@ import android.content.res.Resources
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.BuildConfig
 import com.example.playlistmaker.common.di.dataModule
-import com.example.playlistmaker.common.di.experimetnKoinModule
+import com.example.playlistmaker.common.di.experimentKoinModule
 import com.example.playlistmaker.common.di.interactorModule
 import com.example.playlistmaker.common.di.repositoryModule
 import com.example.playlistmaker.common.di.useCaseModule
 import com.example.playlistmaker.common.di.viewModelModule
 import com.example.playlistmaker.common.domain.consumer.ConsumerData
 import com.example.playlistmaker.settings.domain.interactors.DarkThemeInteractor
+import com.markodevcic.peko.PermissionRequester
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -36,7 +37,7 @@ class App() : Application() {
             if (BuildConfig.DEBUG) {
                 androidLogger(Level.DEBUG) // Включаем логирование только в debug
             }
-            modules(experimetnKoinModule, dataModule, interactorModule, repositoryModule,
+            modules(experimentKoinModule, dataModule, interactorModule, repositoryModule,
                 useCaseModule, viewModelModule)
         }
 
@@ -46,6 +47,8 @@ class App() : Application() {
             val darkTheme = darkThemeInteractor.getThemeSync()
             switchTheme(getDarkTheme(darkTheme))
         }
+
+        PermissionRequester.initialize(applicationContext)
     }
 
     fun getDarkTheme(data: ConsumerData<Boolean>): Boolean {

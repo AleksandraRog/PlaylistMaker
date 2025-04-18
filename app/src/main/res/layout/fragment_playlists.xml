@@ -5,32 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".library.playlists.ui.PlaylistsFragment">
+    tools:context=".playlists.ui.PlaylistsFragment">
 
     <Button
         android:id="@+id/new_playlist_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/top_padding"
-        android:gravity="center_vertical"
-        android:text="@string/new_playlist"
-        android:textAllCaps="false"
-        app:cornerRadius="54dp"
-        android:backgroundTint="?attr/colorOnSecondary"
-        android:textColor="?attr/colorSecondary"
-        android:paddingHorizontal="14dp"
-        android:paddingVertical="10dp"
-        android:fontFamily="@font/ys_display_medium"
-        android:textSize="14sp"/>
+        style="@style/NewPlaylistButton"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/playlists_recyclerview"
+    <include
+        android:id="@+id/includeView"
+        layout="@layout/placeholder_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:visibility="gone"/>
-
+        android:layout_marginHorizontal="12dp"
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/placeholderMessage"

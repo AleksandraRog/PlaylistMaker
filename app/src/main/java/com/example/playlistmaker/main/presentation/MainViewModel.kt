@@ -3,14 +3,24 @@ package com.example.playlistmaker.main.presentation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.playlistmaker.common.presentation.model.TopicalFragment
 
-class MainViewModel : ViewModel() {
+class MainViewModel :  ViewModel() {
 
-    private var screenStateLiveData = MutableLiveData<Boolean>()
+    private var windowFocusLiveData = MutableLiveData<Boolean>()
+    private var topicalFragmentLiveData = MutableLiveData<TopicalFragment>()
 
-    fun getScreenStateLiveData(): LiveData<Boolean> = screenStateLiveData
+    fun setFragmentScreen(fragment: TopicalFragment){
+        topicalFragmentLiveData.value = fragment
+    }
+
+    init{
+        topicalFragmentLiveData.value = TopicalFragment.DEFAULT
+    }
+
+    fun getWindowFocusLiveData(): LiveData<Boolean> = windowFocusLiveData
 
     fun focusChange(screen: Boolean) {
-        screenStateLiveData.value = screen
+        windowFocusLiveData.value = screen
     }
 }
