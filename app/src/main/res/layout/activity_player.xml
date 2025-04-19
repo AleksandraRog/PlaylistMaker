@@ -217,6 +217,7 @@
         android:background="@drawable/background_drawable"
         app:behavior_hideable="true"
         app:behavior_peekHeight="240dp"
+        app:behavior_skipCollapsed = "true"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <TextView

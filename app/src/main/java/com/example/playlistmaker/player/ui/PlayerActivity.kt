@@ -105,7 +105,8 @@ class PlayerActivity : AppCompatActivity() {
         binding.addButton.setOnClickListener {
 
             dimOverlay.visibility = View.VISIBLE
-            viewModel.getPlaylists()
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        //    viewModel.getPlaylists()
         }
 
         binding.newPlaylistButton.setOnClickListener {
@@ -130,7 +131,8 @@ class PlayerActivity : AppCompatActivity() {
                     BottomSheetBehavior.STATE_COLLAPSED, BottomSheetBehavior.STATE_HIDDEN -> {
                         dimOverlay.visibility = View.GONE
                     }
-
+                    BottomSheetBehavior.STATE_EXPANDED ->
+                        viewModel.getPlaylists()
                     else -> {
                         // empty
                     }
@@ -242,14 +244,12 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun activateAddPanel(playlists: LinkedList<ItemPlaylistWrapper.PlaylistPair>) {
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
 
         val recyclerView = binding.playlistsList
         recyclerView.adapter = adapter
         recyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         adapter.updateList(playlists)
-
     }
 
     private fun clickDebounce(): Boolean {
@@ -267,6 +267,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun showToast(message: String) {
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         CustomToast(this, binding.root)
             .setMessage(message)
             .show()
