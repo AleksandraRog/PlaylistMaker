@@ -2,11 +2,13 @@ package com.example.playlistmaker.common.di
 
 import android.os.Bundle
 import com.example.playlistmaker.R
-import com.example.playlistmaker.library.favorite_tracks.domain.interactors.FavoriteTracksInteractor
-import com.example.playlistmaker.library.favorite_tracks.presentation.FavoriteTracksViewModel
+import com.example.playlistmaker.favorite_tracks.domain.interactors.FavoriteTracksInteractor
+import com.example.playlistmaker.favorite_tracks.presentation.FavoriteTracksViewModel
+import com.example.playlistmaker.playlists.domain.interactors.PlaylistsInteractor
+import com.example.playlistmaker.playlists.presentation.PlaylistsViewModel
 import com.example.playlistmaker.library.presentation.LibraryViewModel
-import com.example.playlistmaker.library.playlists.presentation.PlaylistsViewModel
 import com.example.playlistmaker.main.presentation.MainViewModel
+import com.example.playlistmaker.new_playlist.presentation.MakePlaylistViewModel
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.search.presentation.SearchViewModel
 import com.example.playlistmaker.settings.presentation.DarkThemeViewModel
@@ -21,15 +23,17 @@ import org.koin.dsl.module
 val viewModelModule = module {
 
     viewModel {
-       DarkThemeViewModel( androidApplication(),get())
-      }
+        DarkThemeViewModel(androidApplication(), get())
+    }
 
-    viewModel {params ->
+    viewModel { params ->
         val appLink: String = androidContext().getString(R.string.link_course)
         val termsLink: String = androidContext().getString(R.string.link_arrow)
-        val emailData = EmailData(androidContext().getString(R.string.support_email),
+        val emailData = EmailData(
+            androidContext().getString(R.string.support_email),
             androidContext().getString(R.string.theme_support_message),
-            androidContext().getString(R.string.text_support_message))
+            androidContext().getString(R.string.text_support_message)
+        )
 
         val sharingInteractor = get<SharingInteractor>().apply {
             getShareAppLink = { appLink }
@@ -37,19 +41,19 @@ val viewModelModule = module {
             getSupportEmailData = { emailData }
         }
 
-       SharingsViewModel(sharingInteractor)
+        SharingsViewModel(sharingInteractor)
     }
 
     viewModel {
-        SearchViewModel( androidApplication(),get(),get(),get(),)
+        SearchViewModel(androidApplication(), get(), get(), get())
     }
 
-    viewModel {(trackId: Bundle) ->
-        PlayerViewModel(trackId, get(),get(),)
+    viewModel { (trackId: Bundle) ->
+        PlayerViewModel(trackId, get(), get())
     }
 
     viewModel {
-      MainViewModel()
+        MainViewModel()
     }
 
     viewModel {
@@ -61,6 +65,11 @@ val viewModelModule = module {
     }
 
     viewModel {
-        PlaylistsViewModel()
+        PlaylistsViewModel(get<PlaylistsInteractor>())
     }
+
+    viewModel {
+        MakePlaylistViewModel(get())
+    }
+
 }

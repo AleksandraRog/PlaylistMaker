@@ -6,13 +6,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface PlayerRepository {
 
-    fun currentPosition() : ConsumerData<Long>
+    fun currentPosition(): ConsumerData<Long>
 
-    fun preparePlayerFlow(url: String,) : Flow<PlayerState>
+    fun preparePlayerFlow(url: String,): Flow<PlayerState>
 
-    fun playPlayerFlow() : Flow<PlayerState>
+    fun playPlayerFlow(): Flow<PlayerState>
 
-    fun pausePlayerFlow() : Flow<PlayerState>
+    fun pausePlayerFlow(): Flow<PlayerState>
 
-    fun releasePlayerFlow() : Flow<PlayerState>
+    fun releasePlayerFlow(): Flow<PlayerState>
 }

@@ -14,20 +14,25 @@ import androidx.core.view.isNotEmpty
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.common.domain.model.ExtraActionBundleKey
-import com.example.playlistmaker.common.presentation.TracksState
-import com.example.playlistmaker.common.presentation.UiState
-import com.example.playlistmaker.common.ui.IncludeFragment
-import com.example.playlistmaker.common.ui.TrackAdapter
+import com.example.playlistmaker.common.domain.model.Track
+import com.example.playlistmaker.common.presentation.ListUiState
+import com.example.playlistmaker.common.presentation.TrackListUiState
+import com.example.playlistmaker.common.presentation.model.TopicalFragment
+import com.example.playlistmaker.common.ui.fragments.IncludeFragment
+import com.example.playlistmaker.common.ui.recycler_components.common.RecyclerAdapter
+import com.example.playlistmaker.common.ui.recycler_components.track.TrackAdapter
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.databinding.ErrorViewGroupBinding
 import com.example.playlistmaker.databinding.HistoryViewGroupBinding
+import com.example.playlistmaker.main.presentation.MainViewModel
+import com.example.playlistmaker.common.presentation.model.ExtraActionBundleKey
 import com.example.playlistmaker.search.domain.model.HistoryQueue
 import com.example.playlistmaker.search.presentation.SearchViewModel
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.LinkedList
 
-class SearchFragment() : IncludeFragment<ActivitySearchBinding>() {
+class SearchFragment() : IncludeFragment<ActivitySearchBinding, Track, >() {
 
 
     private lateinit var inputEditText: EditText
@@ -38,9 +43,10 @@ class SearchFragment() : IncludeFragment<ActivitySearchBinding>() {
     private lateinit var historyLinearLayoutManager: LinearLayoutManager
 
     private val viewModel: SearchViewModel by viewModel()
+    private val mainViewModel: MainViewModel by activityViewModel()
     private var searchTextValue: String = EDIT_TEXT_DEF
     private val historyTrackAdapter = TrackAdapter()
-
+    override val adapter: RecyclerAdapter<Track> = TrackAdapter()
     override val navigateIdAction: Int = R.id.action_searchFragment_to_playerActivity
     override val extraActionBundleKey: ExtraActionBundleKey = ExtraActionBundleKey.TRACK_EXTRA_HISTORY
 
@@ -50,6 +56,7 @@ class SearchFragment() : IncludeFragment<ActivitySearchBinding>() {
     ): ActivitySearchBinding {
         errorBinding = ErrorViewGroupBinding.inflate(layoutInflater)
         historyBinding = HistoryViewGroupBinding.inflate(layoutInflater)
+        mainViewModel.setFragmentScreen(TopicalFragment.SEARCH)
         return ActivitySearchBinding.inflate(increateBindingflater, container, false)
     }
 
@@ -60,13 +67,13 @@ class SearchFragment() : IncludeFragment<ActivitySearchBinding>() {
 
         if (savedInstanceState!=null){
             searchTextValue = savedInstanceState.getString(EDIT_TEXT_KEY, EDIT_TEXT_DEF)
-
+            inputEditText.setText(searchTextValue)
             if(savedInstanceState.getBoolean("EDIT_FOCUS_KEY", false)) {inputEditText.requestFocus()}
         }
 
         viewModel.observeState.observe(viewLifecycleOwner) {
 
-            if(it is TracksState.History){
+            if(it is (TrackListUiState.History)){
                 inputEditText.requestFocus()
             }
             showContentRender(it)
@@ -119,7 +126,7 @@ class SearchFragment() : IncludeFragment<ActivitySearchBinding>() {
 
         inputEditText.addTextChangedListener(simpleTextWatcher)
 
-        inputEditText.setOnFocusChangeListener { view, hasFocus ->
+        inputEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && inputEditText.text.isEmpty()) {
                 viewModel.showHistory()
             } else if (this.includeView.isNotEmpty()) {
@@ -127,8 +134,9 @@ class SearchFragment() : IncludeFragment<ActivitySearchBinding>() {
             }
         }
 
-        trackAdapter.setOnItemClickListener = { track ->
+        adapter.setOnItemClickListener = { track ->
             if (clickDebounce()) {
+
                 viewModel.showTrack(track)
             }
         }
@@ -156,17 +164,16 @@ class SearchFragment() : IncludeFragment<ActivitySearchBinding>() {
         inputEditText = binding.inputEditText
     }
 
-    override fun goToPlayerActivity(trackId: Int) {
-        super.goToPlayerActivity(trackId)
+    override fun goToIntent(entityId: Int) {
+        super.goToIntent(entityId)
         viewModel.restoreState()
     }
 
-    override fun renderUiIncludeState(state: UiState.UiIncludeState) {
+    override fun renderUiIncludeState(state: ListUiState.ListUiIncludeState<Track>) {
         when (state) {
-            is TracksState.History -> updateIncludeViewByHistory(state.tracks)
-            is TracksState.EmptyHistory  -> updateIncludeViewByClear()
-            is TracksState.LinkError -> showLinkError()
-
+            is TrackListUiState.History -> updateIncludeViewByHistory(state.tracks)
+            is TrackListUiState.EmptyHistory  -> updateIncludeViewByClear()
+            is TrackListUiState.LinkError -> showLinkError()
         }
     }
 
@@ -184,9 +191,9 @@ class SearchFragment() : IncludeFragment<ActivitySearchBinding>() {
 
     private fun updateIncludeViewByHistory(historyTracks: HistoryQueue) {
         initHistoryView()
-        historyTrackAdapter.tracks = LinkedList(historyTracks).asReversed()
+        historyTrackAdapter.list = LinkedList(historyTracks).asReversed()
         updateIncludeView(historyBinding.root)
-        historyTrackAdapter.updateTracks(LinkedList(historyTracks).asReversed())
+        historyTrackAdapter.updateList(LinkedList(historyTracks).asReversed())
         historyLinearLayoutManager.scrollToPosition(0)
     }
 

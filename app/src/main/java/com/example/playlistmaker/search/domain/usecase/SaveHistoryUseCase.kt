@@ -1,8 +1,7 @@
 package com.example.playlistmaker.search.domain.usecase
 
-import android.util.Log
 import com.example.playlistmaker.common.domain.model.Track
-import com.example.playlistmaker.search.domain.reposirory.HistoryRepository
+import com.example.playlistmaker.search.domain.repository.HistoryRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

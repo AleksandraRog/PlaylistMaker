@@ -20,6 +20,16 @@ class PlayerRepositoryImpl(private val mediaPlayer : MediaPlayer) : PlayerReposi
     }
 
     override fun preparePlayerFlow(url: String): Flow<PlayerState> = callbackFlow {
+
+        withContext(Dispatchers.Main) {
+            mediaPlayer.setOnPreparedListener {
+                trySend(PlayerState.STATE_PREPARED).isSuccess
+            }
+            mediaPlayer.setOnCompletionListener {
+                trySend(PlayerState.STATE_PREPARED).isSuccess
+            }
+        }
+
         withContext(Dispatchers.IO) {
             try {
                 mediaPlayer.setDataSource(url)
@@ -30,14 +40,7 @@ class PlayerRepositoryImpl(private val mediaPlayer : MediaPlayer) : PlayerReposi
                 return@withContext
             }
         }
-        withContext(Dispatchers.Main) {
-            mediaPlayer.setOnPreparedListener {
-                trySend(PlayerState.STATE_PREPARED).isSuccess
-            }
-            mediaPlayer.setOnCompletionListener {
-                trySend(PlayerState.STATE_PREPARED).isSuccess
-            }
-        }
+
         awaitClose {
             mediaPlayer.setOnPreparedListener(null)
             mediaPlayer.setOnCompletionListener(null)

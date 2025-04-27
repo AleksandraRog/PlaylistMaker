@@ -1,6 +1,5 @@
 package com.example.playlistmaker.player.domain.interactors.impl
 
-import com.example.playlistmaker.common.domain.repsitory.DbRepository
 import com.example.playlistmaker.player.domain.interactors.AudioPlayerInteractor
 import com.example.playlistmaker.player.domain.reposirory.PlayerRepository
 import com.example.playlistmaker.player.presentation.model.PlayerState
@@ -11,7 +10,6 @@ class AudioPlayerInteractorImpl(
 
     override fun prepareFlow(url: String): Flow<PlayerState> {
         return repository.preparePlayerFlow(url)
-
     }
 
     override fun playFlow(): Flow<PlayerState> {

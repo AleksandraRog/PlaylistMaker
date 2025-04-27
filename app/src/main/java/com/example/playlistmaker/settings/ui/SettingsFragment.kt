@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.main.presentation.MainViewModel
+import com.example.playlistmaker.common.presentation.model.TopicalFragment
 import com.example.playlistmaker.settings.presentation.DarkThemeViewModel
 import com.example.playlistmaker.sharing.presentation.SharingObjects
 import com.example.playlistmaker.sharing.presentation.SharingsViewModel
@@ -69,7 +70,7 @@ class SettingsFragment : Fragment() {
             sharingsViewModel.openTerms()
         }
 
-        mainViewModel.getScreenStateLiveData().observe(viewLifecycleOwner) { hasFocus ->
+        mainViewModel.getWindowFocusLiveData().observe(viewLifecycleOwner) { hasFocus ->
             lifecycleObserver(hasFocus)
         }
     }
@@ -78,7 +79,7 @@ class SettingsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
+        mainViewModel.setFragmentScreen(TopicalFragment.SETTING)
         binding = ActivitySettingsBinding.inflate(inflater, container, false)
         return binding.root
     }

@@ -22,7 +22,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var app: App
     private lateinit var binding: ActivityMainBinding
-    private val viewModel: MainViewModel by viewModel()
+
+    val viewModel: MainViewModel by viewModel()
     private val darkThemeViewModel: DarkThemeViewModel by viewModel()
     private var changeModeListener: Boolean? = null
 
@@ -36,6 +37,7 @@ class MainActivity : AppCompatActivity() {
 
         setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
             val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
             val paddingBottom =
                 if (ime.bottom > 0) {
@@ -73,8 +75,8 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         val navController = navHostFragment.navController
-        val bottomNavigationView = binding.bottomNavigationView
 
+        val bottomNavigationView = binding.bottomNavigationView
         bottomNavigationView.setupWithNavController(navController)
     }
 
@@ -95,4 +97,5 @@ class MainActivity : AppCompatActivity() {
             (View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or
                     View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR)
     }
+
 }

@@ -1,205 +1,246 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/player_activity"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:id="@+id/player_activity_coordinator">
 
-
-
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/top_toolbar_frame"
-        style="@style/TopFrame"
-        app:navigationContentDescription="@null"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-
-        app:layout_constraintBottom_toTopOf="@+id/trackImage"/>
-
-    <ImageView
-        android:id="@+id/trackImage"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="26dp"
-        app:layout_constrainedHeight="true"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintDimensionRatio="width:height"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_max="312dp"
-        app:layout_constraintWidth_min="312dp"
-        app:layout_constraintVertical_bias="0"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_toolbar_frame"
-        app:layout_constraintBottom_toTopOf="@+id/trackName"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintWidth_max="312dp"
-        tools:src="@drawable/vector_placeholder" />
-
-    <TextView
-        android:id="@+id/trackName"
-        android:layout_width="match_parent"
-        android:layout_height="26dp"
-        android:layout_marginHorizontal="@dimen/top_padding"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:maxLines="1"
-        android:fontFamily="@font/ys_display_medium"
-        android:textSize="22sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trackImage"
-        app:layout_constraintBottom_toTopOf="@+id/artistName"
-        tools:text="Yesterday (Remastered 2009)hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"/>
-
-    <TextView
-        android:id="@+id/artistName"
-        android:layout_marginVertical="12dp"
-        android:layout_width="match_parent"
-        android:layout_height="16dp"
-        android:layout_marginHorizontal="@dimen/top_padding"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:maxLines="1"
-        android:fontFamily="@font/ys_display_medium"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trackName"
-        app:layout_constraintBottom_toTopOf="@+id/play_button"
-        tools:text="The Beatles hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"/>
-
-    <ImageButton
-        android:id="@+id/add_button"
-        style="@style/PlayerSmallButton"
-        app:iconSize="23dp"
-        app:layout_constraintTop_toBottomOf="@+id/artistName"
-        app:layout_constraintStart_toStartOf="parent"
-        android:src="@drawable/ic_vector_add" />
-
-    <ImageView
-        android:id="@+id/play_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:padding="8dp"
-        android:stateListAnimator="@animator/button_state_animator"
-
-        app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintTop_toBottomOf="@+id/artistName"
-        app:layout_constraintBottom_toTopOf="@+id/currentTrackTime"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/play_selector"
-        android:contentDescription="@string/play_button"/>
-
-    <ToggleButton
-        android:id="@+id/like_button"
-        style="@style/PlayerSmallButton"
-        app:layout_constraintTop_toBottomOf="@+id/artistName"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:drawableTop="@drawable/like_selector"
-        android:textOff=""
-        android:textOn=""/>
-
-    <TextView
-        android:id="@+id/currentTrackTime"
-        android:layout_width="match_parent"
-        android:layout_height="16dp"
-        android:layout_marginHorizontal="@dimen/top_padding"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="30dp"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:maxLines="1"
-        android:fontFamily="@font/ys_display_medium"
-        android:textSize="14sp"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintWidth_max="wrap"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/play_button"
-        app:layout_constraintBottom_toBottomOf="@+id/horizontal_guideline"
-        tools:text="0:29" />
-
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/center_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="109dp" />
+        android:id="@+id/player_activity">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/bottom_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="20dp" />
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/top_toolbar_frame"
+            style="@style/TopFrame"
+            app:navigationContentDescription="@null"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/trackImage"/>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/horizontal_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="180dp" />
+        <ImageView
+            android:id="@+id/trackImage"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="26dp"
+            android:layout_marginHorizontal="@dimen/top_padding"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/top_toolbar_frame"
+            app:layout_constraintBottom_toTopOf="@+id/trackName"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:src="@drawable/vector_placeholder" />
 
-    <TextView
-        android:id="@+id/titleTrackTime"
-        style="@style/TitleParamTrack"
-        android:text="@string/track_time"
-        app:layout_constraintBottom_toTopOf="@+id/titleCollectionName"/>
-    <TextView
-        android:id="@+id/titleCollectionName"
-        style="@style/TitleParamTrack"
-        android:text="@string/collection_name"
-        app:layout_constraintBottom_toTopOf="@+id/titleReleaseDate"/>
-    <TextView
-        android:id="@+id/titleReleaseDate"
-        style="@style/TitleParamTrack"
-        android:text="@string/release_date"
-        app:layout_constraintBottom_toTopOf="@+id/titlePrimaryGenreName"/>
-    <TextView
-        android:id="@+id/titlePrimaryGenreName"
-        style="@style/TitleParamTrack"
-        android:text="@string/primary_genre_name"
-        app:layout_constraintBottom_toTopOf="@+id/titleCountry"/>
-    <TextView
-        android:id="@+id/titleCountry"
-        style="@style/TitleParamTrack"
-        android:text="@string/country"
-        app:layout_constraintBottom_toBottomOf="@+id/bottom_guideline"/>
+        <TextView
+            android:id="@+id/trackName"
+            android:layout_width="match_parent"
+            android:layout_height="26dp"
+            android:layout_marginHorizontal="@dimen/top_padding"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:fontFamily="@font/ys_display_medium"
+            android:textSize="22sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/trackImage"
+            app:layout_constraintBottom_toTopOf="@+id/artistName"
+            tools:text="Yesterday (Remastered 2009)hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"/>
 
-    <TextView
-        android:id="@+id/trackTime"
-        style="@style/ParamTrack"
-        tools:text="5:35"
-        app:layout_constraintBottom_toTopOf="@+id/collectionName" />
-    <TextView
-        android:id="@+id/collectionName"
-        style="@style/ParamTrack"
-        tools:text="Yesterday (Remastered 2009)"
-        app:layout_constraintBottom_toTopOf="@+id/releaseDate"/>
-    <TextView
-        android:id="@+id/releaseDate"
-        style="@style/ParamTrack"
-        tools:text="1965"
-        app:layout_constraintBottom_toTopOf="@+id/primaryGenreName"/>
-    <TextView
-        android:id="@+id/primaryGenreName"
-        style="@style/ParamTrack"
-        tools:text="Rock"
-        app:layout_constraintBottom_toTopOf="@+id/country"/>
-    <TextView
-        android:id="@+id/country"
-        style="@style/ParamTrack"
-        tools:text="Великобритания hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
-        app:layout_constraintBottom_toBottomOf="@+id/bottom_guideline"/>
+        <TextView
+            android:id="@+id/artistName"
+            android:layout_marginVertical="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:layout_marginHorizontal="@dimen/top_padding"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:fontFamily="@font/ys_display_medium"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/trackName"
+            app:layout_constraintBottom_toTopOf="@+id/play_button"
+            tools:text="The Beatles hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"/>
+
+        <ImageButton
+            android:id="@+id/add_button"
+            style="@style/PlayerSmallButton"
+            app:iconSize="23dp"
+            app:layout_constraintTop_toBottomOf="@+id/artistName"
+            app:layout_constraintStart_toStartOf="parent"
+            android:src="@drawable/ic_vector_add" />
+
+        <ImageView
+            android:id="@+id/play_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:padding="8dp"
+            android:stateListAnimator="@animator/button_state_animator"
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toBottomOf="@+id/artistName"
+            app:layout_constraintBottom_toTopOf="@+id/currentTrackTime"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:src="@drawable/play_selector"
+            android:contentDescription="@string/play_button"/>
+
+        <ToggleButton
+            android:id="@+id/like_button"
+            style="@style/PlayerSmallButton"
+            app:layout_constraintTop_toBottomOf="@+id/artistName"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:drawableTop="@drawable/like_selector"
+            android:textOff=""
+            android:textOn=""/>
+
+        <TextView
+            android:id="@+id/currentTrackTime"
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:layout_marginHorizontal="@dimen/top_padding"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="30dp"
+            android:gravity="center_horizontal"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:fontFamily="@font/ys_display_medium"
+            android:textSize="14sp"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintWidth_max="wrap"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/play_button"
+            app:layout_constraintBottom_toBottomOf="@+id/horizontal_guideline"
+            tools:text="0:29" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/center_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="109dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/bottom_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="20dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/horizontal_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="180dp" />
+
+        <TextView
+            android:id="@+id/titleTrackTime"
+            style="@style/TitleParamTrack"
+            android:text="@string/track_time"
+            app:layout_constraintBottom_toTopOf="@+id/titleCollectionName"/>
+        <TextView
+            android:id="@+id/titleCollectionName"
+            style="@style/TitleParamTrack"
+            android:text="@string/collection_name"
+            app:layout_constraintBottom_toTopOf="@+id/titleReleaseDate"/>
+        <TextView
+            android:id="@+id/titleReleaseDate"
+            style="@style/TitleParamTrack"
+            android:text="@string/release_date"
+            app:layout_constraintBottom_toTopOf="@+id/titlePrimaryGenreName"/>
+        <TextView
+            android:id="@+id/titlePrimaryGenreName"
+            style="@style/TitleParamTrack"
+            android:text="@string/primary_genre_name"
+            app:layout_constraintBottom_toTopOf="@+id/titleCountry"/>
+        <TextView
+            android:id="@+id/titleCountry"
+            style="@style/TitleParamTrack"
+            android:text="@string/country"
+            app:layout_constraintBottom_toBottomOf="@+id/bottom_guideline"/>
+
+        <TextView
+            android:id="@+id/trackTime"
+            style="@style/ParamTrack"
+            tools:text="5:35"
+            app:layout_constraintBottom_toTopOf="@+id/collectionName" />
+        <TextView
+            android:id="@+id/collectionName"
+            style="@style/ParamTrack"
+            tools:text="Yesterday (Remastered 2009)"
+            app:layout_constraintBottom_toTopOf="@+id/releaseDate"/>
+        <TextView
+            android:id="@+id/releaseDate"
+            style="@style/ParamTrack"
+            tools:text="1965"
+            app:layout_constraintBottom_toTopOf="@+id/primaryGenreName"/>
+        <TextView
+            android:id="@+id/primaryGenreName"
+            style="@style/ParamTrack"
+            tools:text="Rock"
+            app:layout_constraintBottom_toTopOf="@+id/country"/>
+        <TextView
+            android:id="@+id/country"
+            style="@style/ParamTrack"
+            tools:text="Великобритания hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+            app:layout_constraintBottom_toBottomOf="@+id/bottom_guideline"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/dim_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/black_50"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/standard_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="505dp"
+        android:orientation="vertical"
+        android:background="@drawable/background_drawable"
+        app:behavior_hideable="true"
+        app:behavior_peekHeight="240dp"
+        app:behavior_skipCollapsed = "true"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <TextView
+            android:id="@+id/your_history"
+            android:layout_width="match_parent"
+            android:layout_height="68dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:paddingBottom="12dp"
+            android:gravity="center_horizontal"
+            android:textColor="?attr/colorOnSecondary"
+            android:textSize="@dimen/message_text_size"
+            android:text="@string/add_to_playlist"
+            app:drawableTopCompat="@drawable/panel_separation"
+            android:drawablePadding="30dp"
+            android:fontFamily="@font/ys_display_medium"/>
+        <Button
+            android:id="@+id/new_playlist_button"
+            style="@style/NewPlaylistButton"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/playlists_list"/>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
