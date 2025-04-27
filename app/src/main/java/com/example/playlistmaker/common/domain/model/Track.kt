@@ -13,5 +13,6 @@ data class Track(
     val country: String,
     val trackId: Int,
     var isFavorite: Boolean = false,
-    val trackTime: TrackTimePeriod?
+    val trackTime: TrackTimePeriod?,
+    val systemTime: Long? = null
 )

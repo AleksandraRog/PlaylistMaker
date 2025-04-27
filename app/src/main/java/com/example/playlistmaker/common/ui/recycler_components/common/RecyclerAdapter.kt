@@ -8,6 +8,7 @@ abstract class RecyclerAdapter<T> : RecyclerView.Adapter<ListViewHolder<T>>(){
 
     var list: List<T> = emptyList()
     var setOnItemClickListener: ((T) -> Unit)? = null
+    var setOnItemLongClickListener: ((T) -> Boolean)? = null
 
     abstract fun createViewHolder(layoutInspector: LayoutInflater, parent: ViewGroup, viewType: Int = 1): ListViewHolder<T>
 
@@ -21,6 +22,9 @@ abstract class RecyclerAdapter<T> : RecyclerView.Adapter<ListViewHolder<T>>(){
         holder.bind(item)
         holder.itemView.setOnClickListener {
             setOnItemClickListener?.invoke(item)
+        }
+        holder.itemView.setOnLongClickListener{
+            setOnItemLongClickListener?.invoke(item) ?: false
         }
     }
 

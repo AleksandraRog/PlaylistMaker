@@ -16,5 +16,7 @@ interface NewPlaylistRepository {
 
     // db
     fun insertPlaylist(playlist : Playlist): Flow<Playlist>
+    fun updatePlaylist(playlist: Playlist): Flow<Playlist>
+    fun getPlaylistByIdFlow(id: Int): Flow<Playlist>
 
 }

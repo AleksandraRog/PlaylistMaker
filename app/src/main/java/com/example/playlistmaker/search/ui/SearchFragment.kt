@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.common.domain.model.Track
 import com.example.playlistmaker.common.presentation.ListUiState
-import com.example.playlistmaker.common.presentation.TrackListUiState
+import com.example.playlistmaker.common.presentation.model.ExtraActionBundleKey
 import com.example.playlistmaker.common.presentation.model.TopicalFragment
 import com.example.playlistmaker.common.ui.fragments.IncludeFragment
 import com.example.playlistmaker.common.ui.recycler_components.common.RecyclerAdapter
@@ -25,9 +25,9 @@ import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.databinding.ErrorViewGroupBinding
 import com.example.playlistmaker.databinding.HistoryViewGroupBinding
 import com.example.playlistmaker.main.presentation.MainViewModel
-import com.example.playlistmaker.common.presentation.model.ExtraActionBundleKey
 import com.example.playlistmaker.search.domain.model.HistoryQueue
 import com.example.playlistmaker.search.presentation.SearchViewModel
+import com.example.playlistmaker.search.presentation.TrackListUiState
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.LinkedList
@@ -135,23 +135,17 @@ class SearchFragment() : IncludeFragment<ActivitySearchBinding, Track, >() {
         }
 
         adapter.setOnItemClickListener = { track ->
-            if (clickDebounce()) {
-
-                viewModel.showTrack(track)
-            }
+            viewModel.showTrack(track)
         }
 
         historyTrackAdapter.setOnItemClickListener = { track ->
-            if (clickDebounce()) {
-                viewModel.showTrack(track)
-            }
+            viewModel.showTrack(track)
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         simpleTextWatcher.let { inputEditText.removeTextChangedListener(it) }
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

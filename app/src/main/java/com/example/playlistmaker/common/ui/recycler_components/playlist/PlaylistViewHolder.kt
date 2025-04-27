@@ -8,7 +8,7 @@ import com.example.playlistmaker.common.presentation.mapper.SizeFormatter
 import com.example.playlistmaker.common.presentation.model.ItemPlaylistWrapper
 import com.example.playlistmaker.common.ui.model.TypePlaylistBindingWrapper
 import com.example.playlistmaker.common.ui.recycler_components.common.ListViewHolder
-import com.example.playlistmaker.playlists.presentation.mapper.TextFormForIntFormatter
+import com.example.playlistmaker.common.presentation.mapper.TextFormForIntFormatter
 
 class PlaylistViewHolder(private val playlistBinding: TypePlaylistBindingWrapper) : ListViewHolder<ItemPlaylistWrapper>(
     when (playlistBinding) {

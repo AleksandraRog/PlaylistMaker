@@ -12,11 +12,11 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.playlistmaker.R
+import com.example.playlistmaker.common.presentation.model.SharingObjects
+import com.example.playlistmaker.common.presentation.model.TopicalFragment
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.main.presentation.MainViewModel
-import com.example.playlistmaker.common.presentation.model.TopicalFragment
 import com.example.playlistmaker.settings.presentation.DarkThemeViewModel
-import com.example.playlistmaker.sharing.presentation.SharingObjects
 import com.example.playlistmaker.sharing.presentation.SharingsViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.koin.androidx.viewmodel.ext.android.activityViewModel

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("androidx.navigation.safeargs.kotlin") version "2.8.9"
     id("com.google.devtools.ksp") version "2.0.21-1.0.26"
 
 }

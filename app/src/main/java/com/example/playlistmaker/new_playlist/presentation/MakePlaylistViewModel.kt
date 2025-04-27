@@ -2,18 +2,35 @@ package com.example.playlistmaker.new_playlist.presentation
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.common.domain.model.Playlist
+import com.example.playlistmaker.common.presentation.mapper.BundleMapper.toModel
 import com.example.playlistmaker.new_playlist.domain.interactors.MakePlaylistInteractor
 import com.example.playlistmaker.new_playlist.presentation.BitmapMapper.toByteArrayAsync
 import kotlinx.coroutines.launch
 
-class MakePlaylistViewModel(private val interactor: MakePlaylistInteractor,) : ViewModel() {
+class MakePlaylistViewModel(
+    playlistIdBundle: Bundle,
+    private val interactor: MakePlaylistInteractor,) : ViewModel() {
 
-    private var screenStateLiveData = MutableLiveData<CreatePlaylistScreenState>()
+        private var screenStateLiveData = MutableLiveData<CreatePlaylistScreenState>()
+
+    init {
+        viewModelScope.launch {
+            interactor.loadPlaylistFlow(playlistIdBundle.toModel())
+                .collect { pair ->
+                    if (pair != null)
+                        screenStateLiveData.postValue(CreatePlaylistScreenState.LoadPlaylist(pair))
+                    else
+                        screenStateLiveData.postValue(CreatePlaylistScreenState.Empty)
+                }
+        }
+    }
+
     fun getScreenStateLiveData(): LiveData<CreatePlaylistScreenState> = screenStateLiveData
 
     private fun saveUriToFile(uri: Uri) {
@@ -39,14 +56,13 @@ class MakePlaylistViewModel(private val interactor: MakePlaylistInteractor,) : V
         }
     }
 
-    fun savePlaylist(playlist: Playlist) {
+    fun savePlaylist(playlist: Playlist, editFlag: Boolean) {
 
         viewModelScope.launch {
 
-            interactor.createNewPlaylist(playlist)
+            interactor.processPlaylist(playlist, editFlag)
                 .collect { listState ->
-
-                    screenStateLiveData.postValue(CreatePlaylistScreenState.SavePlaylist(listState))
+                    screenStateLiveData.postValue(CreatePlaylistScreenState.OnSavePlaylist(listState))
                 }
         }
     }
@@ -85,3 +101,4 @@ class MakePlaylistViewModel(private val interactor: MakePlaylistInteractor,) : V
         screenStateLiveData.postValue(CreatePlaylistScreenState.ClosePlaylist(true))
     }
 }
+

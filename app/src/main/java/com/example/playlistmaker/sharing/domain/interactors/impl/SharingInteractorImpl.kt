@@ -1,15 +1,15 @@
 package com.example.playlistmaker.sharing.domain.interactors.impl
 
-import com.example.playlistmaker.sharing.domain.interactors.SharingInteractor
+import com.example.playlistmaker.common.presentation.model.SharingObjects
+import com.example.playlistmaker.sharing.domain.interactors.CompleteSharingInteractor
 import com.example.playlistmaker.sharing.domain.model.EmailData
-import com.example.playlistmaker.sharing.domain.repsitory.ExternalNavigator
-import com.example.playlistmaker.sharing.presentation.SharingObjects
+import com.example.playlistmaker.sharing.domain.repsitory.SharingExternalNavigator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class SharingInteractorImpl(
-    private val externalNavigator: ExternalNavigator,
-) : SharingInteractor {
+    private val externalNavigator: SharingExternalNavigator,
+) : CompleteSharingInteractor {
 
     override fun getIntentProperty(sharingObjects: SharingObjects): Flow<SharingObjects> {
         when (sharingObjects) {

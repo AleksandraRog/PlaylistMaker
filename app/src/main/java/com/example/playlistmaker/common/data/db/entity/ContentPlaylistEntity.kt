@@ -23,12 +23,14 @@ class ContentPlaylistEntity(
     val playlistId: Int,
     val trackId: Int,
     @PrimaryKey
-    val keyId: String
+    val keyId: String,
+    val systemTime: Long,
 ) {
     @Ignore
-    constructor(playlistId: Int, trackId: Int) : this(
+    constructor(playlistId: Int, trackId: Int, ) : this(
         playlistId = playlistId,
         trackId = trackId,
-        keyId = "${playlistId}#${trackId}"
+        keyId = "${playlistId}#${trackId}",
+        systemTime = System.currentTimeMillis(),
     )
 }

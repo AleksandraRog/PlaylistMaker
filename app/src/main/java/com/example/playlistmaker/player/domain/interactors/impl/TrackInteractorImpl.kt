@@ -50,7 +50,7 @@ class TrackInteractorImpl(private val trackRepository: TrackRepository,
                                 }
                         }
 
-                        ExtraActionBundleKey.TRACK_EXTRA_FAVORITE -> {
+                        ExtraActionBundleKey.TRACK_EXTRA_FAVORITE, ExtraActionBundleKey.TRACK_EXTRA_PLAYLIST -> {
                             trackRepository.getTrackByIdFlow(extraActionBundleKey.id)
                                 .map { consData ->
                                     Pair(consData.result, consData.code)

@@ -4,13 +4,16 @@
     <item
         android:id="@+id/searchFragment"
         android:icon="@drawable/vector_search"
+        android:tooltipText="@null"
         android:title="@string/button_search" />
     <item
         android:id="@+id/libraryFragment"
         android:icon="@drawable/vector_library"
+        android:tooltipText="@null"
         android:title="@string/button_library" />
     <item
         android:id="@+id/settingsFragment"
         android:icon="@drawable/vector_setting"
+        android:tooltipText="@null"
         android:title="@string/button_setting" />
 </menu>

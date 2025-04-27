@@ -28,8 +28,11 @@
             android:id="@+id/action_favoriteTracksFragment_to_playerActivity"
             app:destination="@id/playerActivity" />
         <action
-            android:id="@+id/action_libraryFragment_to_newPlaylistActivity"
+            android:id="@+id/action_playlistsFragment_to_newPlaylistActivity"
             app:destination="@id/newPlaylistActivity" />
+        <action
+            android:id="@+id/action_playlistsFragment_to_playlistFragment"
+            app:destination="@id/playlistFragment" />
 
     </fragment>
     <activity
@@ -42,4 +45,19 @@
         android:name="com.example.playlistmaker.new_playlist.ui.NewPlaylistActivity"
         android:label="activity_new_playlist"
         tools:layout="@layout/activity_new_playlist" />
+    <fragment
+        android:id="@+id/playlistFragment"
+        android:name="com.example.playlistmaker.playlist.ui.PlaylistFragment"
+        android:label="fragment_playlist"
+        tools:layout="@layout/fragment_playlist" >
+        <argument
+            android:name="playlistId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_playlistFragment_to_playerActivity"
+            app:destination="@id/playerActivity" />
+        <action
+            android:id="@+id/action_playlistFragment_to_newPlaylistActivity"
+            app:destination="@id/newPlaylistActivity" />
+    </fragment>
 </navigation>

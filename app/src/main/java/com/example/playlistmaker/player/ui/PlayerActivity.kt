@@ -18,7 +18,6 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.common.domain.model.Track
 import com.example.playlistmaker.common.domain.model.TrackTimePeriod
 import com.example.playlistmaker.common.presentation.ListUiState
-import com.example.playlistmaker.common.presentation.TrackUiState
 import com.example.playlistmaker.common.presentation.mapper.SizeFormatter
 import com.example.playlistmaker.common.presentation.model.ItemPlaylistWrapper
 import com.example.playlistmaker.common.ui.castom_view.CustomCircularProgressIndicator
@@ -29,6 +28,7 @@ import com.example.playlistmaker.new_playlist.ui.NewPlaylistActivity
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.player.presentation.model.PlayerPropertyState
 import com.example.playlistmaker.player.presentation.model.PlayerState
+import com.example.playlistmaker.player.presentation.model.TrackUiState
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -106,7 +106,6 @@ class PlayerActivity : AppCompatActivity() {
 
             dimOverlay.visibility = View.VISIBLE
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-        //    viewModel.getPlaylists()
         }
 
         binding.newPlaylistButton.setOnClickListener {
@@ -268,6 +267,7 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun showToast(message: String) {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
         CustomToast(this, binding.root)
             .setMessage(message)
             .show()

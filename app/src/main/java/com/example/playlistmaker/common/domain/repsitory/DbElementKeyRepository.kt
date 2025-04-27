@@ -9,4 +9,6 @@ interface DbElementKeyRepository {
     fun insertTrackToPlaylist(track: Track, playlist: Playlist) : Flow<Boolean>
     suspend fun getTrackByIdInPlaylist(trackId: Int ) : Boolean
     fun del() : Flow<Boolean>
+    fun deleteTrackFromPlaylist(track: Track, playlist: Playlist): Flow<Boolean>
+
 }

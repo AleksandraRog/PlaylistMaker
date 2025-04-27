@@ -56,7 +56,8 @@ object TrackMapper {
             country = this.country,
             trackId = this.trackId,
             isFavorite = this.isFavorite ?: false,
-            trackTime = TrackTimePeriod.fromMillis(this.trackTimeMillis)
+            trackTime = TrackTimePeriod.fromMillis(this.trackTimeMillis),
+            systemTime = this.systemTime
         )
     }
 
@@ -72,7 +73,7 @@ object TrackMapper {
             country = this.country,
             trackId = this.trackId,
             trackTimeMillis = this.trackTime!!.toMillis()!!,
-            systemTime = System.currentTimeMillis(),
+            systemTime = this.systemTime ?: System.currentTimeMillis(),
             isFavorite = this.isFavorite,
         )
     }

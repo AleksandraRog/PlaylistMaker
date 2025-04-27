@@ -7,4 +7,5 @@ class Playlist(
     val description: String = "",
     val playlistId: Int = 0,
     val playlistSize: Int = 0,
+    var playlistTime: TrackTimePeriod? = null
     )

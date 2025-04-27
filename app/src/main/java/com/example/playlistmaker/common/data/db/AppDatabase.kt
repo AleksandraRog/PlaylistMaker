@@ -10,7 +10,7 @@ import com.example.playlistmaker.common.data.db.entity.TrackEntity
 import com.example.playlistmaker.common.data.mapper.DateConverter
 
 @Database(
-    version = 4,
+    version = 5,
     entities = [
         TrackEntity::class,
         PlaylistEntity::class,

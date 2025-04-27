@@ -7,11 +7,12 @@ import java.util.LinkedList
 
 interface DbTrackTableRepository {
 
-  fun notifyDatabaseChanged()
+  suspend fun notifyDatabaseChanged()
   fun insertTrack(track: Track): Flow<Boolean>
   fun delTrack(track: Track): Flow<Boolean>
   fun loadHistoryFlow(): Flow<ConsumerData<LinkedList<Track>>>
   suspend fun getFavoriteId(trackId: Int): Boolean
   fun getTrackByIdFlow(trackId: Int): Flow<ConsumerData<Track>>
+  fun getTrackListInPlaylist(playlistId: Int): Flow<ConsumerData<LinkedList<Track>>>
 
 }
