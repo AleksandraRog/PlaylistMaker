@@ -23,7 +23,7 @@ class DbPlaylistTableRepositoryImpl(private val appDatabase: AppDatabase,) : DbP
     private val _stateFlow = MutableSharedFlow<Unit>(replay = 1)
     private val stateFlow = _stateFlow.asSharedFlow()
 
-    override fun notifyDatabaseChanged() {
+    override suspend fun notifyDatabaseChanged() {
         _stateFlow.tryEmit(Unit)
     }
 
@@ -65,6 +65,24 @@ class DbPlaylistTableRepositoryImpl(private val appDatabase: AppDatabase,) : DbP
                 emit(ConsumerData(playlists, 1))
             }
             .flowOn(Dispatchers.IO)
+
+    override fun getPlaylist(id: Int): Flow<Playlist> =  stateFlow
+        .onStart { emit(Unit) }
+        .transform {
+            val playlist =  appDatabase.trackDao().getPlaylist(id).toDomainModel()
+            emit(playlist)
+        }
+        .flowOn(Dispatchers.IO)
+
+    override fun updatePlaylist(playlist: Playlist): Flow<Playlist> = flow {
+        val insertedPlaylistEntity = withContext(Dispatchers.IO) {
+
+            appDatabase.trackDao().updatePlaylist(playlist.toEntity())
+            playlist.toEntity()
+        }
+        notifyDatabaseChanged()
+        emit(insertedPlaylistEntity.toDomainModel())
+    }
 
     override fun insertPlaylist(playlist: Playlist): Flow<Playlist> = flow {
         val insertedPlaylistEntity = withContext(Dispatchers.IO) {

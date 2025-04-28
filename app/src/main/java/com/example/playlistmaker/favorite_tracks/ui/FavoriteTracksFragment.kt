@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.playlistmaker.R
-import com.example.playlistmaker.common.presentation.model.ExtraActionBundleKey
 import com.example.playlistmaker.common.domain.model.Track
 import com.example.playlistmaker.common.presentation.ListUiState
+import com.example.playlistmaker.common.presentation.model.ExtraActionBundleKey
 import com.example.playlistmaker.common.ui.fragments.IncludeFragment
 import com.example.playlistmaker.common.ui.recycler_components.track.TrackAdapter
 import com.example.playlistmaker.databinding.FragmentFavoriteTracksBinding
@@ -24,7 +24,6 @@ class FavoriteTracksFragment() : IncludeFragment<FragmentFavoriteTracksBinding, 
         ExtraActionBundleKey.TRACK_EXTRA_FAVORITE
     override val navigateIdAction: Int = R.id.action_favoriteTracksFragment_to_playerActivity
     override val adapter: TrackAdapter = TrackAdapter()
-
     private val viewModel by viewModel<FavoriteTracksViewModel>()
 
     override fun createBinding(
@@ -42,9 +41,7 @@ class FavoriteTracksFragment() : IncludeFragment<FragmentFavoriteTracksBinding, 
         }
 
         adapter.setOnItemClickListener = { track ->
-            if (clickDebounce()) {
-                viewModel.showTrack(track)
-            }
+            viewModel.showTrack(track)
         }
     }
 

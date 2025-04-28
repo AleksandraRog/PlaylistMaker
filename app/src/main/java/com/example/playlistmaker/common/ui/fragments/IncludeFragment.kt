@@ -6,20 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.example.playlistmaker.R
 import com.example.playlistmaker.common.ScreenSize
-import com.example.playlistmaker.common.presentation.model.ExtraActionBundleKey
 import com.example.playlistmaker.common.presentation.ListUiState
 import com.example.playlistmaker.common.presentation.mapper.SizeFormatter
+import com.example.playlistmaker.common.presentation.model.ExtraActionBundleKey
 import com.example.playlistmaker.common.ui.castom_view.CustomCircularProgressIndicator
 import com.example.playlistmaker.common.ui.recycler_components.common.RecyclerAdapter
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 abstract class IncludeFragment<T : ViewBinding, I,> : Fragment() {
 
@@ -63,12 +60,12 @@ abstract class IncludeFragment<T : ViewBinding, I,> : Fragment() {
 
     open fun goToIntent(entityId: Int) {
 
-        val bundleTrackId = Bundle().apply {
+        val bundleEntityId = Bundle().apply {
             putInt(extraActionBundleKey.value, entityId)
 
         }
 
-        findNavController().navigate(navigateIdAction, bundleTrackId)
+        findNavController().navigate(navigateIdAction, bundleEntityId)
 
     }
 
@@ -85,19 +82,6 @@ abstract class IncludeFragment<T : ViewBinding, I,> : Fragment() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-    }
-
-    fun clickDebounce(): Boolean {
-
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            viewLifecycleOwner.lifecycleScope.launch {
-                delay(CLICK_DEBOUNCE_DELAY)
-                isClickAllowed = true
-            }
-        }
-        return current
     }
 
     open fun updateIncludeViewByProgressBar() {
@@ -125,7 +109,4 @@ abstract class IncludeFragment<T : ViewBinding, I,> : Fragment() {
 
     abstract fun renderUiIncludeState(state: ListUiState.ListUiIncludeState<I>)
 
-    companion object {
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-    }
 }

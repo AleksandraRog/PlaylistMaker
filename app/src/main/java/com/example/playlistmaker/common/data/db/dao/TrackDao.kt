@@ -43,6 +43,9 @@ interface TrackDao {
     @Query("SELECT * FROM playlist_table ORDER BY systemTime DESC")
     suspend fun getPlaylists(): List<PlaylistEntity>
 
+    @Query("SELECT * FROM playlist_table WHERE playlistId = :id")
+    suspend fun getPlaylist(id: Int): PlaylistEntity
+
     @Update
     suspend fun updatePlaylist(playlist: PlaylistEntity)
 
@@ -60,7 +63,11 @@ interface TrackDao {
     suspend fun getTracksIdInPlaylist (playlistId: Int): List<Int>
 
     @Query("SELECT COUNT(*) FROM content_playlist_table WHERE trackId = :trackId")
-    suspend fun getTrackByIdInPlaylist(trackId: Int) : Int
+    suspend fun getCountTrackByIdInPlaylists(trackId: Int) : Int
+
+    @Query("DELETE FROM content_playlist_table WHERE keyId = :keyId")
+    suspend fun deleteContentKey(keyId: String)
+
 
     //complex query
     @Query("SELECT * FROM playlist_table WHERE playlistId NOT IN (SELECT playlistId FROM content_playlist_table WHERE trackId = :trackId)")
@@ -68,6 +75,13 @@ interface TrackDao {
 
     @Query("SELECT * FROM playlist_table WHERE playlistId IN (SELECT playlistId FROM content_playlist_table WHERE trackId = :trackId)")
     suspend fun getPlaylistsContainingTrack(trackId: Int): List<PlaylistEntity>
+
+    @Query("""
+    SELECT track_table.* FROM track_table
+    INNER JOIN content_playlist_table ON track_table.trackId = content_playlist_table.trackId
+    WHERE content_playlist_table.playlistId = :playlistId
+    ORDER BY content_playlist_table.systemTime DESC """)
+    suspend fun getTrackListInPlaylist(playlistId: Int): List<TrackEntity>
 
     //Transaction
     @Transaction
@@ -86,5 +100,17 @@ interface TrackDao {
             getTracksIdInPlaylist(playlist.playlistId)
         )
         deletePlaylist(playlist)
+    }
+
+    @Transaction
+    suspend fun deleteTrackFromPlaylist(trackEntity: TrackEntity, playlist: PlaylistEntity) {
+
+        if( (getCountTrackByIdInPlaylists(trackEntity.trackId) == 1)
+            && (trackEntity.isFavorite != true)) {
+            deleteTrack(trackEntity)
+        }
+        deleteContentKey("${playlist.playlistId}#${trackEntity.trackId}")
+        playlist.apply { playlistSize = getCountTracksInPlaylist(playlist.playlistId) }
+        updatePlaylist(playlist)
     }
 }

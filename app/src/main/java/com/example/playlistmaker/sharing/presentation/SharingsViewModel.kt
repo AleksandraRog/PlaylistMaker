@@ -4,11 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.sharing.domain.interactors.SharingInteractor
+import com.example.playlistmaker.common.presentation.model.SharingObjects
+import com.example.playlistmaker.sharing.domain.interactors.CompleteSharingInteractor
 import kotlinx.coroutines.launch
 
 class SharingsViewModel(
-    private val sharingInteractor: SharingInteractor,
+    private val sharingInteractor: CompleteSharingInteractor,
 ) : ViewModel() {
 
     private var sharingLiveData = MutableLiveData<SharingObjects>()

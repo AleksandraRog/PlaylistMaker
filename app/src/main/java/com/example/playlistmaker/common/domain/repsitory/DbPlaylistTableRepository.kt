@@ -7,10 +7,12 @@ import java.util.LinkedList
 
 interface DbPlaylistTableRepository {
 
-    fun notifyDatabaseChanged()
+    suspend fun notifyDatabaseChanged()
     fun insertPlaylist(playlist: Playlist): Flow<Playlist>
     fun delPlaylist(playlist: Playlist): Flow<Boolean>
     fun loadPlaylistsFlow(): Flow<ConsumerData<LinkedList<Playlist>>>
     fun loadPlaylistsNotContainingTrack(trackId: Int): Flow<ConsumerData<LinkedList<Playlist>>>
     fun loadPlaylistsContainingTrack(trackId: Int): Flow<ConsumerData<LinkedList<Playlist>>>
+    fun getPlaylist(id: Int): Flow<Playlist>
+    fun updatePlaylist(playlist: Playlist): Flow<Playlist>
 }

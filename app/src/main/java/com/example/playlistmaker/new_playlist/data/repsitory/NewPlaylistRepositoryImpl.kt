@@ -97,4 +97,12 @@ class NewPlaylistRepositoryImpl(private val repositoryDb: DbPlaylistTableReposit
     override fun insertPlaylist(playlist: Playlist): Flow<Playlist> {
         return repositoryDb.insertPlaylist(playlist)
     }
+
+    override fun updatePlaylist(playlist: Playlist): Flow<Playlist> {
+        return repositoryDb.updatePlaylist(playlist)
+    }
+
+    override fun getPlaylistByIdFlow(id: Int): Flow<Playlist> {
+        return repositoryDb.getPlaylist(id)
+    }
 }

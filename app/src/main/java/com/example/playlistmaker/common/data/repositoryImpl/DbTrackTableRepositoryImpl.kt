@@ -41,7 +41,7 @@ class DbTrackTableRepositoryImpl(
         emit(false)
     }
 
-    override fun notifyDatabaseChanged() {
+    override suspend fun notifyDatabaseChanged() {
         _stateFlow.tryEmit(Unit)
     }
 
@@ -70,4 +70,14 @@ class DbTrackTableRepositoryImpl(
         }
         emit(ConsumerData(favoritTrack))
     }
+
+    override fun getTrackListInPlaylist(playlistId: Int): Flow<ConsumerData<LinkedList<Track>>> = stateFlow
+        .onStart { emit(Unit) }
+        .transform {
+            val resultList = appDatabase.trackDao().getTrackListInPlaylist(playlistId)
+            val result = TrackMapper.mapEntityToDomainModel(LinkedList(resultList))
+            val resultCode = 200
+            emit(ConsumerData(result, resultCode))
+        }
+        .flowOn(Dispatchers.IO)
 }

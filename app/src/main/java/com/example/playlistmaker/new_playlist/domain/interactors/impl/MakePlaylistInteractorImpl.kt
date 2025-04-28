@@ -1,10 +1,12 @@
 package com.example.playlistmaker.new_playlist.domain.interactors.impl
 
 import com.example.playlistmaker.common.domain.model.Playlist
+import com.example.playlistmaker.common.presentation.model.ExtraActionBundleKey
 import com.example.playlistmaker.new_playlist.data.file.GetValueFileString
 import com.example.playlistmaker.new_playlist.domain.interactors.MakePlaylistInteractor
 import com.example.playlistmaker.new_playlist.domain.repository.NewPlaylistRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.io.File
 
 class MakePlaylistInteractorImpl(private val newPlaylistRepository: NewPlaylistRepository,
@@ -48,5 +50,22 @@ class MakePlaylistInteractorImpl(private val newPlaylistRepository: NewPlaylistR
         val path: String = fileUrl
         val file = File(path)
         return newPlaylistRepository.deleteFile(file)
+    }
+
+    override fun loadPlaylistFlow(playlistId: ExtraActionBundleKey?): Flow<Playlist?> {
+        return  if(playlistId ==null || playlistId.id < 0) {
+                flow { emit(null) }
+            } else {
+            newPlaylistRepository.getPlaylistByIdFlow(playlistId.id)
+        }
+    }
+
+    override fun processPlaylist(playlist: Playlist, editFlag: Boolean): Flow<Playlist> {
+
+        return  if(editFlag) {
+            newPlaylistRepository.updatePlaylist(playlist)
+        } else {
+            createNewPlaylist(playlist)
+        }
     }
 }

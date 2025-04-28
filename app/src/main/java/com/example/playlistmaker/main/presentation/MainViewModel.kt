@@ -19,6 +19,7 @@ class MainViewModel :  ViewModel() {
     }
 
     fun getWindowFocusLiveData(): LiveData<Boolean> = windowFocusLiveData
+    fun getTopicalFragmentLiveData(): LiveData<TopicalFragment> = topicalFragmentLiveData
 
     fun focusChange(screen: Boolean) {
         windowFocusLiveData.value = screen

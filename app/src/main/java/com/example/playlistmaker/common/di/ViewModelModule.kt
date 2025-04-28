@@ -4,15 +4,16 @@ import android.os.Bundle
 import com.example.playlistmaker.R
 import com.example.playlistmaker.favorite_tracks.domain.interactors.FavoriteTracksInteractor
 import com.example.playlistmaker.favorite_tracks.presentation.FavoriteTracksViewModel
-import com.example.playlistmaker.playlists.domain.interactors.PlaylistsInteractor
-import com.example.playlistmaker.playlists.presentation.PlaylistsViewModel
 import com.example.playlistmaker.library.presentation.LibraryViewModel
 import com.example.playlistmaker.main.presentation.MainViewModel
 import com.example.playlistmaker.new_playlist.presentation.MakePlaylistViewModel
 import com.example.playlistmaker.player.presentation.PlayerViewModel
+import com.example.playlistmaker.playlist.presentation.PlaylistViewModel
+import com.example.playlistmaker.playlists.domain.interactors.PlaylistsInteractor
+import com.example.playlistmaker.playlists.presentation.PlaylistsViewModel
 import com.example.playlistmaker.search.presentation.SearchViewModel
 import com.example.playlistmaker.settings.presentation.DarkThemeViewModel
-import com.example.playlistmaker.sharing.domain.interactors.SharingInteractor
+import com.example.playlistmaker.sharing.domain.interactors.CompleteSharingInteractor
 import com.example.playlistmaker.sharing.domain.model.EmailData
 import com.example.playlistmaker.sharing.presentation.SharingsViewModel
 import org.koin.android.ext.koin.androidApplication
@@ -35,7 +36,7 @@ val viewModelModule = module {
             androidContext().getString(R.string.text_support_message)
         )
 
-        val sharingInteractor = get<SharingInteractor>().apply {
+        val sharingInteractor = get<CompleteSharingInteractor>().apply {
             getShareAppLink = { appLink }
             getTermsLink = { termsLink }
             getSupportEmailData = { emailData }
@@ -45,7 +46,7 @@ val viewModelModule = module {
     }
 
     viewModel {
-        SearchViewModel(androidApplication(), get(), get(), get())
+        SearchViewModel(get(), get(), get())
     }
 
     viewModel { (trackId: Bundle) ->
@@ -68,8 +69,11 @@ val viewModelModule = module {
         PlaylistsViewModel(get<PlaylistsInteractor>())
     }
 
-    viewModel {
-        MakePlaylistViewModel(get())
+    viewModel {(playlistId: Bundle) ->
+        MakePlaylistViewModel(playlistId, get())
     }
 
+    viewModel { (playlistId: Int) ->
+        PlaylistViewModel(playlistId, get())
+    }
 }

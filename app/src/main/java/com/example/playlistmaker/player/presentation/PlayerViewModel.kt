@@ -6,13 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.common.presentation.ListUiState
-import com.example.playlistmaker.common.presentation.TrackUiState
 import com.example.playlistmaker.common.presentation.model.ItemPlaylistWrapper
 import com.example.playlistmaker.player.domain.interactors.AudioPlayerInteractor
 import com.example.playlistmaker.player.domain.interactors.TrackInteractor
-import com.example.playlistmaker.player.presentation.mapper.BundleMapper.toModel
+import com.example.playlistmaker.common.presentation.mapper.BundleMapper.toModel
 import com.example.playlistmaker.player.presentation.model.PlayerPropertyState
 import com.example.playlistmaker.player.presentation.model.PlayerState
+import com.example.playlistmaker.player.presentation.model.TrackUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest

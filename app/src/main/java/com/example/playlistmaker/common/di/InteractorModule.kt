@@ -8,6 +8,8 @@ import com.example.playlistmaker.player.domain.interactors.AudioPlayerInteractor
 import com.example.playlistmaker.player.domain.interactors.TrackInteractor
 import com.example.playlistmaker.player.domain.interactors.impl.AudioPlayerInteractorImpl
 import com.example.playlistmaker.player.domain.interactors.impl.TrackInteractorImpl
+import com.example.playlistmaker.playlist.domain.interactors.PlaylistInteractor
+import com.example.playlistmaker.playlist.domain.interactors.impl.PlaylistInteractorImpl
 import com.example.playlistmaker.playlists.domain.interactors.PlaylistsInteractor
 import com.example.playlistmaker.playlists.domain.interactors.impl.PlaylistsInteractorImpl
 import com.example.playlistmaker.search.domain.interactors.HistoryInteractor
@@ -16,7 +18,7 @@ import com.example.playlistmaker.search.domain.interactors.impl.HistoryInteracto
 import com.example.playlistmaker.search.domain.interactors.impl.TracksInteractorImpl
 import com.example.playlistmaker.settings.domain.interactors.DarkThemeInteractor
 import com.example.playlistmaker.settings.domain.interactors.impl.DarkThemeInteractorImpl
-import com.example.playlistmaker.sharing.domain.interactors.SharingInteractor
+import com.example.playlistmaker.sharing.domain.interactors.CompleteSharingInteractor
 import com.example.playlistmaker.sharing.domain.interactors.impl.SharingInteractorImpl
 import org.koin.dsl.module
 
@@ -38,7 +40,7 @@ val interactorModule = module {
         AudioPlayerInteractorImpl(get(),)
     }
 
-    single<SharingInteractor> {
+    single<CompleteSharingInteractor> {
         SharingInteractorImpl(get())
     }
 
@@ -56,5 +58,9 @@ val interactorModule = module {
 
     single<MakePlaylistInteractor> {
         MakePlaylistInteractorImpl(get(), get(),)
+    }
+
+    single<PlaylistInteractor> {
+        PlaylistInteractorImpl(get(), get())
     }
 }

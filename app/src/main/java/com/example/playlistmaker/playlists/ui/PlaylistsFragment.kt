@@ -13,6 +13,7 @@ import com.example.playlistmaker.common.presentation.model.ItemPlaylistWrapper
 import com.example.playlistmaker.common.ui.fragments.IncludeFragment
 import com.example.playlistmaker.common.ui.recycler_components.playlist.PlaylistAdapter
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
+import com.example.playlistmaker.library.ui.LibraryFragmentDirections
 import com.example.playlistmaker.playlists.presentation.PlaylistsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -25,10 +26,9 @@ class PlaylistsFragment() : IncludeFragment<FragmentPlaylistsBinding, ItemPlayli
     }
 
     private val viewModel: PlaylistsViewModel by viewModel<PlaylistsViewModel>()
-
-    override val navigateIdAction: Int= R.id.action_favoriteTracksFragment_to_playerActivity
+    override val navigateIdAction: Int= R.id.action_playlistsFragment_to_playlistFragment
     override val adapter: PlaylistAdapter = PlaylistAdapter(PlaylistAdapter.ITEM_VIEW_RECTANGLE)
-    override val extraActionBundleKey: ExtraActionBundleKey = ExtraActionBundleKey.PLAYLIST_EXTRA
+    override val extraActionBundleKey: ExtraActionBundleKey = ExtraActionBundleKey.PLAYLIST_EXTRA_PLAYLISTS
 
     override fun createBinding(
         increateBindingflater: LayoutInflater,
@@ -37,9 +37,6 @@ class PlaylistsFragment() : IncludeFragment<FragmentPlaylistsBinding, ItemPlayli
         return  FragmentPlaylistsBinding.inflate(increateBindingflater, container, false)
     }
 
-    override fun renderUiIncludeState(state: ListUiState.ListUiIncludeState<ItemPlaylistWrapper>) {
-        TODO("Not yet implemented")
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -49,11 +46,12 @@ class PlaylistsFragment() : IncludeFragment<FragmentPlaylistsBinding, ItemPlayli
         }
 
         adapter.setOnItemClickListener = { playlist ->
+            viewModel.showPlaylist(playlist)
 
         }
 
         binding.newPlaylistButton.setOnClickListener {
-            findNavController().navigate(R.id.action_libraryFragment_to_newPlaylistActivity)
+            findNavController().navigate(R.id.action_playlistsFragment_to_newPlaylistActivity)
         }
     }
 
@@ -79,7 +77,11 @@ class PlaylistsFragment() : IncludeFragment<FragmentPlaylistsBinding, ItemPlayli
         binding.placeholderMessage.visibility = View.VISIBLE
     }
 
+    override fun renderUiIncludeState(state: ListUiState.ListUiIncludeState<ItemPlaylistWrapper>) {}
+
     override fun goToIntent(entityId: Int) {
+        val action = LibraryFragmentDirections.actionPlaylistsFragmentToPlaylistFragment(entityId)
+        findNavController().navigate(action)
         viewModel.restoreState()
     }
 }
